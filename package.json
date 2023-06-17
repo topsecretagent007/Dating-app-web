@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.15",
     "@material-tailwind/react": "^2.0.3",
+    "@mui/material": "^5.13.5",
     "@react-icons/all-files": "^4.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

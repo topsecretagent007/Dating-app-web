@@ -23,7 +23,7 @@ export default function InviteModal() {
 
             <div className="w-full">
                 <Link to="" className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white gap-1">
-                    <FiCopy /> <div className="text-sm xl:text-lg">Copy link</div>
+                    <FiCopy /> <div className="text-sm xl:text-lg font-bold">Copy link</div>
                 </Link>
             </div>
         </>
