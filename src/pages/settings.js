@@ -11,7 +11,7 @@ export default function SettingsPage() {
         <div>
             <Header />
             <Setting />
-            {/* <Footer /> */}
+            <Footer />
         </div >
     )
 }

@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import FindImage from "../../assets/findImage.png"
 
 export default function Carousel() {
-
   const images = [FindImage, FindImage, FindImage];
-
-
   const [currentImage, setCurrentImage] = React.useState(0);
 
   const refs = images.reduce((acc, val, i) => {
@@ -56,14 +53,16 @@ export default function Carousel() {
     </button>
   );
 
+
+
   return (
     <div className="flex justify-center w-screenw-full items-center">
-      <div className="relative w-full">
-        <div className="carousel">
+      <div className="relative w-full ">
+        <div className="overflow-y-hidden h-[160px] md:h-[380px] lg:h-[510px] xl:h-[410px] 2xl:h-[650px]">
           {sliderControl(true)}
           {images.map((img, i) => (
-            <div className="w-full h-full flex-shrink-0" key={img} ref={refs[i]}>
-              <img src={img} className="h-full object-contain" />
+            <div className="w-full h-full flex-shrink-0" key={`img-${i}`} ref={refs[i]}>
+              <img src={img} className="xl:ml-auto h-full object-contain" />
             </div>
           ))}
           {sliderControl()}

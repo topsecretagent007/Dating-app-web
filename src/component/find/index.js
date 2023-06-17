@@ -54,7 +54,7 @@ export default function Find() {
 
     return (
         <>
-            <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] pt-28 xl:pt-36 bg-[#f1f1f1] pb-20" >
+            <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] pt-28 xl:pt-36 bg-[#f1f1f1] pb-48 md:pb-36 lg:pb-32 xl:pb-28" >
                 <button type="button" className="fixed top-0 -left-2 md:left-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-prev>
                     <span className="inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-20 xl:h-20 rounded-full border-[#888888] border-2 group-hover:bg-pinkLight">
                         <svg aria-hidden="true" className="w-6 h-6 font-bold text-[#888888] dark:text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7"></path></svg>

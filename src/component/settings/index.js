@@ -7,7 +7,9 @@ import { MdDelete, MdVideoLibrary, MdNotifications } from "react-icons/md";
 import { GoChevronRight } from "react-icons/go";
 import { HiUsers } from "react-icons/hi";
 import { AiOutlineMail } from "react-icons/ai";
-
+import { styled } from '@mui/material/styles';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import PatnerUser from "../users/partnerUser"
 
 import GoolgleMap from "./maps";
@@ -20,7 +22,7 @@ import PhoneVerification from "./modal/phoneverification";
 
 
 export default function ProfileSetting() {
-    const [inputAge, setInputAge] = useState(0);
+    const [inputAge, setInputAge] = useState("");
     const [inviteModal, setInviteModal] = useState(false);
     const [logoutModal, setLogoutModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -30,8 +32,9 @@ export default function ProfileSetting() {
     const [length, setLength] = useState(50);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
-
     const [isChecked, setIsChecked] = useState(false);
+    const [swich, serSwich] = useState(false);
+    const [unit, setUnit] = useState('');
 
     const handleToggle = () => {
         alert("fgfg");
@@ -40,10 +43,8 @@ export default function ProfileSetting() {
 
     const totalLength = async (e) => {
         e.preventDefault();
-
         await setLength(e);
-
-        console.log("max", e.target.timeStemp)
+        console.log("max", e)
     }
     const menuDropdown = useRef(null)
 
@@ -77,8 +78,66 @@ export default function ProfileSetting() {
         };
     }, [menuDropdown]);
 
+    useEffect(() => {
+        if (swich === true)
+            setUnit("Miles")
+        else
+            setUnit("Km")
+    }, [swich])
+
+    const IOSSwitch = styled((props) => (
+        <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+    ))(({ theme }) => ({
+        width: 36,
+        height: 20,
+        padding: 0,
+        '& .MuiSwitch-switchBase': {
+            padding: 0,
+            margin: 2,
+            transitionDuration: '300ms',
+            '&.Mui-checked': {
+                transform: 'translateX(16px)',
+                color: '#fff',
+                '& + .MuiSwitch-track': {
+                    backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#E50AAC',
+                    opacity: 1,
+                    border: 0,
+                },
+                '&.Mui-disabled + .MuiSwitch-track': {
+                    opacity: 0.5,
+                },
+            },
+            '&.Mui-focusVisible .MuiSwitch-thumb': {
+                color: '#E50AAC',
+                border: '6px solid #fff',
+            },
+            '&.Mui-disabled .MuiSwitch-thumb': {
+                color:
+                    theme.palette.mode === 'light'
+                        ? theme.palette.grey[100]
+                        : theme.palette.grey[600],
+            },
+            '&.Mui-disabled + .MuiSwitch-track': {
+                opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+            },
+        },
+        '& .MuiSwitch-thumb': {
+            boxSizing: 'border-box',
+            width: 16,
+            height: 16,
+        },
+        '& .MuiSwitch-track': {
+            borderRadius: 26 / 2,
+            backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+            opacity: 1,
+            transition: theme.transitions.create(['background-color'], {
+                duration: 500,
+            }),
+        },
+    }));
+    // onClick={() => serSwich(!swich)}
     return (
-        <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen pb-20" >
+        <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen pb-48 md:pb-36 lg:pb-32 xl:pb-28" >
             <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
                 <div className="w-full xl:w-2/3">
                     <div className="w-full  xl:flex gap-5">
@@ -89,7 +148,7 @@ export default function ProfileSetting() {
                             <a href="/verifyprofile" className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
                                 <div className="w-full justify-between flex pl-5">
                                     <div className="justify-start w-full">Verification Status</div>
-                                    <div className="justify-end">Unverified</div>
+                                    <div className="justify-end text-red-600">Unverified</div>
                                 </div>
                                 <div className="justify-end pr-5">
                                     <GoChevronRight />
@@ -98,7 +157,7 @@ export default function ProfileSetting() {
                             <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
                                 <div className="w-full justify-between flex pl-5">
                                     <div className="justify-start w-full">Verification Profile</div>
-                                    <div className="justify-end">Verified</div>
+                                    <div className="justify-end text-green-600">Verified</div>
                                 </div>
                                 <div className="justify-end pr-5">
                                     <GoChevronRight />
@@ -121,8 +180,8 @@ export default function ProfileSetting() {
                             <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center hover:bg-[#bebebe] hover:border-l-pinkLight border-b-2 border-l-white border-l-2 border-b-black/5 cursor-pointer">
                                 <PatnerUser />
                             </div>
-                            <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center">
-                                <button onClick={() => setAddPartnerModal(!addPartnerModal)} className="text-pinkLight border-2 border-pinkLight justify-center xl:text-2xl rounded-xl py-2 px-10 xl:py-4 xl:px-20  mx-auto items-center flex hover:text-white hover:bg-pinkLight">
+                            <div className="text-sm lg:text-lg gap-6 py-2 px-10 xl:texl-xl justify-between text-start flex items-center">
+                                <button onClick={() => setAddPartnerModal(!addPartnerModal)} className="w-full  justify-center xl:text-xl rounded-full py-2 px-10 xl:py-4 xl:px-20  mx-auto items-center flex text-white bg-pinkLight hover:bg-pinkLight/80 font-bold">
                                     <FiPlus />
                                     Add Partner
                                 </button>
@@ -165,21 +224,15 @@ export default function ProfileSetting() {
                                 <div className="w-full pl-5 text-sm xl:text-lg py-2">
                                     <div className="justify-start w-full">Maximum distance</div>
                                     <div className="p-3">
-                                        <div className="justify-start">308Km</div>
+                                        <div className="justify-start">308{unit}</div>
                                         <Slider size="sm" defaultValue={length} onChange={(e) => totalLength(e)} />
                                         <div className="justify-start flex gap-4 items-center mt-5">
                                             <div>Miles</div>
                                             <div className="relative inline-flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    className="toggle-input peer"
-                                                    checked={isChecked}
-                                                    onChange={() => handleToggle()}
+                                                <FormControlLabel
+                                                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked  />}
+                                                    // onClick={() => serSwich(!swich)}
                                                 />
-                                                <span
-                                                    className={`toggle-switch ${isChecked ? "bg-green-500" : "bg-gray-200"
-                                                        }`}
-                                                ></span>
                                             </div>
 
                                         </div>
@@ -194,9 +247,9 @@ export default function ProfileSetting() {
                                             <div className="text-start py-2">
                                                 From
                                             </div>
-                                            <div className="flex items-center bg-[#f3f3f3] rounded-xl">
-                                                <input type="text" value={inputAge} placeholder="18" onChange={(e) => setInputAge(e)} className="rounded-l-xl w-full bg-[#F3F3F3] text-[#888888] px-2 py-4 text-right" />
-                                                <div className="bg-[#f3f3f3] text-pinkLight pr-3 p-1">
+                                            <div className="flex items-center text-pinkLight bg-[#f3f3f3] rounded-xl">
+                                            <input type="number" className="rounded-l-xl w-full bg-[#F3F3F3] px-2 py-4 text-right" placeholder="18" min="18" max="99" />
+                                                <div className="bg-[#f3f3f3] pr-3 p-1">
                                                     <FiChevronUp />
                                                     <FiChevronDown />
                                                 </div>
@@ -204,11 +257,11 @@ export default function ProfileSetting() {
                                         </div>
                                         <div className="text-sm font-bold">
                                             <div className="text-start py-2">
-                                                From
+                                                To
                                             </div>
-                                            <div className="flex items-center bg-[#f3f3f3] rounded-xl">
-                                                <input type="text" value={inputAge} placeholder="99" onChange={(e) => setInputAge(e)} className="rounded-l-xl w-full bg-[#F3F3F3] text-[#888888] px-2 py-4 text-right" />
-                                                <div className="bg-[#f3f3f3] text-pinkLight pr-3 p-1">
+                                            <div className="flex items-center text-pinkLight bg-[#f3f3f3] rounded-xl">
+                                            <input type="number" className="rounded-l-xl w-full bg-[#F3F3F3] px-2 py-4 text-right" placeholder="99" min="18" max="99" />
+                                                <div className="bg-[#f3f3f3] pr-3 p-1">
                                                     <FiChevronUp />
                                                     <FiChevronDown />
                                                 </div>
@@ -222,64 +275,64 @@ export default function ProfileSetting() {
                 </div>
                 <div className="w-full xl:w-1/3">
                     <a href="/notification">
-                        <button className="w-full bg-white xl:text-2xl text-black border-2 border-black/30 rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
-                            <div className="w-40 xl:w-60 items-center flex">
+                        <button className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
+                            <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <MdNotifications />
                                 </div>
-                                <div className="w-5/6">
-                                    Invite your friends
+                                <div className="w-5/6 font-bold">
+                                    Notifications
                                 </div>
                             </div>
                         </button>
                     </a>
-                    <button onClick={() => setInviteModal(!inviteModal)} className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-black/30 rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
-                        <div className="w-40 xl:w-60 items-center flex">
+                    <button onClick={() => setInviteModal(!inviteModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <div className="w-48 xl:w-64 items-center flex">
                             <div className="w-1/6">
                                 <HiUsers />
                             </div>
-                            <div className="w-5/6">
+                            <div className="w-5/6 font-bold">
                                 Invite your friends
                             </div>
                         </div>
                     </button>
-                    <button onClick={() => setLogoutModal(!logoutModal)} className="w-full bg-white xl:text-2xl text-black border-2 border-black/30 rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
-                        <div className="w-40 xl:w-60 items-center flex">
+                    <button onClick={() => setLogoutModal(!logoutModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
+                        <div className="w-48 xl:w-64 items-center flex">
                             <div className="w-1/6">
                                 <FaSignOutAlt />
                             </div>
-                            <div className="w-5/6">
+                            <div className="w-5/6 font-bold">
                                 Log out
                             </div>
                         </div>
                     </button>
-                    <button onClick={() => setDeleteModal(!deleteModal)} className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-black/30 rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
-                        <div className="w-40 xl:w-60 items-center flex">
+                    <button onClick={() => setDeleteModal(!deleteModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <div className="w-48 xl:w-64 items-center flex">
                             <div className="w-1/6">
                                 <MdDelete />
                             </div>
-                            <div className="w-5/6">
+                            <div className="w-5/6 font-bold">
                                 Delete Account
                             </div>
                         </div>
                     </button>
-                    <button onClick={() => setContactModal(!contactModal)} className="w-full bg-white xl:text-2xl text-black border-2 border-black/30 rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
-                        <div className="w-40 xl:w-60 items-center flex">
+                    <button onClick={() => setContactModal(!contactModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
+                        <div className="w-48 xl:w-64 items-center flex">
                             <div className="w-1/6">
                                 <AiOutlineMail />
                             </div>
-                            <div className="w-5/6">
+                            <div className="w-5/6 font-bold">
                                 Contact
                             </div>
                         </div>
                     </button>
                     <a href="/tutorial">
-                        <button className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-black/30 rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
-                            <div className="w-40 xl:w-60 items-center flex">
+                        <button className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                            <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <MdVideoLibrary />
                                 </div>
-                                <div className="w-5/6">
+                                <div className="w-5/6 font-bold">
                                     Tutorial
                                 </div>
                             </div>
