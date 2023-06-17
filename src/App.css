@@ -1,0 +1,116 @@
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #6bf150 #ffffff;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 3px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #888888;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #181818;
+  border-radius: 10px;
+  border: 1px none #353434;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.toggle-input {
+  display: none;
+}
+
+.toggle-label {
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  width: 2.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background-color: #d1d5db;
+  transition: background-color 150ms ease-in-out;
+}
+
+.toggle-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.35);
+  transition: transform 150ms ease-in-out;
+}
+
+.toggle-input:checked+.toggle-switch {
+  background-color: #10b981;
+}
+
+.toggle-input:checked+.toggle-switch::after {
+  transform: translateX(1rem);
+}
+.carousel {
+  height: 550px;
+  display: inline-flex;
+  flex-direction: column;
+  overflow-y: hidden;
+/*  scroll snap is a great feature which will center the image on snap on touch screen devices  */
+  scroll-snap-type: x mandatory;
+/* all below will hide the scrollbar on all browsers.    */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
