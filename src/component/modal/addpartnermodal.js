@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-import ModelLogo from "../../../assets/Modal-Logo.png"
-import Users from "../../users/partnerUser";
+import Users from "../users/partnerUser";
 
 
 export default function AddPartnerModal() {

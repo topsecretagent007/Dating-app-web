@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiCopy } from "react-icons/fi";
 
-import ModelLogo from "../../../assets/Modal-Logo.png"
+import ModelLogo from "../../assets/Modal-Logo.png"
 
 
 export default function InviteModal() {

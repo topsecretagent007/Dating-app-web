@@ -6,11 +6,11 @@ import ReactCodeInput from 'react-code-input';
 
 
 import { FiArrowLeft } from "react-icons/fi";
-import UserContext from "../../../context/userContext";
+import UserContext from "../../context/userContext";
 
-import ModelLogo from "../../../assets/Modal-Logo.png"
-import Image1 from "../../../assets/image-1.png"
-import EhterCodeImg from "../../../assets/3d-mobile-phone-with-security-code-padlock.png"
+import ModelLogo from "../../assets/Modal-Logo.png"
+import Image1 from "../../assets/image-1.png"
+import EhterCodeImg from "../../assets/3d-mobile-phone-with-security-code-padlock.png"
 
 
 

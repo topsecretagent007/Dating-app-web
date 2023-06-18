@@ -3,7 +3,7 @@ import React from "react";
 export default function Search() {
 
     return (
-        <div className="relative mb-4 flex w-full xl:w-1/2  mx-auto 2xl:w-1/3 flex-wrap items-stretch">
+        <div className="relative mb-4 flex w-full xl:w-1/2  flex-wrap items-stretch">
             <input
                 type="search"
                 className="relative m-0 -mr-0.5 block w-[1px] min-w-0 flex-auto rounded-l border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out 

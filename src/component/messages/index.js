@@ -1,7 +1,7 @@
 import React, { useState, Component } from 'react'
 
 import { BsFillSendFill, BsEmojiSmile } from "react-icons/bs";
-import MessageUsers from "./users";
+import MessageUsers from "../users/users";
 import Messages from "./messages.js";
 
 import Avatar from "../../assets/istockphoto-1167582073-612x6121.png";

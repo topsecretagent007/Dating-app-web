@@ -8,12 +8,9 @@ import { GiAlienEgg } from "react-icons/gi"
 
 export default function ReportUserModal({ openModal }) {
     const [userModal, setUserModal] = useState(false);
-
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
-
     const menuDropdown = useRef(null);
-
 
     useEffect(() => {
         function handleScroll() {
@@ -39,8 +36,6 @@ export default function ReportUserModal({ openModal }) {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [menuDropdown]);
-
-
 
     return (
         <>
