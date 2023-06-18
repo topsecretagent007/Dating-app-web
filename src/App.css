@@ -102,3 +102,40 @@
 .toggle-input:checked+.toggle-switch::after {
   transform: translateX(1rem);
 }
+
+#fristage::-webkit-outer-spin-button,
+#fristage::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#fristage[type=number] {
+  -moz-appearance: textfield;
+}
+
+#lastage::-webkit-outer-spin-button,
+#lastage::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#lastage[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+.ageSelect:hover {
+  background-color: #E50AAC !important;
+}
+/* 
+path {
+  color: #E50AAC;
+} */
+
+.showme {
+  color: #888888 !important;
+}
+
+.css-m5hdmq-MuiInputBase-root-MuiInput-root-MuiSelect-root:after {
+  border-bottom: nome !important;
+}

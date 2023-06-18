@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-import ModelLogo from "../../../assets/Modal-Logo.png"
+import ModelLogo from "../../assets/Modal-Logo.png"
 
 
-export default function LogoutModal() {
+export default function DeleteModal() {
 
     return (
         <>
@@ -13,14 +13,13 @@ export default function LogoutModal() {
             </h2>
             <p className="text-lg lg:text-xl xl:text-3xl font-bold my-3 text-pinkLight">Information</p>
             <span className="text-sm xl:text-lg 2xl:text-xl my-3 lg:leading-relaxed">
-                Would you like to logout of your account?
-            </span>
+                You are about to permanently delete your account. Are you sure you want to do this?            </span>
 
             <div className="w-full lg:flex gap-2">
-                <Link to="https://unjabbed.app/web-app/" className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white">
-                    <div className="text-sm xl:text-lg font-bold">Log out</div>
+                <Link to="" className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white gap-1">
+                    <div className="text-sm xl:text-lg font-bold">Delete</div>
                 </Link>
-                <Link to="/settings" className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white">
+                <Link to="" className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white gap-1">
                     <div className="text-sm xl:text-lg font-bold">Cancel</div>
                 </Link>
             </div>

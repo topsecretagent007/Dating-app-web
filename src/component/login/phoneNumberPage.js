@@ -1,4 +1,4 @@
-import React, { useState, useContext  } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
@@ -13,16 +13,26 @@ import Image1 from "../../assets/image-1.png"
 
 export default function PhoneNumberPage() {
     const [value, setValue] = useState('');
+    const [errValue, setErrValue] = useState(false);
+
     const { phoneNumber, setPhoneNumber } = useContext(UserContext);
 
 
     const getEnterCode = async () => {
         console.log(value, 'I am VALUE');
-        await setPhoneNumber(value);
+        if (value == "") {
+            setErrValue(true);
+        } else {
+            setPhoneNumber(value);
+        }
         console.log(phoneNumber, 'I am PHONENUMBER');
     }
 
-    
+    useEffect(() => {
+        setErrValue(false);
+    }, [])
+
+
     return (
         <div className="w-full absolute h-full min-h-screen bg-cover flex bg-[url('./assets/Blur-Bg.png')] px-8 py-20 xl:py-40 justify-center items-center" >
             <div className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px]">
@@ -37,22 +47,33 @@ export default function PhoneNumberPage() {
                 <div className="w-full xl:text-2xl lg:w-2/3 mx-auto px-5">
                     <div className="justify-center">
                         <PhoneInput
+                            type="tel"
                             international
                             defaultCountry=""
                             value={value}
                             onChange={setValue}
-                            maxLength={19}
+                            minLength="9"
+                            maxLength="15"
                         />
                     </div>
                     <hr className="w-4/5 2xl:w-2/3 h-px mx-auto my-3 border-0 bg-buleLight" />
-
+                    {errValue &&
+                        < span className="w-4/5 2xl:w-2/3 h-px mx-auto pt-2 text-sm text-red-500">
+                            dfgsdfgsdf
+                        </span>
+                    }
                 </div>
                 <div className="text-sm xl:text-lg justify-center my-5 xl:my-8 leading-relaxed">
                     Please enter your mobile number to receive a verification code. <br />Message and data rates may apply.
                 </div>
-                <div className="my-5 xl:my-10">
-                    <Link to="/login/enter" onClick={getEnterCode} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">CONTINUE</Link>
-                </div>
+                {!errValue ?
+                    <div className="my-5 xl:my-10">
+                        <Link  onClick={getEnterCode} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">CONTINUE</Link>
+                    </div> :
+                    <div className="my-5 xl:my-10">
+                        <Link to="/login/enter" onClick={getEnterCode} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">CONTINUE</Link>
+                    </div>
+                }
             </div>
         </div >
     )

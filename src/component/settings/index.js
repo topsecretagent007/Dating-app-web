@@ -10,43 +10,90 @@ import { AiOutlineMail } from "react-icons/ai";
 import { styled } from '@mui/material/styles';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import PatnerUser from "../users/partnerUser"
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
-import GoolgleMap from "./maps";
-import InviteModal from "./modal/invitemodal";
-import LogoutModal from "./modal/logoutmodal";
-import DeleteModal from "./modal/deletemodal";
-import ContactModal from "./modal/contactmodal";
-import AddPartnerModal from "./modal/addpartnermodal";
-import PhoneVerification from "./modal/phoneverification";
+import PatnerUser from "../users/partnerUser";
+import GoolgleMap from "../other/maps";
+import InviteModal from "../modal/invitemodal";
+import LogoutModal from "../modal/logoutmodal";
+import DeleteModal from "../modal/deletemodal";
+import ContactModal from "../modal/contactmodal";
+import AddPartnerModal from "../modal/addpartnermodal";
+import PhoneVerification from "../modal/phoneverification";
+import SettingShow from "../combox/settingshow";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 5 + ITEM_PADDING_TOP,
+            width: 100,
+        },
+    },
+};
 
 
 export default function ProfileSetting() {
-    const [inputAge, setInputAge] = useState("");
     const [inviteModal, setInviteModal] = useState(false);
     const [logoutModal, setLogoutModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [contactModal, setContactModal] = useState(false);
     const [addPartnerModal, setAddPartnerModal] = useState(false);
     const [phoneVerification, setPhoneVerification] = useState(false);
-    const [length, setLength] = useState(50);
+    const [length, setLength] = useState(0);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
-    const [isChecked, setIsChecked] = useState(false);
-    const [swich, serSwich] = useState(false);
-    const [unit, setUnit] = useState('');
+    const [unit, setUnit] = useState(false);
+    const [listAge, setListAge] = useState([]);
+    const [fristAge, setFristAge] = useState(18);
+    const [lastAge, setLastAge] = useState(99);
+    const menuDropdown = useRef(null);
 
-    const handleToggle = () => {
-        alert("fgfg");
-        setIsChecked(!isChecked);
+    const fristAgeSelect = listAge.map((listAge, index) => (
+        <MenuItem key={listAge} value={listAge} className="text-pinkLight ageSelect">
+            <em className="ml-auto text-[#888888] font-bold">{listAge}</em>
+        </MenuItem>
+    ))
+
+    const fristAgeChange = (event) => {
+        setFristAge(event.target.value);
     };
-
-    const totalLength = async (e) => {
-        e.preventDefault();
-        await setLength(e);
-        console.log("max", e)
+    const lastAgeChange = (event) => {
+        setLastAge(event.target.value);
     }
-    const menuDropdown = useRef(null)
+
+
+    useEffect(() => {
+        const allAge = [];
+        for (let i = 18; i <= 99; i++) {
+            allAge.push(i);
+        }
+        setListAge(allAge);
+    }, []);
+
+
+    const selectLength = (e) => {
+        e.preventDefault();
+        const totalLength = (e.target.value);
+        if (unit === false) {
+            setLength(parseInt(totalLength * 4));
+        } else {
+            setLength(parseInt(totalLength * 2.48));
+        }
+    }
+
+    useEffect(() => {
+        if (unit === false) {
+            setLength(parseInt(length * 4 / 2.48));
+
+        } else {
+            setLength(parseInt(length * 2.48 / 4));
+        }
+    }, [unit])
+
 
     useEffect(() => {
         function handleScroll() {
@@ -77,13 +124,6 @@ export default function ProfileSetting() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [menuDropdown]);
-
-    useEffect(() => {
-        if (swich === true)
-            setUnit("Miles")
-        else
-            setUnit("Km")
-    }, [swich])
 
     const IOSSwitch = styled((props) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -135,10 +175,13 @@ export default function ProfileSetting() {
             }),
         },
     }));
+
+
+
     // onClick={() => serSwich(!swich)}
     return (
-        <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen pb-48 md:pb-36 lg:pb-32 xl:pb-28" >
-            <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
+        <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen pb-40 lg:pb-64 pt-10" >
+            <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 xl:px-20 mx-auto xl:pt-32 xl:flex gap-12">
                 <div className="w-full xl:w-2/3">
                     <div className="w-full  xl:flex gap-5">
                         <div className="w-full xl:w-1/2 rounded-xl bg-white border-2 border-black/5 mb-5">
@@ -181,7 +224,7 @@ export default function ProfileSetting() {
                                 <PatnerUser />
                             </div>
                             <div className="text-sm lg:text-lg gap-6 py-2 px-10 xl:texl-xl justify-between text-start flex items-center">
-                                <button onClick={() => setAddPartnerModal(!addPartnerModal)} className="w-full  justify-center xl:text-xl rounded-full py-2 px-10 xl:py-4 xl:px-20  mx-auto items-center flex text-white bg-pinkLight hover:bg-pinkLight/80 font-bold">
+                                <button onClick={() => setAddPartnerModal(!addPartnerModal)} className="w-full  justify-center xl:text-xl rounded-full py-2 px-10 xl:py-4 xl:px-12  mx-auto items-center flex text-white bg-pinkLight hover:bg-pinkLight/80 font-bold">
                                     <FiPlus />
                                     Add Partner
                                 </button>
@@ -201,7 +244,6 @@ export default function ProfileSetting() {
                                 <div className="justify-end pr-5">
                                     <GoChevronRight />
                                 </div>
-
                             </div>
                             <div className="p-5">
                                 <GoolgleMap />
@@ -211,30 +253,23 @@ export default function ProfileSetting() {
                             <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
                                 <div className="px-5">Search settings</div>
                             </div>
-                            <a href="/profile" className="text-sm gap-6 py-2 lg:texl-lg justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
-                                <div className="w-full justify-between lg:flex pl-5 items-center">
-                                    <div className="justify-start w-full">Show me</div>
-                                    <div className="justify-end w-full">WOMAN, WOMAN + WOMAN COUPLE</div>
-                                </div>
-                                <div className="justify-end pr-5">
-                                    <GoChevronRight />
-                                </div>
-                            </a>
+
+                            <SettingShow />
                             <div className="gap-6 py-1 justify-between text-start items-center border-b-2 border-b-black/5">
                                 <div className="w-full pl-5 text-sm xl:text-lg py-2">
                                     <div className="justify-start w-full">Maximum distance</div>
                                     <div className="p-3">
-                                        <div className="justify-start">308{unit}</div>
-                                        <Slider size="sm" defaultValue={length} onChange={(e) => totalLength(e)} />
+                                        <div className="justify-start">{length}{unit ? "Mile" : "Km"}</div>
+                                        <Slider size="sm" defaultValue={length} onChange={(e) => selectLength(e)} />
                                         <div className="justify-start flex gap-4 items-center mt-5">
                                             <div>Miles</div>
                                             <div className="relative inline-flex items-center cursor-pointer">
                                                 <FormControlLabel
-                                                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked  />}
-                                                    // onClick={() => serSwich(!swich)}
+
+                                                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked checked={unit} onClick={() => { setUnit(!unit) }}
+                                                    />}
                                                 />
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -242,30 +277,41 @@ export default function ProfileSetting() {
                             <div className="text-sm lg:text-lg gap-6 xl:texl-xl justify-between text-start items-center">
                                 <div className="w-full pl-5 py-">
                                     <div className="justify-start w-full">Age range</div>
-                                    <div className="justify-start grid grid-cols-3 md:grid-cols-4 2xl:grid-cols-4 gap-4 items-center py-3">
-                                        <div className="text-sm font-bold">
+                                    <div className="justify-start grid md:grid-cols-2 gap-4 items-center py-3">
+                                        <div className="text-sm">
                                             <div className="text-start py-2">
                                                 From
                                             </div>
-                                            <div className="flex items-center text-pinkLight bg-[#f3f3f3] rounded-xl">
-                                            <input type="number" className="rounded-l-xl w-full bg-[#F3F3F3] px-2 py-4 text-right" placeholder="18" min="18" max="99" />
-                                                <div className="bg-[#f3f3f3] pr-3 p-1">
-                                                    <FiChevronUp />
-                                                    <FiChevronDown />
-                                                </div>
-                                            </div>
+                                            <FormControl sx={{ m: 1, minWidth: 120 }} className="bg-[#888888]/40 text-end" >
+                                                <Select
+                                                    value={fristAge}
+                                                    onChange={(e) => fristAgeChange(e)}
+                                                    displayEmpty
+                                                    inputProps={{ 'aria-label': 'Without label' }}
+                                                    MenuProps={MenuProps}
+                                                    className="outline-none"
+                                                >
+                                                    {fristAgeSelect}
+                                                </Select>
+                                            </FormControl>
                                         </div>
-                                        <div className="text-sm font-bold">
+                                        <div className="text-sm">
                                             <div className="text-start py-2">
                                                 To
                                             </div>
-                                            <div className="flex items-center text-pinkLight bg-[#f3f3f3] rounded-xl">
-                                            <input type="number" className="rounded-l-xl w-full bg-[#F3F3F3] px-2 py-4 text-right" placeholder="99" min="18" max="99" />
-                                                <div className="bg-[#f3f3f3] pr-3 p-1">
-                                                    <FiChevronUp />
-                                                    <FiChevronDown />
-                                                </div>
-                                            </div>
+                                            <FormControl sx={{ m: 1, minWidth: 120, }} className="bg-[#888888]/40 text-end" >
+                                                <Select
+                                                    value={lastAge}
+                                                    onChange={(e) => lastAgeChange(e)}
+                                                    displayEmpty
+                                                    inputProps={{ 'aria-label': 'Without label' }}
+                                                    MenuProps={MenuProps}
+                                                    className="outline-none"
+
+                                                >
+                                                    {fristAgeSelect}
+                                                </Select>
+                                            </FormControl>
                                         </div>
                                     </div>
                                 </div>
@@ -273,14 +319,14 @@ export default function ProfileSetting() {
                         </div>
                     </div>
                 </div>
-                <div className="w-full xl:w-1/3">
+                <div className="w-full xl:w-1/3  md:px-14">
                     <a href="/notification">
-                        <button className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
+                        <button className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <MdNotifications />
                                 </div>
-                                <div className="w-5/6 font-bold">
+                                <div className="w-5/6 text-start font-bold">
                                     Notifications
                                 </div>
                             </div>
@@ -291,17 +337,17 @@ export default function ProfileSetting() {
                             <div className="w-1/6">
                                 <HiUsers />
                             </div>
-                            <div className="w-5/6 font-bold">
+                            <div className="w-5/6 text-start font-bold">
                                 Invite your friends
                             </div>
                         </div>
                     </button>
-                    <button onClick={() => setLogoutModal(!logoutModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
+                    <button onClick={() => setLogoutModal(!logoutModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                         <div className="w-48 xl:w-64 items-center flex">
                             <div className="w-1/6">
                                 <FaSignOutAlt />
                             </div>
-                            <div className="w-5/6 font-bold">
+                            <div className="w-5/6 text-start font-bold">
                                 Log out
                             </div>
                         </div>
@@ -311,17 +357,17 @@ export default function ProfileSetting() {
                             <div className="w-1/6">
                                 <MdDelete />
                             </div>
-                            <div className="w-5/6 font-bold">
+                            <div className="w-5/6 text-start font-bold">
                                 Delete Account
                             </div>
                         </div>
                     </button>
-                    <button onClick={() => setContactModal(!contactModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-[#888888] hover:text-white">
+                    <button onClick={() => setContactModal(!contactModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                         <div className="w-48 xl:w-64 items-center flex">
                             <div className="w-1/6">
                                 <AiOutlineMail />
                             </div>
-                            <div className="w-5/6 font-bold">
+                            <div className="w-5/6 text-start font-bold">
                                 Contact
                             </div>
                         </div>
@@ -332,7 +378,7 @@ export default function ProfileSetting() {
                                 <div className="w-1/6">
                                     <MdVideoLibrary />
                                 </div>
-                                <div className="w-5/6 font-bold">
+                                <div className="w-5/6 text-start font-bold">
                                     Tutorial
                                 </div>
                             </div>
@@ -343,8 +389,8 @@ export default function ProfileSetting() {
 
             {
                 inviteModal &&
-                <div className={`fixed z-50 w-full h-full min-h-screen `}>
-                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                             <InviteModal />
                         </div>
@@ -353,7 +399,7 @@ export default function ProfileSetting() {
             }
             {
                 logoutModal &&
-                <div className={`fixed z-50 w-full h-full min-h-screen `}>
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                             <LogoutModal />
@@ -363,7 +409,7 @@ export default function ProfileSetting() {
             }
             {
                 deleteModal &&
-                <div className={`fixed z-50 w-full h-full min-h-screen `}>
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                             <DeleteModal />
@@ -373,7 +419,7 @@ export default function ProfileSetting() {
             }
             {
                 contactModal &&
-                <div className={`fixed z-50 w-full h-full min-h-screen `}>
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                             <ContactModal />
@@ -383,7 +429,7 @@ export default function ProfileSetting() {
             }
             {
                 addPartnerModal &&
-                <div className={`fixed z-50 w-full h-full min-h-screen `}>
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                             <AddPartnerModal />
@@ -393,7 +439,7 @@ export default function ProfileSetting() {
             }
             {
                 phoneVerification &&
-                <div className={`fixed z-50 w-full h-full min-h-screen `}>
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                             <PhoneVerification />
