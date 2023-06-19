@@ -7,12 +7,12 @@ import Logo from "../../assets/Logo1.svg";
 
 
 export default function PhotoUpload() {
-    const [images, setImages] = React.useState([]);
+    const [images, setImages] = useState();
     const maxNumber = 100;
 
-    const onChange = (imageList, addUpdateIndex) => {
+    const onChange = (imageList, addUpdateIndex, dataURLKey) => {
         // data for submit
-        console.log(imageList, addUpdateIndex);
+        console.log(imageList, addUpdateIndex, dataURLKey);
         setImages(imageList);
     };
 

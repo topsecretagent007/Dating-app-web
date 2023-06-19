@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useContext, useEffect } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import UserContext from '../../context/userContext';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -17,32 +18,34 @@ const MenuProps = {
         },
     },
 };
-
+const names = [
+    "RELATIONSHIP",
+    "FRIENDSHIP",
+    "CASUAL",
+    "FWB",
+    "FUN",
+    "DATES",
+    "TEXTING",
+    "THREESOME",
+];
 
 export default function MultipleSelectCheckmarks() {
-
-    const names = [
-        "RELATIONSHIP",
-        "FRIENDSHIP",
-        "CASUAL",
-        "FWB",
-        "FUN",
-        "DATES",
-        "TEXTING",
-        "THREESOME",
-    ];
-
     const [showMe, setShowMe] = React.useState([]);
+    const { userLooking, setUserLooking } = useContext(UserContext);
 
-    const handleChange = (event) => {
+    const handleChange = async (event) => {
         const {
             target: { value },
         } = event;
-        setShowMe(
+        await setShowMe(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
     };
+
+    useEffect(() => {
+        setUserLooking(showMe);
+    }, [showMe]);
 
     return (
         <div>

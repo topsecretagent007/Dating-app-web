@@ -185,7 +185,7 @@ export default function EditProfile() {
                             </div>
                         </div>
                     </div>
-                    <Link to="/profile/friendship" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">I'm 18+</Link>
+                    <Link to="/profile" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</Link>
                 </div>
             </div>
         </div>

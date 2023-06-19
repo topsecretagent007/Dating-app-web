@@ -1,18 +1,25 @@
-import React, { useState, Component, Fragment } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Logo from "../../assets/Logo1.svg";
-
 import MeDropdown from "../combox/medropdown";
 import SexualDropdown from "../combox/sexualdropdown";
 import StatusDropdown from "../combox/statusdropdown";
 import LookDropdown from "../combox/lookingdropdown";
 import ShowDropdown from "../combox/showdropdown";
+import UserContext from "../../context/userContext";
 
 export default function ProfileData() {
-    const [name, setName] = useState();
-    const [brithday, setBrithday] = useState();
-
+    const [name, setName] = useState("");
+    const [brithday, setBrithday] = useState("");
+    const [nextPage, setNextPage] = useState(false);
+    const { userName, setUserName } = useContext(UserContext);
+    const { userBrithday, setUserBrithday } = useContext(UserContext);
+    const { userSex } = useContext(UserContext);
+    const { userSexual } = useContext(UserContext);
+    const { userStatus } = useContext(UserContext);
+    const { userLooking } = useContext(UserContext);
+    const { userShow } = useContext(UserContext);
     const nameChange = (event) => {
         setName(event.target.value);
     }
@@ -20,6 +27,27 @@ export default function ProfileData() {
     const brithdayChange = (event) => {
         setBrithday(event.target.value);
     }
+
+    const userProfileData = () => {
+        if (name !== "" && brithday !== "" && userSex !== "" && userSexual !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
+            console.log(userName, ",", userBrithday, ",", userSex, ",", userSexual, ",", userStatus, ",", userLooking, ",", userShow, ",")
+        }
+    }
+    useEffect(() => {
+        setUserName(name);
+    }, [name]);
+
+    useEffect(() => {
+        setUserBrithday(brithday);
+    }, [brithday]);
+
+    useEffect(() => {
+        if (name !== "" && brithday !== "" && userSex !== "" && userSexual !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
+            setNextPage(true);
+        } else {
+            setNextPage(false);
+        }
+    }, [name, brithday, userSex, userSexual, userStatus, userLooking, userShow])
 
 
     return (
@@ -52,7 +80,12 @@ export default function ProfileData() {
                         <ShowDropdown />
                     </div>
                 </div>
-                <Link to="/profile/location" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</Link>
+                {
+                    nextPage ?
+                        <Link to="/profile/location" onClick={() => userProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</Link>
+                        :
+                        <Link to="" onClick={() => userProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</Link>
+                }
             </div>
             <div className=" pt-20 pl-[8%]">
             </div>

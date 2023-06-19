@@ -2,21 +2,15 @@ import React, { useState, useContext  } from "react";
 import { Link } from "react-router-dom";
 import 'react-phone-number-input/style.css';
 import ReactCodeInput from 'react-code-input';
-
 import { FiArrowLeft } from "react-icons/fi";
 import UserContext from "../../context/userContext";
-
-
 import ModelLogo from "../../assets/Modal-Logo.png"
 import EhterCodeImg from "../../assets/3d-mobile-phone-with-security-code-padlock.png"
-
-
 
 export default function EnterCode() {
     const { phoneNumber } = useContext(UserContext);
 
-    const resendCode = () => {
-        
+    const resendCode = () => {        
     console.log("resend", phoneNumber)
 
     }

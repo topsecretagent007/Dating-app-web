@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import UserContext from '../../context/userContext';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -18,48 +19,52 @@ const MenuProps = {
     },
 };
 
+const names = [
+    "MAN",
+    "WOMAN",
+    "OTHER",
+    "AGENDER",
+    "ANDROGYNOUS",
+    "BIGENDER",
+    "GENDER FLUID",
+    "GENDER NON CONFORMING",
+    "GENDER QUEER",
+    "GENDER QUESTIONING",
+    "INTERSEX",
+    "NON-BINARY",
+    "PANGENDER",
+    "TRANS HUMAN",
+    "TRANS MAN",
+    "TRANS WOMAN",
+    "TRANSFEMINIME",
+    "TRANSMASCULINE",
+    "TWO-SPIRIT",
+];
+
 
 export default function MultipleSelectCheckmarks() {
+    const [showMe, setShowMe] = useState("");
+    const { userSex, setUserSex } = useContext(UserContext);
 
-    const names = [
-        "MAN",
-        "WOMAN",
-        "OTHER",
-        "AGENDER",
-        "ANDROGYNOUS",
-        "BIGENDER",
-        "GENDER FLUID",
-        "GENDER NON CONFORMING",
-        "GENDER QUEER",
-        "GENDER QUESTIONING",
-        "INTERSEX",
-        "NON-BINARY",
-        "PANGENDER",
-        "TRANS HUMAN",
-        "TRANS MAN",
-        "TRANS WOMAN",
-        "TRANSFEMINIME",
-        "TRANSMASCULINE",
-        "TWO-SPIRIT",
-    ];
-
-    const [showMe, setShowMe] = React.useState([]);
-
-    const handleChange = (event) => {
+    const handleChange = async (event) => {
         const {
             target: { value },
         } = event;
-        setShowMe(
+        await setShowMe(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
     };
 
+    useEffect(() => {
+        setUserSex(showMe)
+    }, [showMe]);
+
     return (
         <div>
             <div className="text-lg xl:text-xl w-full 2xl:text-3xl text-start mx-auto">
                 <div className="py-2 font-bold w-full">I am a</div>
-                <FormControl className='w-full' sx={{ m: 1,}}>
+                <FormControl className='w-full' sx={{ m: 1, }}>
                     <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
                     <Select
                         labelId="demo-multiple-checkbox-label"
@@ -67,7 +72,7 @@ export default function MultipleSelectCheckmarks() {
                         value={showMe}
                         onChange={(event) => handleChange(event)}
                         input={<OutlinedInput label="Tag" />}
-                        renderValue={(selected) => selected.join(', ')}
+                        renderValue={(selected) => selected.join()}
                         MenuProps={MenuProps}
                     >
                         {names.map((name) => (
