@@ -51,7 +51,7 @@ export default function MultipleSelectCheckmarks() {
             target: { value },
         } = event;
         setShowMe(
-            // On autofill we get a stringified value.
+            // On autofill we get a stringified value..substring(0, 8)
             typeof value === 'string' ? value.split(',') : value,
         );
     };
@@ -60,7 +60,7 @@ export default function MultipleSelectCheckmarks() {
         <div>
             <div className="text-lg xl:text-xl w-full 2xl:text-3xl text-start ">
                 <FormControl variant="standard" className='w-full' sx={{ my: 2 }}>
-                <div className='absolute z-50 left-5 text-lg '>show me</div>
+                    <div className='absolute z-50 left-5 text-lg '>show me</div>
 
                     <Select
                         label="Age"
@@ -69,11 +69,11 @@ export default function MultipleSelectCheckmarks() {
                         onChange={(event) => handleChange(event)}
                         renderValue={(selected) => selected.join(', ')}
                         MenuProps={MenuProps}
-                        className='pl-[40%] bg-white pb-3 text-[#888888]'
+                        className='pl-[40%] bg-white pb-3 text-[#888888] max-w-2xl'
                     >
                         {names.map((name) => (
                             <MenuItem key={name} value={name}  >
-                                <Checkbox checked={showMe.indexOf(name) > -1}/>
+                                <Checkbox checked={showMe.indexOf(name) > -1} />
                                 <ListItemText primary={name} />
                             </MenuItem>
                         ))}

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import UserContext from '../../context/userContext';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -17,28 +18,30 @@ const MenuProps = {
         },
     },
 };
-
+const names = [
+    "SINGLE",
+    "MAN + WOMAN COUPLE",
+    "MAN + MAN COUPLE",
+    "WOMAN + WOMAN COUPLE",
+];
 
 export default function MultipleSelectCheckmarks() {
+    const [showMe, setShowMe] = useState("");
+    const { userStatus, setUserStatus } = useContext(UserContext);
 
-    const names = [
-         "SINGLE" ,
-         "MAN + WOMAN COUPLE" ,
-         "MAN + MAN COUPLE" ,
-         "WOMAN + WOMAN COUPLE" ,
-    ];
-
-    const [showMe, setShowMe] = React.useState([]);
-
-    const handleChange = (event) => {
+    const handleChange = async (event) => {
         const {
             target: { value },
         } = event;
-        setShowMe(
+        await setShowMe(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
     };
+
+    useEffect(() => {
+        setUserStatus(showMe);
+    }, [showMe]);
 
     return (
         <div>
@@ -52,7 +55,7 @@ export default function MultipleSelectCheckmarks() {
                         value={showMe}
                         onChange={(event) => handleChange(event)}
                         input={<OutlinedInput label="Tag" />}
-                        renderValue={(selected) => selected.join(', ')}
+                        renderValue={(selected) => selected.join()}
                         MenuProps={MenuProps}
                     >
                         {names.map((name) => (

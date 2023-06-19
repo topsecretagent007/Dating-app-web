@@ -18,14 +18,10 @@ export default function PhoneNumberPage() {
     const { phoneNumber, setPhoneNumber } = useContext(UserContext);
 
 
-    const getEnterCode = async () => {
-        console.log(value, 'I am VALUE');
-        if (value == "") {
-            setErrValue(true);
-        } else {
+    const getEnterCode = () => {
+        if (!value == "") {
             setPhoneNumber(value);
         }
-        console.log(phoneNumber, 'I am PHONENUMBER');
     }
 
     useEffect(() => {
@@ -59,16 +55,16 @@ export default function PhoneNumberPage() {
                     <hr className="w-4/5 2xl:w-2/3 h-px mx-auto my-3 border-0 bg-buleLight" />
                     {errValue &&
                         < span className="w-4/5 2xl:w-2/3 h-px mx-auto pt-2 text-sm text-red-500">
-                            dfgsdfgsdf
+                            Please enter the correct number.
                         </span>
                     }
                 </div>
                 <div className="text-sm xl:text-lg justify-center my-5 xl:my-8 leading-relaxed">
                     Please enter your mobile number to receive a verification code. <br />Message and data rates may apply.
                 </div>
-                {!errValue ?
+                {errValue ?
                     <div className="my-5 xl:my-10">
-                        <Link  onClick={getEnterCode} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">CONTINUE</Link>
+                        <Link onClick={getEnterCode} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">CONTINUE</Link>
                     </div> :
                     <div className="my-5 xl:my-10">
                         <Link to="/login/enter" onClick={getEnterCode} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">CONTINUE</Link>

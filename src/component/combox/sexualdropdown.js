@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import UserContext from '../../context/userContext';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -17,35 +18,33 @@ const MenuProps = {
         },
     },
 };
-
+const names = [
+    "STRAIGHT",
+    "GAY",
+    "LESBIAN",
+    "BISEXUAL",
+    "ANDROGYNOUS",
+    "BIGENDER",
+    "BI-CURIOUS",
+    "PANSEXUAL",
+    "POLYSEXUAL",
+    "QUEER",
+    "ANDROGYNOBEXUAL",
+    "ASEXUAL",
+    "AUTOSEXUAL",
+    "DEMISEXUAL",
+    "GRAY A",
+    "GYNOSEXUAL",
+    "HETEROFLEXIBLE",
+    "HOMOFLEXIBLE",
+    "OBJECTUMSEXUAL",
+    "OMNISEXUAL",
+    "SKOLIOSEXUAL",
+];
 
 export default function MultipleSelectCheckmarks() {
-
-    const names = [
-         "STRAIGHT",
-         "GAY",
-         "LESBIAN",
-         "BISEXUAL",
-         "ANDROGYNOUS",
-         "BIGENDER",
-         "BI-CURIOUS",
-         "PANSEXUAL",
-         "POLYSEXUAL",
-         "QUEER",
-         "ANDROGYNOBEXUAL",
-         "ASEXUAL",
-         "AUTOSEXUAL",
-         "DEMISEXUAL",
-         "GRAY A",
-         "GYNOSEXUAL",
-         "HETEROFLEXIBLE",
-         "HOMOFLEXIBLE",
-         "OBJECTUMSEXUAL",
-         "OMNISEXUAL",
-         "SKOLIOSEXUAL",
-    ];
-
-    const [showMe, setShowMe] = React.useState([]);
+    const [showMe, setShowMe] = useState("");
+    const { userSexual, setUserSexual } = useContext(UserContext);
 
     const handleChange = (event) => {
         const {
@@ -56,6 +55,10 @@ export default function MultipleSelectCheckmarks() {
             typeof value === 'string' ? value.split(',') : value,
         );
     };
+
+    useEffect(() => {
+        setUserSexual(showMe);
+    }, [showMe]);
 
     return (
         <div>
@@ -69,7 +72,7 @@ export default function MultipleSelectCheckmarks() {
                         value={showMe}
                         onChange={(event) => handleChange(event)}
                         input={<OutlinedInput label="Tag" />}
-                        renderValue={(selected) => selected.join(', ')}
+                        renderValue={(selected) => selected.join()}
                         MenuProps={MenuProps}
                     >
                         {names.map((name) => (

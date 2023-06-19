@@ -31,9 +31,16 @@ import Description from "./component/profile/description";
 
 function App() {
   const [phoneNumber, setPhoneNumber] = useState();
+  const [userName, setUserName] = useState("");
+  const [userBrithday, setUserBrithday] = useState();
+  const [userSex, setUserSex] = useState("");
+  const [userSexual, setUserSexual] = useState("");
+  const [userStatus, setUserStatus] = useState("");
+  const [userLooking, setUserLooking] = useState([]);
+  const [userShow, setUserShow] = useState([]);
 
   return (
-    <UserContext.Provider value={{ phoneNumber, setPhoneNumber }}>
+    <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userName, setUserName, userBrithday, setUserBrithday, userSex, setUserSex, userSexual, setUserSexual, userStatus, setUserStatus, userLooking, setUserLooking, userShow, setUserShow }}>
       <div className="App">
         <Router >
           <Routes>
