@@ -2,11 +2,11 @@ import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Logo from "../../assets/Logo1.svg";
-import MeDropdown from "../combox/medropdown";
-import SexualDropdown from "../combox/sexualdropdown";
-import StatusDropdown from "../combox/statusdropdown";
-import LookDropdown from "../combox/lookingdropdown";
-import ShowDropdown from "../combox/showdropdown";
+import MeDropdown from "../../component/combox/medropdown";
+import SexualDropdown from "../../component/combox/sexualdropdown";
+import StatusDropdown from "../../component/combox/statusdropdown";
+import LookDropdown from "../../component/combox/lookingdropdown";
+import ShowDropdown from "../../component/combox/showdropdown";
 import UserContext from "../../context/userContext";
 
 export default function ProfileData() {

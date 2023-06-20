@@ -14,16 +14,16 @@ import Tutorial from './pages/tutorial';
 import EditProfile from './pages/editProfile';
 import Verify from './pages/verify';
 
-import WelcomePage from "./component/login/welcomePage";
-import PhoneNumberPage from "./component/login/phoneNumberPage";
-import EnterCode from "./component/login/enterCode";
-import Age from "./component/profile/age";
-import FriendShip from "./component/profile/friendship";
-import ProfileData from "./component/profile/profileData";
-import Location from "./component/profile/location";
-import PhotoUpload from "./component/profile/photoupload";
-import PhotoAddMore from "./component/profile/photoAddMore";
-import Description from "./component/profile/description";
+import WelcomePage from "./pages/login/welcomePage";
+import PhoneNumberPage from "./pages/login/phoneNumberPage";
+import EnterCode from "./pages/login/enterCode";
+import Age from "./pages/profile/age";
+import FriendShip from "./pages/profile/friendship";
+import ProfileData from "./pages/profile/profileData";
+import Location from "./pages/profile/location";
+import PhotoUpload from "./pages/profile/photoupload";
+import PhotoAddMore from "./pages/profile/photoAddMore";
+import Description from "./pages/profile/description";
 
 function App() {
   const [phoneNumber, setPhoneNumber] = useState();
