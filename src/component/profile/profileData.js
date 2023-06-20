@@ -15,20 +15,31 @@ export default function ProfileData() {
     const [nextPage, setNextPage] = useState(false);
     const { userName, setUserName } = useContext(UserContext);
     const { userBrithday, setUserBrithday } = useContext(UserContext);
+    const { userAge, setUserAge } = useContext(UserContext);
     const { userSex } = useContext(UserContext);
     const { userSexual } = useContext(UserContext);
     const { userStatus } = useContext(UserContext);
     const { userLooking } = useContext(UserContext);
     const { userShow } = useContext(UserContext);
+
     const nameChange = (event) => {
         setName(event.target.value);
     }
 
     const brithdayChange = (event) => {
         setBrithday(event.target.value);
+        const today = new Date();
+        const birthDate = new Date(event.target.value);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        setUserAge(age);
+        event.preventDefault();
     }
 
-    const userProfileData = () => {
+    const userProfileData = async () => {
         if (name !== "" && brithday !== "" && userSex !== "" && userSexual !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
             console.log(userName, ",", userBrithday, ",", userSex, ",", userSexual, ",", userStatus, ",", userLooking, ",", userShow, ",")
         }
@@ -51,7 +62,7 @@ export default function ProfileData() {
 
 
     return (
-        <div className="bg-[#FFFBFE] bg-cover rounded-xl w-full h-full min-h-screen flex">
+        <div className="bg-[#FFFBFE] bg-cover rounded-xl w-full h-full min-h-screen py-10 flex">
             <div className="pt-20 pl-[8%]">
                 <Link to='/profile/friendship' className="">
                     <FiArrowLeft className="text-pinkLight text-4xl my-3" />

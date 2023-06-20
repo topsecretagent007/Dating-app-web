@@ -17,7 +17,7 @@ export default function ProfileSetting() {
     };
 
     return (
-        <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen pb-10" >
+        <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen py-20" >
             <div className="w-full px-5 pt-[103px] xl:px-[24%] xl:pt-32">
                 <div className="text-2xl font-bold justify-start xl:absolute z-10">My Profile</div>
                 <div className="flex justify-center">

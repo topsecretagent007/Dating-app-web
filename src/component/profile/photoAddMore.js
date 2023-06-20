@@ -24,7 +24,7 @@ export default function PhotoAddMore() {
     };
 
     return (
-        <div className="bg-[#FFFBFE] justify-center rounded-xl w-full h-full min-h-screen flex">
+        <div className="bg-[#FFFBFE] justify-center rounded-xl w-full h-full min-h-screen flex pt-10 pb-20">
             <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
                 <Link to='/profile/photoupload' className="">
                     <FiArrowLeft className="text-pinkLight text-xl lg:text-2xl xl:text-4xl my-3" />

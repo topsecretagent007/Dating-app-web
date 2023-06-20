@@ -8,7 +8,7 @@ import Image3 from "../../assets/image-3.png"
 export default function Location() {
 
     return (
-        <div className="bg-[#FFFBFE] rounded-xl w-full h-screen flex">
+        <div className="bg-[#FFFBFE] rounded-xl w-full h-min-screen h-full flex pt-10 pb-32">
             <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
                 <Link to='/profile/profiledata' className="">
                     <FiArrowLeft className="text-pinkLight text-xl lg:text-2xl xl:text-4xl my-3" />

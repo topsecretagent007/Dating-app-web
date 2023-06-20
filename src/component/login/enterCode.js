@@ -1,4 +1,4 @@
-import React, { useState, useContext  } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import 'react-phone-number-input/style.css';
 import ReactCodeInput from 'react-code-input';
@@ -6,13 +6,73 @@ import { FiArrowLeft } from "react-icons/fi";
 import UserContext from "../../context/userContext";
 import ModelLogo from "../../assets/Modal-Logo.png"
 import EhterCodeImg from "../../assets/3d-mobile-phone-with-security-code-padlock.png"
+import { collection, addDoc, doc, updateDoc } from 'firebase/firestore'
+import { db } from '../services/firebase.config';
+import { User } from "firebase/auth";
 
 export default function EnterCode() {
     const { phoneNumber } = useContext(UserContext);
+    const { userName } = useContext(UserContext);
+    const { userBrithday } = useContext(UserContext);
+    const { userSex } = useContext(UserContext);
+    const { userSexual } = useContext(UserContext);
+    const { userStatus } = useContext(UserContext);
+    const { userLooking } = useContext(UserContext);
+    const { userShow } = useContext(UserContext);
+    const { userAge } = useContext(UserContext);
+    const { userId, setUserId } = useContext(UserContext);
+    const { userDescription } = useContext(UserContext);
+    const [inputImage, SetInputImage] = useState(false);
+    const collectionRef = collection(db, 'Users');
 
-    const resendCode = () => {        
-    console.log("resend", phoneNumber)
+    const updataProfile = async () => {
+        // if (inputImage == "") {
 
+        // } else {
+        try {
+            const docRef = await addDoc(collectionRef, {
+                LoginID: { apple: "", fb: "", google: "", phone: "" },
+                Pictures: [{ show: "ture", url: "" },],
+                UserName: "",
+                user_DOB: "",
+                sexualOrientation: { orientation: "", showOnProfile: false },
+                status: "",
+                desires: "",
+                editInfo: { showOnProfile: false, university: "", userGender: "" },
+                showGender: "",
+                discription: "",
+                age: 0,
+                timestamp: new Date(),
+                verified: 0,
+                showdesires: false,
+                showstatus: false,
+                phoneNumber: "",
+                metode: "",
+                miles: true,
+                maximum_distance: 0,
+                age_range: { max: "99", min: "18" },
+                userId: "",
+                gerHash: "",
+                geoLocation: [],
+                listSwipedUser: [],
+                location: { address: "", countryID: "", countryName: "", latitude: 1.2312, longitude: 34.565467 },
+                point: { geohash: "", geopoint: [] },
+            });
+            const updateUserId = doc(db, "Users", docRef.id)
+            await updateDoc(updateUserId, {
+                LoginID: { apple: "", fb: "", google: "", phone: docRef.id },
+                userId: docRef.id
+            });
+            setUserId(docRef.id);
+            console.log(userName, ",", userBrithday, ",", userSex, ",", userSexual, ",", userStatus, ",", userLooking, ",", userShow, ",", userDescription, ",", userAge, ",")
+        } catch (err) {
+            console.log(err);
+        }
+        // }
+    }
+
+    const resendCode = () => {
+        console.log("resend", phoneNumber)
     }
     return (
         <div className="w-full absolute h-full min-h-screen bg-cover flex bg-[url('./assets/Blur-Bg.png')]  justify-center items-center" >
@@ -29,7 +89,7 @@ export default function EnterCode() {
                     and click the verify button.<br />
                     <span className="text-pinkLight">{phoneNumber}</span></div>
                 <div className="lg:text-xl px-10 mx-auto">
-                    <ReactCodeInput type='text' fields={6}  />
+                    <ReactCodeInput type='text' fields={6} />
                 </div>
                 <div className="text-sm lg:text-lg xl:text-xl justify-center px-10 my-5">
                     Didn’t receive the code?
@@ -37,7 +97,12 @@ export default function EnterCode() {
 
                 </div>
                 <div className="mb-10">
-                    <Link to="/profile/age" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">VERIFY</Link>
+                    {/* { */}
+                    {/* inputImage ? */}
+                    <Link to="/profile/age" onClick={() => updataProfile()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">VERIFY</Link>
+                    {/* : */}
+                    {/* <Link to="" onClick={() => updataProfile()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">VERIFY</Link> */}
+                    {/* } */}
                 </div>
             </div>
         </div >

@@ -26,8 +26,7 @@ import Location from "./component/profile/location";
 import PhotoUpload from "./component/profile/photoupload";
 import PhotoAddMore from "./component/profile/photoAddMore";
 import Description from "./component/profile/description";
-
-
+// const { User } = require('firebase/auth');
 
 function App() {
   const [phoneNumber, setPhoneNumber] = useState();
@@ -38,9 +37,14 @@ function App() {
   const [userStatus, setUserStatus] = useState("");
   const [userLooking, setUserLooking] = useState([]);
   const [userShow, setUserShow] = useState([]);
+  const [userDescription, setUserDescription] = useState("");
+  const [userAge, setUserAge] = useState();
+  const [userId, setUserId] = useState();
+  const [userImages, setUserImages] = useState([]);
+  // const [userTmpl, setUserTmpl ] = useState( undefined | null | User);
 
   return (
-    <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userName, setUserName, userBrithday, setUserBrithday, userSex, setUserSex, userSexual, setUserSexual, userStatus, setUserStatus, userLooking, setUserLooking, userShow, setUserShow }}>
+    <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userName, setUserName, userBrithday, setUserBrithday, userSex, setUserSex, userSexual, setUserSexual, userStatus, setUserStatus, userLooking, setUserLooking, userShow, setUserShow, userDescription, setUserDescription, userAge, setUserAge, userId, setUserId, userImages, setUserImages }}>
       <div className="App">
         <Router >
           <Routes>

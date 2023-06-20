@@ -13,20 +13,25 @@ import Image1 from "../../assets/image-1.png"
 
 export default function PhoneNumberPage() {
     const [value, setValue] = useState('');
-    const [errValue, setErrValue] = useState(false);
-
+    const [errValue, setErrValue] = useState(true);
+    const [errMessage, setErrMessage] = useState(false);
     const { phoneNumber, setPhoneNumber } = useContext(UserContext);
 
-
     const getEnterCode = () => {
-        if (!value == "") {
-            setPhoneNumber(value);
+        setPhoneNumber(value);
+        if (value == "") {
+            setErrMessage(true)
         }
     }
 
     useEffect(() => {
-        setErrValue(false);
-    }, [])
+        setErrMessage(false)
+        if (value == "") {
+            setErrValue(true)
+        } else {
+            setErrValue(false);
+        }
+    }, [value])
 
 
     return (
@@ -53,7 +58,7 @@ export default function PhoneNumberPage() {
                         />
                     </div>
                     <hr className="w-4/5 2xl:w-2/3 h-px mx-auto my-3 border-0 bg-buleLight" />
-                    {errValue &&
+                    {errMessage &&
                         < span className="w-4/5 2xl:w-2/3 h-px mx-auto pt-2 text-sm text-red-500">
                             Please enter the correct number.
                         </span>
