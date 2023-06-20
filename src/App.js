@@ -1,8 +1,9 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import UserContext from './context/userContext';
+import { AuthContextProvider, UserAuth } from "./context/AuthContext"
 import Landing from "./pages/landing";
 import FindPage from './pages/find';
 import ProfileSetting from './pages/profile';
@@ -12,9 +13,6 @@ import Setting from './pages/settings';
 import Tutorial from './pages/tutorial';
 import EditProfile from './pages/editProfile';
 import Verify from './pages/verify';
-
-
-import Login from "./pages/login";
 
 import WelcomePage from "./component/login/welcomePage";
 import PhoneNumberPage from "./component/login/phoneNumberPage";
@@ -26,7 +24,6 @@ import Location from "./component/profile/location";
 import PhotoUpload from "./component/profile/photoupload";
 import PhotoAddMore from "./component/profile/photoAddMore";
 import Description from "./component/profile/description";
-// const { User } = require('firebase/auth');
 
 function App() {
   const [phoneNumber, setPhoneNumber] = useState();
@@ -41,45 +38,46 @@ function App() {
   const [userAge, setUserAge] = useState();
   const [userId, setUserId] = useState();
   const [userImages, setUserImages] = useState([]);
-  // const [userTmpl, setUserTmpl ] = useState( undefined | null | User);
 
   return (
-    <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userName, setUserName, userBrithday, setUserBrithday, userSex, setUserSex, userSexual, setUserSexual, userStatus, setUserStatus, userLooking, setUserLooking, userShow, setUserShow, userDescription, setUserDescription, userAge, setUserAge, userId, setUserId, userImages, setUserImages }}>
-      <div className="App">
-        <Router >
-          <Routes>
-            <Route exact path="/" element={<Landing />} />
-            <Route exact path="/login" element={<WelcomePage />} />
-            <Route exact path="/login/phoneinput" element={<PhoneNumberPage />} />
-            <Route exact path="/login/enter" element={<EnterCode />} />
+    <AuthContextProvider>
+      <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userName, setUserName, userBrithday, setUserBrithday, userSex, setUserSex, userSexual, setUserSexual, userStatus, setUserStatus, userLooking, setUserLooking, userShow, setUserShow, userDescription, setUserDescription, userAge, setUserAge, userId, setUserId, userImages, setUserImages }}>
+        <div className="App">
+          <Router >
+            <Routes>
+              <Route exact path="/" element={<Landing />} />
+              <Route exact path="/login" element={<WelcomePage />} />
+              <Route exact path="/login/phoneinput" element={<PhoneNumberPage />} />
+              <Route exact path="/login/enter" element={<EnterCode />} />
 
-            <Route exact path="/profile/age" element={<Age />} />
-            <Route exact path="/profile/friendship" element={<FriendShip />} />
-            <Route exact path="/profile/profiledata" element={<ProfileData />} />
-            <Route exact path="/profile/location" element={<Location />} />
-            <Route exact path="/profile/photoupload" element={<PhotoUpload />} />
-            <Route exact path="/profile/photoaddmore" element={<PhotoAddMore />} />
-            <Route exact path="/profile/description" element={<Description />} />
+              <Route exact path="/profile/age" element={<Age />} />
+              <Route exact path="/profile/friendship" element={<FriendShip />} />
+              <Route exact path="/profile/profiledata" element={<ProfileData />} />
+              <Route exact path="/profile/location" element={<Location />} />
+              <Route exact path="/profile/photoupload" element={<PhotoUpload />} />
+              <Route exact path="/profile/photoaddmore" element={<PhotoAddMore />} />
+              <Route exact path="/profile/description" element={<Description />} />
 
-            <Route exact path="/find" element={<FindPage />} />
+              <Route exact path="/find" element={<FindPage />} />
 
-            <Route exact path="/notification" element={<Notification />} />
+              <Route exact path="/notification" element={<Notification />} />
 
-            <Route exact path="/message" element={<Message />} />
+              <Route exact path="/message" element={<Message />} />
 
-            <Route exact path="/profile" element={<ProfileSetting />} />
+              <Route exact path="/profile" element={<ProfileSetting />} />
 
-            <Route exact path="/settings" element={<Setting />} />
-            <Route exact path="/tutorial" element={<Tutorial />} />
-            <Route exact path="/editprofile" element={<EditProfile />} />
+              <Route exact path="/settings" element={<Setting />} />
+              <Route exact path="/tutorial" element={<Tutorial />} />
+              <Route exact path="/editprofile" element={<EditProfile />} />
 
-            <Route exact path="/verifyprofile" element={<Verify />} />
+              <Route exact path="/verifyprofile" element={<Verify />} />
 
 
-          </Routes>
-        </Router>
-      </div>
-    </UserContext.Provider>
+            </Routes>
+          </Router>
+        </div>
+      </UserContext.Provider>
+    </AuthContextProvider>
   );
 }
 

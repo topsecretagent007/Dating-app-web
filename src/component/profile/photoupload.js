@@ -5,7 +5,7 @@ import { FcCamera, FcPicture } from "react-icons/fc";
 import UserContext from "../../context/userContext";
 import Logo from "../../assets/Logo1.svg";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getStorage } from "firebase/storage"
-import { storage } from "../services/firebase.config";  // Import the firebase storage object
+import { storage } from "../../firebase";  // Import the firebase storage object
 
 export default function PhotoUpload() {
     const [images, setImages] = useState([]);

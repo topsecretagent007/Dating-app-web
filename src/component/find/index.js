@@ -70,14 +70,14 @@ export default function Find() {
                             </div>
                             <div className="flex text-md xl:text-2xl items-center gap-2">
                                 <div className="text-pinkLight text-2xl" >
-                                    <MdOutlineLocationOn />
+                                    <MdOutlineLocationOn fillOpacity={0.5}/>
                                 </div>
                                 <div>
                                     Location
                                 </div>
                             </div>
                             <div className="text-start py-5">
-                                <div className="text-md md:text-lg lg:text-xl xl:text-2xl">About me</div>
+                                <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Desires</div>
                                 <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
                                     Single, no kids, always looking forward to life, searching for covid unvaxed soul mate, I have a good job, great house and I am looking for someone to share my life with 3 let me know if you might be interested.
                                 </div>
