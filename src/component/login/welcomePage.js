@@ -1,12 +1,32 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { BsTelephone, BsFacebook } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
-import ModelLogo from "../../assets/Modal-Logo.png"
+import ModelLogo from "../../assets/Modal-Logo.png";
+import { UserAuth } from "../../context/AuthContext";
+import { useEffect } from "react";
 
 export default function WelcomePage() {
+    const navigate = useNavigate();
     const [agreeCheck, setAgreeCheck] = useState(false);
+    const [checkboxColor, setCheckboxColor] = useState(true);
+    const { googleSignIn, user }  = UserAuth();
+
+    const handleGoogleSignIn = async () => {
+        try {
+            await googleSignIn()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        if(user != null) {
+            navigate("/profile/age")
+        }
+    }, [user])
 
     return (
         <div className="w-full absolute h-full min-h-screen bg-cover flex bg-[url('./assets/Blur-Bg.png')] px-8 py-20 justify-center items-center" >
@@ -32,27 +52,25 @@ export default function WelcomePage() {
                             <BsTelephone /> <div className="text-sm xl:text-lg">Continue with Phone Number</div>
                         </Link>
                     }
-
                 </div>
                 <div className="lg:my-6 2xl:my-10 my-3">
                     <div className="inline-flex items-center justify-center w-full">
                         <hr className="w-full h-px my-8 border-0 bg-[#888888]" />
                         <div className="text-sm absolute px-2 xl:px-12 xl:text-lg font-medium text-[#888888] -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-[#888888]">Or Register Using</div>
                     </div>
-
                 </div>
                 <div className="xl:flex gap-3 justify-center my-3 px-5">
                     <div className="rounded-xl bg-buleLight px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center text-white gap-2 mb-3 xl:mb-0 text-sm xl:text-2xl">
                         <BsFacebook />
                         Facebook
                     </div>
-                    <div className="rounded-xl bg-white border-2 border-[#888888] px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center gap-2 text-sm xl:text-2xl text-[#888888]">
+                    <div className="rounded-xl bg-white border-2 border-[#888888] px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center gap-2 text-sm xl:text-2xl text-[#888888]" onClick={() => handleGoogleSignIn()}>
                         <FcGoogle />
                         Google
                     </div>
                 </div>
                 <div className="w-full xl:w-1/2  xl:text-end items-center my-5 text-sm">
-                    <input id="default-checkbox" type="checkbox" value={agreeCheck} className="accent-pinkLight bg-gray-100 rounded-xl mr-1" onChange={() => setAgreeCheck(!agreeCheck)} />
+                    <input id="default-checkbox" type="checkbox" value={agreeCheck} className={`${checkboxColor ? "text-black" : "text-red-600"} accent-pinkLight bg-gray-100 rounded-xl mr-1`} onChange={() => setAgreeCheck(!agreeCheck)} />
                     I agree to terms and conditions
                 </div>
                 <div className="text-pinkLight text-sm justify-center my-6 ">Terms of use & Privacy Policy</div>

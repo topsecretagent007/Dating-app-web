@@ -45,15 +45,12 @@ const nextArrow = (onClickHandler, hasNext, label) => {
 }
 export default function sfsdfCarousel() {
   const onChange = (index, item) => {
-    console.log(`Index: ${index} Item: ${item}`);
   };
 
   const onClickItem = (index, item) => {
-    console.log(`Index: ${index} Item: ${item}`);
   };
 
   const onClickThumb = (index, item) => {
-    console.log(`Index: ${index} Item: ${item}`);
   };
 
   return (

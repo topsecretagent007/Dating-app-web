@@ -44,7 +44,7 @@ export default function Header() {
 
     return (
         <div className="relative ">
-            <div className={`w-full  fixed z-[9999] flex bg-[#000000]/80 justify-between items-center transition-all duration-300 px-5 md:px-10 lg:px-16 ${visible ? 'top-0' : '-translate-y-full'}`} >
+            <div className={`w-full fixed z-[9999] flex bg-[#000000]/80 justify-between items-center transition-all duration-300 px-5 md:px-10 lg:px-16 ${visible ? 'top-0' : '-translate-y-full'}`} >
                 <img src={Logo} alt="LogoImg" className="w-40 justify-start py-5" />
                 <div className="hidden xl:flex w-full text-start text-white text-xl 2xl:text-2xl 2xl:gap-2 mx-16 ">
                     <div className="border-t-2 border-t-[#000000]/10 hover:border-t-pinkLight px-3 py-6 xl:py-10">

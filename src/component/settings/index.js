@@ -22,8 +22,6 @@ import ContactModal from "../modal/contactmodal";
 import AddPartnerModal from "../modal/addpartnermodal";
 import PhoneVerification from "../modal/phoneverification";
 import SettingShow from "../combox/settingshow";
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { db } from '../services/firebase.config';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

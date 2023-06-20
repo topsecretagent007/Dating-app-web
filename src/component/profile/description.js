@@ -4,7 +4,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import Logo from "../../assets/Logo1.svg";
 import UserContext from "../../context/userContext";
 import { collection, addDoc, setDoc, doc, updateDoc } from 'firebase/firestore'
-import { db } from '../services/firebase.config';
+import { db } from '../../firebase';
 
 export default function ProfileDescription() {
     const [description, setDescription] = useState("");
@@ -18,9 +18,8 @@ export default function ProfileDescription() {
     const { userShow } = useContext(UserContext);
     const { userAge } = useContext(UserContext);
     const { phoneNumber } = useContext(UserContext);
-    const { userId } = useContext(UserContext);
     const { userImages } = useContext(UserContext);
-
+    const { userTmpl } = useContext(UserContext)
 
 
     const inputDescription = (e) => {
@@ -31,7 +30,7 @@ export default function ProfileDescription() {
         console.log(userName, ",", userBrithday, ",", userSex, ",", userSexual, ",", userStatus, ",", userLooking, ",", userShow, ",", userDescription, ",", userAge, ",")
 
         try {
-            const updateUserId = doc(db, "Users", userId)
+            const updateUserId = doc(db, "Users", userTmpl.uid)
             await updateDoc(updateUserId, {
                 Pictures: [{ show: "ture", url: userImages },],
                 UserName: userName,

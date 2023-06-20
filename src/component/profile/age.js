@@ -1,11 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
-
 import Logo from "../../assets/Logo1.svg";
 import Image2 from "../../assets/image-2.png"
+import { UserAuth } from "../../context/AuthContext";
 
 export default function Age() {
+
+    const { user } = UserAuth();
+
+    useEffect(() => {
+        if(user!=null) {
+            console.log(user, "User")
+        }
+    }, [user])
 
     return (
         <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen justify-center py-20">
