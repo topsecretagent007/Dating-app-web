@@ -38,24 +38,23 @@ export default function MultipleSelectCheckmarks() {
             typeof value === 'string' ? value.split(',') : value,
         );
     };
-
     useEffect(() => {
         setUserStatus(showMe);
-    }, [showMe]);
+    }, [showMe])
 
     return (
         <div>
             <div className="text-lg xl:text-xl w-full 2xl:text-3xl text-start mx-auto">
                 <div className="py-2 font-bold w-full">My Status is</div>
                 <FormControl className='w-full' sx={{ m: 1 }}>
-                    <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                    <InputLabel id="demo-multiple-checkbox-label">Please Select</InputLabel>
                     <Select
                         labelId="demo-multiple-checkbox-label"
                         id="demo-multiple-checkbox"
                         value={showMe}
                         onChange={(event) => handleChange(event)}
-                        input={<OutlinedInput label="Tag" />}
-                        renderValue={(selected) => selected.join()}
+                        input={<OutlinedInput label="Please Select" />}
+                        renderValue={(selected) => selected.join(', ')}
                         MenuProps={MenuProps}
                     >
                         {names.map((name) => (

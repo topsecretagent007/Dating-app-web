@@ -10,7 +10,7 @@ export default function MessagePage() {
 
 
     return (
-        <div className='w-full h-full min-h-screen bg-cover px-5 pt-28 xl:pt-32 2xl:pt-40 bg-[#f1f1f1] pb-48 md:pb-36 lg:pb-32 xl:pb-28'>
+        <div className='w-full h-full min-h-screen bg-cover px-5 pt-28 xl:pt-32 2xl:pt-40 bg-[#f1f1f1] py-48'>
             <div className='w-full md:w-[500px] lg:w-[900px] mx-auto xl:h-[720px] bg-white rounded-xl border-[0.5px] border-black/20'>
                 <div className='w-full lg:flex border-black/10'>
                     <div className='w-full lg:w-1/3 p-5 text-start text-3xl font-bold border-b-[0.1px] lg:border-r-[0.1px] border-black/10'>Messages</div>
@@ -24,7 +24,7 @@ export default function MessagePage() {
                         <MessageUsers />
                         <MessageUsers />
                     </div>
-                    
+
                     <Messages />
 
                 </div>

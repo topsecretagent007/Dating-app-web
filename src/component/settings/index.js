@@ -13,7 +13,6 @@ import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-
 import PatnerUser from "../users/partnerUser";
 import GoolgleMap from "../other/maps";
 import InviteModal from "../modal/invitemodal";
@@ -23,6 +22,8 @@ import ContactModal from "../modal/contactmodal";
 import AddPartnerModal from "../modal/addpartnermodal";
 import PhoneVerification from "../modal/phoneverification";
 import SettingShow from "../combox/settingshow";
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { db } from '../services/firebase.config';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -176,9 +177,6 @@ export default function ProfileSetting() {
         },
     }));
 
-
-
-    // onClick={() => serSwich(!swich)}
     return (
         <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen pb-40 lg:pb-64 pt-10" >
             <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 xl:px-20 mx-auto xl:pt-32 xl:flex gap-12">
