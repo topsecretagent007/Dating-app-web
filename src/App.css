@@ -124,8 +124,16 @@
 }
 
 
+.ageSelect {
+  background-color: #fae1f3 !important;
+}
+
 .ageSelect:hover {
-  background-color: #E50AAC !important;
+  background-color: #ffc5f0 !important;
+}
+
+.css-6hp17o-MuiList-root-MuiMenu-list{
+  padding: 0 !important;
 }
 /* 
 path {

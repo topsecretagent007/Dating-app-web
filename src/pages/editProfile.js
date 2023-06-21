@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 import { FcCamera, FcPicture } from "react-icons/fc";
 import ModelLogo from "../assets/Modal-Logo.png"
 import ImageUploading from 'react-images-uploading';
-import MeDropdown from "../component/combox/medropdown";
-import SexualDropdown from "../component/combox/sexualdropdown";
-import StatusDropdown from "../component/combox/statusdropdown";
-import LookDropdown from "../component/combox/lookingdropdown";
-import ShowDropdown from "../component/combox/showdropdown";
+// import MeDropdown from "../component/combox/dropdown";
+// import SexualDropdown from "../component/combox/sexualdropdown";
+// import StatusDropdown from "../component/combox/statusdropdown";
+// import LookDropdown from "../component/combox/lookingdropdown";
+// import ShowDropdown from "../component/combox/showdropdown";
 import AddInterested from "../component/other/addinterested";
 
 import Header from "../component/header/index";
@@ -64,7 +64,7 @@ export default function EditProfilePage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen py-20">
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-20">
                 <div className="w-[300px] md:w-[600px] xl:w-[1100px] 2xl:w-[1750px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
                     <div className="w-full xl:px-10 2xl:px-40 pb-20">
                         <div className="w-full lg:flex lg:justify-between items-center">
@@ -179,11 +179,11 @@ export default function EditProfilePage() {
                                         </div>
                                     </div>
                                     <div className="grid md:grid-cols-2 md:justify-between gap-5 pb-56">
-                                        <MeDropdown />
+                                        {/* <MeDropdown />
                                         <SexualDropdown />
                                         <StatusDropdown />
                                         <LookDropdown />
-                                        <ShowDropdown />
+                                        <ShowDropdown /> */}
                                     </div>
                                 </div>
                             </div>

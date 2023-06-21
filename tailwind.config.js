@@ -5,7 +5,7 @@ module.exports = {
     extend: {
       colors: {
         pinkLight: '#E50AAC',
-        buleLight: '#4FAAFF'
+        blueLight: '#4FAAFF'
       }
     },
   },

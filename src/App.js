@@ -24,11 +24,10 @@ import Location from "./pages/profile/location";
 import PhotoUpload from "./pages/profile/photoupload";
 import PhotoAddMore from "./pages/profile/photoAddMore";
 import Description from "./pages/profile/description";
+import Protected from './component/Protected';
 
 function App() {
   const [phoneNumber, setPhoneNumber] = useState();
-  const [userName, setUserName] = useState("");
-  const [userBrithday, setUserBrithday] = useState();
   const [userSex, setUserSex] = useState("");
   const [userSexual, setUserSexual] = useState("");
   const [userStatus, setUserStatus] = useState("");
@@ -41,36 +40,36 @@ function App() {
 
   return (
     <AuthContextProvider>
-      <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userName, setUserName, userBrithday, setUserBrithday, userSex, setUserSex, userSexual, setUserSexual, userStatus, setUserStatus, userLooking, setUserLooking, userShow, setUserShow, userDescription, setUserDescription, userAge, setUserAge, userId, setUserId, userImages, setUserImages }}>
+      <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userDescription, setUserDescription, userAge, setUserAge, userId, setUserId, userImages, setUserImages }}>
         <div className="App">
           <Router >
             <Routes>
-              <Route exact path="/" element={<Landing />} />
+              <Route exact path="/" element={<Protected><Landing /></Protected>} />
               <Route exact path="/login" element={<WelcomePage />} />
               <Route exact path="/login/phoneinput" element={<PhoneNumberPage />} />
               <Route exact path="/login/enter" element={<EnterCode />} />
 
-              <Route exact path="/profile/age" element={<Age />} />
-              <Route exact path="/profile/friendship" element={<FriendShip />} />
-              <Route exact path="/profile/profiledata" element={<ProfileData />} />
-              <Route exact path="/profile/location" element={<Location />} />
-              <Route exact path="/profile/photoupload" element={<PhotoUpload />} />
-              <Route exact path="/profile/photoaddmore" element={<PhotoAddMore />} />
-              <Route exact path="/profile/description" element={<Description />} />
+              <Route exact path="/profile/age" element={<Protected><Age /></Protected>} />
+              <Route exact path="/profile/friendship" element={<Protected><FriendShip /></Protected>} />
+              <Route exact path="/profile/profiledata" element={<Protected><ProfileData /></Protected>} />
+              <Route exact path="/profile/location" element={<Protected><Location /></Protected>} />
+              <Route exact path="/profile/photoupload" element={<Protected><PhotoUpload /></Protected>} />
+              <Route exact path="/profile/photoaddmore" element={<Protected><PhotoAddMore /></Protected>} />
+              <Route exact path="/profile/description" element={<Protected><Description /></Protected>} />
 
-              <Route exact path="/find" element={<FindPage />} />
+              <Route exact path="/find" element={<Protected><FindPage /></Protected>} />
 
-              <Route exact path="/notification" element={<Notification />} />
+              <Route exact path="/notification" element={<Protected><Notification /></Protected>} />
 
-              <Route exact path="/message" element={<Message />} />
+              <Route exact path="/message" element={<Protected><Message /></Protected>} />
 
-              <Route exact path="/profile" element={<ProfileSetting />} />
+              <Route exact path="/profile" element={<Protected><ProfileSetting /></Protected>} />
 
-              <Route exact path="/settings" element={<Setting />} />
-              <Route exact path="/tutorial" element={<Tutorial />} />
-              <Route exact path="/editprofile" element={<EditProfile />} />
+              <Route exact path="/settings" element={<Protected><Setting /></Protected>} />
+              <Route exact path="/tutorial" element={<Protected><Tutorial /></Protected>} />
+              <Route exact path="/editprofile" element={<Protected><EditProfile /></Protected>} />
 
-              <Route exact path="/verifyprofile" element={<Verify />} />
+              <Route exact path="/verifyprofile" element={<Protected><Verify /></Protected>} />
 
 
             </Routes>

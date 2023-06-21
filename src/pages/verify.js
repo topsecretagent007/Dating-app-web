@@ -61,7 +61,7 @@ export default function Verify() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover justify-center px-[10%] pt-28 xl:pt-36 bg-[#f1f1f1] py-40" >
+            <div className="w-full h-full min-h-screen bg-cover justify-center px-[10%] pt-28 xl:pt-36 bg-[#FFFBFE] pb-48 xl:pb-20" >
                 <div className="w-full xl:flex">
                     <div className="w-full xl:w-2/5">
                         <img src={SimpleImg} alt="FindImage" className="w-60 sm:w-[500px] lg:w-[700px] xl:w-full mx-auto" />
@@ -79,7 +79,7 @@ export default function Verify() {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-center bg-[#f1f1f1]">
+                                <div className="flex justify-center bg-[#FFFBFE]">
                                     <div className="PhotoUpload">
                                         <ImageUploading
                                             value={images}

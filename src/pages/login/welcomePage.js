@@ -7,12 +7,14 @@ import { FcGoogle } from "react-icons/fc";
 import ModelLogo from "../../assets/Modal-Logo.png";
 import { UserAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
+import { db } from "../../firebase";
+import { collection, query, where, getDoc, doc, setDoc } from "firebase/firestore";
 
 export default function WelcomePage() {
     const navigate = useNavigate();
     const [agreeCheck, setAgreeCheck] = useState(false);
     const [checkboxColor, setCheckboxColor] = useState(true);
-    const { googleSignIn, user }  = UserAuth();
+    const { googleSignIn, user } = UserAuth();
 
     const handleGoogleSignIn = async () => {
         try {
@@ -23,8 +25,31 @@ export default function WelcomePage() {
     }
 
     useEffect(() => {
-        if(user != null) {
-            navigate("/profile/age")
+        const setUserInfo = async () => {
+            const docRef = doc(db, "Users", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+            } else {
+                const loginData = { apple: "", fb: "", google: "", phone: "" };
+                if(user.providerData[0].providerId=='google.com') loginData.google = user.uid;
+                if(user.providerData[0].providerId=='phone') loginData.phone = user.uid;
+                if(user.providerData[0].providerId=='apple.com') loginData.apple = user.uid;
+                if(user.providerData[0].providerId=='facebook.com') loginData.fb = user.uid;
+                const data = {
+                    LoginID: loginData,
+                    timestamp: new Date(),
+                    userId: user.uid,
+                    metode: user.providerData[0].providerId,
+                    verified: 0
+                }
+                await setDoc(doc(db, "Users", user.uid), data);
+                navigate("/profile/age")
+            }
+        }
+        if (user != null && user.uid != null) {
+            setUserInfo();
+            //navigate("/profile/age")
         }
     }, [user])
 
@@ -60,11 +85,11 @@ export default function WelcomePage() {
                     </div>
                 </div>
                 <div className="xl:flex gap-3 justify-center my-3 px-5">
-                    <div className="rounded-xl bg-buleLight px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center text-white gap-2 mb-3 xl:mb-0 text-sm xl:text-2xl">
+                    <div className="rounded-xl bg-blueLight px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center text-white gap-2 mb-3 xl:mb-0 text-sm xl:text-2xl cursor-pointer">
                         <BsFacebook />
                         Facebook
                     </div>
-                    <div className="rounded-xl bg-white border-2 border-[#888888] px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center gap-2 text-sm xl:text-2xl text-[#888888]" onClick={() => handleGoogleSignIn()}>
+                    <div className="rounded-xl bg-white border-2 border-[#888888] px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center gap-2 text-sm xl:text-2xl text-[#888888] cursor-pointer" onClick={() => handleGoogleSignIn()}>
                         <FcGoogle />
                         Google
                     </div>

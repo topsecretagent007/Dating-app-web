@@ -37,7 +37,7 @@ export default function EnterCode() {
                 </div>
                 <div className="text-sm lg:text-lg xl:text-xl justify-center px-10 my-5">
                     Didn’t receive the code?
-                    <button className="text-buleLight block mx-auto py-3">RESEND</button>
+                    <button className="text-blueLight block mx-auto py-3">RESEND</button>
 
                 </div>
                 <div className="mb-10">

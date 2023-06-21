@@ -18,7 +18,7 @@ export default function InviteModal() {
             </span>
             <br />
             <span className="text-sm xl:text-lg 2xl:text-xl my-3 text-blue-600 lg:leading-relaxed">
-                https://jablesscupid.com/
+                https://unjabbed.app
             </span>
 
             <div className="w-full">

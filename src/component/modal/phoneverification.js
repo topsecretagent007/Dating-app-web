@@ -49,7 +49,7 @@ export default function PhoneVerification() {
                             maxLength={19}
                         />
                     </div>
-                    <hr className="w-4/5 2xl:w-2/3 h-px mx-auto my-3 border-0 bg-buleLight" />
+                    <hr className="w-4/5 2xl:w-2/3 h-px mx-auto my-3 border-0 bg-blueLight" />
 
                 </div>
                 <div className="text-sm xl:text-lg justify-center my-5 xl:my-8 leading-relaxed">
@@ -75,7 +75,7 @@ export default function PhoneVerification() {
                 </div>
                 <div className="text-sm lg:text-lg xl:text-xl justify-center px-10 my-5">
                     Didn’t receive the code?
-                    <button onClick={() => sendCode()} className="text-buleLight py-3 block mx-auto cursor-pointer">RESEND</button>
+                    <button onClick={() => sendCode()} className="text-blueLight py-3 block mx-auto cursor-pointer">RESEND</button>
                 </div>
                 <div className="my-5 xl:my-10">
                     <button onClick={() => VerifyCode()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">VERIFY</button>

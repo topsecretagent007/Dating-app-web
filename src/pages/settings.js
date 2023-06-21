@@ -1,18 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Slider } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
 import { FiPlus, FiChevronUp, FiChevronDown, FiCopy } from "react-icons/fi";
 import { FaSignOutAlt } from "react-icons/fa";
 import { MdDelete, MdVideoLibrary, MdNotifications } from "react-icons/md";
 import { GoChevronRight } from "react-icons/go";
 import { HiUsers } from "react-icons/hi";
 import { AiOutlineMail } from "react-icons/ai";
-import { styled } from '@mui/material/styles';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import PatnerUser from "../component/users/partnerUser";
 import GoolgleMap from "../component/other/maps";
 import InviteModal from "../component/modal/invitemodal";
@@ -22,20 +14,10 @@ import ContactModal from "../component/modal/contactmodal";
 import AddPartnerModal from "../component/modal/addpartnermodal";
 import PhoneVerification from "../component/modal/phoneverification";
 import SettingShow from "../component/combox/settingshow";
+import Distance from "../component/other/distance";
+import AgeRange from "../component/other/agerange";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 5 + ITEM_PADDING_TOP,
-            width: 100,
-        },
-    },
-};
-
 
 
 export default function SettingsPage() {
@@ -45,56 +27,11 @@ export default function SettingsPage() {
     const [contactModal, setContactModal] = useState(false);
     const [addPartnerModal, setAddPartnerModal] = useState(false);
     const [phoneVerification, setPhoneVerification] = useState(false);
-    const [length, setLength] = useState(0);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
-    const [unit, setUnit] = useState(false);
-    const [listAge, setListAge] = useState([]);
-    const [fristAge, setFristAge] = useState(18);
-    const [lastAge, setLastAge] = useState(99);
     const menuDropdown = useRef(null);
 
-    const fristAgeSelect = listAge.map((listAge, index) => (
-        <MenuItem key={listAge} value={listAge} className="text-pinkLight ageSelect">
-            <em className="ml-auto text-[#888888] font-bold">{listAge}</em>
-        </MenuItem>
-    ))
 
-    const fristAgeChange = (event) => {
-        setFristAge(event.target.value);
-    };
-    const lastAgeChange = (event) => {
-        setLastAge(event.target.value);
-    }
-
-
-    useEffect(() => {
-        const allAge = [];
-        for (let i = 18; i <= 99; i++) {
-            allAge.push(i);
-        }
-        setListAge(allAge);
-    }, []);
-
-
-    const selectLength = (e) => {
-        e.preventDefault();
-        const totalLength = (e.target.value);
-        if (unit === false) {
-            setLength(parseInt(totalLength * 4));
-        } else {
-            setLength(parseInt(totalLength * 2.48));
-        }
-    }
-
-    useEffect(() => {
-        if (unit === false) {
-            setLength(parseInt(length * 4 / 2.48));
-
-        } else {
-            setLength(parseInt(length * 2.48 / 4));
-        }
-    }, [unit])
 
 
     useEffect(() => {
@@ -127,61 +64,12 @@ export default function SettingsPage() {
         };
     }, [menuDropdown]);
 
-    const IOSSwitch = styled((props) => (
-        <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-    ))(({ theme }) => ({
-        width: 36,
-        height: 20,
-        padding: 0,
-        '& .MuiSwitch-switchBase': {
-            padding: 0,
-            margin: 2,
-            transitionDuration: '300ms',
-            '&.Mui-checked': {
-                transform: 'translateX(16px)',
-                color: '#fff',
-                '& + .MuiSwitch-track': {
-                    backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#E50AAC',
-                    opacity: 1,
-                    border: 0,
-                },
-                '&.Mui-disabled + .MuiSwitch-track': {
-                    opacity: 0.5,
-                },
-            },
-            '&.Mui-focusVisible .MuiSwitch-thumb': {
-                color: '#E50AAC',
-                border: '6px solid #fff',
-            },
-            '&.Mui-disabled .MuiSwitch-thumb': {
-                color:
-                    theme.palette.mode === 'light'
-                        ? theme.palette.grey[100]
-                        : theme.palette.grey[600],
-            },
-            '&.Mui-disabled + .MuiSwitch-track': {
-                opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
-            },
-        },
-        '& .MuiSwitch-thumb': {
-            boxSizing: 'border-box',
-            width: 16,
-            height: 16,
-        },
-        '& .MuiSwitch-track': {
-            borderRadius: 26 / 2,
-            backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
-            opacity: 1,
-            transition: theme.transitions.create(['background-color'], {
-                duration: 500,
-            }),
-        },
-    }));
+    
 
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen pb-40 lg:pb-64 pt-10" >
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen pb-40 lg:pb-64 pt-28 lg:pt-16" >
                 <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 xl:px-20 mx-auto xl:pt-32 xl:flex gap-12">
                     <div className="w-full xl:w-2/3">
                         <div className="w-full  xl:flex gap-5">
@@ -240,7 +128,7 @@ export default function SettingsPage() {
                                 <div className="text-sm gap-6 py-2 lg:texl-lg justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
                                     <div className="w-full justify-between md:flex pl-5">
                                         <div className="justify-start w-full">Current location</div>
-                                        <div className="justify-end md:text-end w-full">Denver CO United States, 80260</div>
+                                        <div className="justify-end md:text-end w-full text-blue-500 font-bold">Denver CO United States, 80260</div>
                                     </div>
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />
@@ -254,73 +142,23 @@ export default function SettingsPage() {
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
                                     <div className="px-5">Search settings</div>
                                 </div>
-
                                 <SettingShow />
                                 <div className="gap-6 py-1 justify-between text-start items-center border-b-2 border-b-black/5">
                                     <div className="w-full pl-5 text-sm xl:text-lg py-2">
-                                        <div className="justify-start w-full">Maximum distance</div>
-                                        <div className="p-3">
-                                            <div className="justify-start">{length}{unit ? "Mile" : "Km"}</div>
-                                            <Slider size="sm" defaultValue={length} onChange={(e) => selectLength(e)} />
-                                            <div className="justify-start flex gap-4 items-center mt-5">
-                                                <div>Miles</div>
-                                                <div className="relative inline-flex items-center cursor-pointer">
-                                                    <FormControlLabel
-
-                                                        control={<IOSSwitch sx={{ m: 1 }} defaultChecked checked={unit} onClick={() => { setUnit(!unit) }}
-                                                        />}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <div className="justify-start w-full font-bold">Maximum distance</div>
+                                        <Distance />
                                     </div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 xl:texl-xl justify-between text-start items-center">
                                     <div className="w-full pl-5 py-">
-                                        <div className="justify-start w-full">Age range</div>
-                                        <div className="justify-start grid md:grid-cols-2 gap-4 items-center py-3">
-                                            <div className="text-sm">
-                                                <div className="text-start py-2">
-                                                    From
-                                                </div>
-                                                <FormControl sx={{ m: 1, minWidth: 120 }} className="bg-[#888888]/40 text-end" >
-                                                    <Select
-                                                        value={fristAge}
-                                                        onChange={(e) => fristAgeChange(e)}
-                                                        displayEmpty
-                                                        inputProps={{ 'aria-label': 'Without label' }}
-                                                        MenuProps={MenuProps}
-                                                        className="outline-none"
-                                                    >
-                                                        {fristAgeSelect}
-                                                    </Select>
-                                                </FormControl>
-                                            </div>
-                                            <div className="text-sm">
-                                                <div className="text-start py-2">
-                                                    To
-                                                </div>
-                                                <FormControl sx={{ m: 1, minWidth: 120, }} className="bg-[#888888]/40 text-end" >
-                                                    <Select
-                                                        value={lastAge}
-                                                        onChange={(e) => lastAgeChange(e)}
-                                                        displayEmpty
-                                                        inputProps={{ 'aria-label': 'Without label' }}
-                                                        MenuProps={MenuProps}
-                                                        className="outline-none"
-
-                                                    >
-                                                        {fristAgeSelect}
-                                                    </Select>
-                                                </FormControl>
-                                            </div>
-                                        </div>
+                                        <div className="justify-start w-full font-bold">Age range</div>
+                                        <AgeRange />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="w-full xl:w-1/3  md:px-14">
+                    <div className="w-full xl:w-1/3  md:px-14 xl:px-5">
                         <a href="/notification">
                             <button className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                                 <div className="w-48 xl:w-64 items-center flex">

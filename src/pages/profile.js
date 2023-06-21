@@ -23,7 +23,7 @@ export default function ProfilePage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#f1f1f1] justify-center min-h-screen py-20" >
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen pt-10 pb-28" >
                 <div className="w-full px-5 pt-[103px] xl:px-[24%] xl:pt-32">
                     <div className="text-2xl font-bold justify-start xl:absolute z-10">My Profile</div>
                     <div className="flex justify-center">
@@ -74,7 +74,7 @@ export default function ProfilePage() {
                     <div className="text-xl xl:text-2xl font-bold pt-12 xl:pt-16">Name</div>
                     <div className="justify-center flex mx-auto gap-24 xl:gap-52 -mt-10">
                         <a href="/settings" >
-                            <button className="justify-start cursor-pointer text-xl xl:text-5xl p-2 rounded-full bg-buleLight border-4 xl:border-8 border-white"
+                            <button className="justify-start cursor-pointer text-xl xl:text-5xl p-2 rounded-full bg-blueLight border-4 xl:border-8 border-white"
                             >
                                 <FcSettings />
                             </button>
@@ -104,7 +104,7 @@ export default function ProfilePage() {
                         for unlimited matches and contacts
                     </div>
                     <div className="pb-20">
-                        <Link to="/profile/photoaddmore" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Subscribe now</Link>
+                        <Link to="" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Subscribe now</Link>
                     </div>
                 </div>
             </div>
