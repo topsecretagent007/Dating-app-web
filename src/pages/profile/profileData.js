@@ -1,26 +1,26 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Logo from "../../assets/Logo1.svg";
-import MeDropdown from "../../component/combox/medropdown";
-import SexualDropdown from "../../component/combox/sexualdropdown";
-import StatusDropdown from "../../component/combox/statusdropdown";
-import LookDropdown from "../../component/combox/lookingdropdown";
-import ShowDropdown from "../../component/combox/showdropdown";
-import UserContext from "../../context/userContext";
+import Dropdown from "../../component/combox/dropdown";
+
+import { UserAuth } from "../../context/AuthContext";
+import { db } from "../../firebase";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { sexData, oriData, statusData, lookingForData, showData } from "../../config/constant";
 
 export default function ProfileData() {
+    const navigate = useNavigate();
+    const { user } = UserAuth();
     const [name, setName] = useState("");
     const [brithday, setBrithday] = useState("");
     const [nextPage, setNextPage] = useState(false);
-    const { userName, setUserName } = useContext(UserContext);
-    const { userBrithday, setUserBrithday } = useContext(UserContext);
-    const { userAge, setUserAge } = useContext(UserContext);
-    const { userSex } = useContext(UserContext);
-    const { userSexual } = useContext(UserContext);
-    const { userStatus } = useContext(UserContext);
-    const { userLooking } = useContext(UserContext);
-    const { userShow } = useContext(UserContext);
+    const [ userAge, setUserAge ] = useState(0);
+    const [ userSex, setUserSex ] = useState("");
+    const [ userOri, setUserOri ] = useState("");
+    const [ userStatus, setUserStatus ] = useState("");
+    const [ userLooking, setUserLooking ] = useState([]);
+    const [ userShow, setUserShow ] = useState([]);
 
     const nameChange = (event) => {
         setName(event.target.value);
@@ -39,26 +39,59 @@ export default function ProfileData() {
         event.preventDefault();
     }
 
-    const userProfileData = async () => {
-        if (name !== "" && brithday !== "" && userSex !== "" && userSexual !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
-            console.log(userName, ",", userBrithday, ",", userSex, ",", userSexual, ",", userStatus, ",", userLooking, ",", userShow, ",")
+    const updateProfileData = async () => {
+        if (name !== "" && brithday !== "" && userSex !== "" && userOri !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
+            await updateDoc(doc(db, "Users", user.uid), {
+                UserName: name,
+                user_DOB: brithday,
+                age: userAge,
+                editInfo: {
+                    showOnProfile: false,
+                    university: "",
+                    userGender: userSex
+                },
+                sexualOrientation: {
+                    orientation: userOri,
+                    showOnProfile: false
+                },
+                showGender: userShow,
+                desires: userLooking,
+                status: userStatus
+            });
+            navigate("/profile/location");
         }
     }
     useEffect(() => {
-        setUserName(name);
-    }, [name]);
-
-    useEffect(() => {
-        setUserBrithday(brithday);
-    }, [brithday]);
-
-    useEffect(() => {
-        if (name !== "" && brithday !== "" && userSex !== "" && userSexual !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
+        if (name !== "" && brithday !== "" && userSex !== "" && userOri !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
             setNextPage(true);
         } else {
             setNextPage(false);
         }
-    }, [name, brithday, userSex, userSexual, userStatus, userLooking, userShow])
+    }, [name, brithday, userSex, userOri, userStatus, userLooking, userShow])
+
+    useEffect(() => {
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setName(userData.UserName);
+                setBrithday(userData.user_DOB);
+                setUserSex(userData.editInfo?.userGender)
+                setUserOri(userData.sexualOrientation?.orientation);
+                setUserStatus(userData.status);
+                setUserLooking(userData.desires);
+                setUserShow(userData.showGender);
+                console.log(userData.editInfo?.userGender)
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if(user && user.uid) {
+            getUserInfo();
+        }
+        
+    }, [user])
 
 
     return (
@@ -84,18 +117,18 @@ export default function ProfileData() {
                         </div>
                     </div>
                     <div className="grid md:grid-cols-2 md:justify-between md:gap-20 lg:grid-cols-3 pb-40">
-                        <MeDropdown />
-                        <SexualDropdown />
-                        <StatusDropdown />
-                        <LookDropdown />
-                        <ShowDropdown />
+                        <Dropdown text="I am a " value={userSex} items={sexData} onHandleChange={e => setUserSex(e[0])} />
+                        <Dropdown text="My sexual orientation " value={userOri} items={oriData} onHandleChange={e => setUserOri(e[0])} />
+                        <Dropdown text="My Status is " value={userStatus} items={statusData} onHandleChange={e => setUserStatus(e[0])} />
+                        <Dropdown text="I am looking for " value={userLooking} items={lookingForData} onHandleChange={e => setUserLooking(e)} multiple={true} />
+                        <Dropdown text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
                     </div>
                 </div>
                 {
                     nextPage ?
-                        <Link to="/profile/location" onClick={() => userProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</Link>
+                        <button onClick={() => updateProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</button>
                         :
-                        <Link to="" onClick={() => userProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</Link>
+                        <Link to="" onClick={() => updateProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</Link>
                 }
             </div>
             <div className=" pt-20 pl-[8%]">

@@ -7,7 +7,8 @@ import ImageSlider from "../component/other/imageslider"
 import Search from "../component/other/search";
 import ReporteModal from "../component/modal/reportemodal";
 import ReportUserModal from "../component/modal/reportusermodal";
-
+import PrevUser from "../component/other/prevuser";
+import NextUser from "../component/other/nextuser";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 
@@ -49,12 +50,9 @@ export default function FindPage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] pt-28 xl:pt-36 bg-[#f1f1f1] py-48" >
+            <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] pt-28 xl:pt-36 bg-[#FFFBFE] py-48" >
                 <button type="button" className="fixed top-0 -left-2 md:left-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-prev>
-                    <span className="inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full border-[#888888] border-2 ">
-                        <svg aria-hidden="true" className="w-6 h-6 font-bold text-[#888888] dark:text-gray-800 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7"></path></svg>
-                        <span className=" sr-only">Previous</span>
-                    </span>
+                    <PrevUser />
                 </button>
                 <div>
                     <Search />
@@ -94,25 +92,22 @@ export default function FindPage() {
                                 <div className="text-md md:text-lg lg:text-xl xl:text-2xl">Interest</div>
                                 <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">Smart girl</div>
                             </div>
-                            <div className="justify-between grid grid-cols-2 gap-4 pt-10 text-sm md:text-base lg:text-lg xl:text-xl">
-                                <Link className="justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2">
+                            <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
+                                <div className="justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2">
                                     <BsHeartFill />
                                     <div>Like</div>
-                                </Link>
-                                <Link to="" className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 md:gap-3 lg:gap-4 xl:gap-5 py-1 lg:py-2 xl:py-3 xl:px-10 flex text-[#888888]">
+                                </div>
+                                <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 md:gap-3 lg:gap-4 xl:gap-5 py-1 lg:py-2 xl:py-3 xl:px-10 flex text-[#888888]">
                                     <AiOutlineClose />
                                     <div>Dislike</div>
-                                </Link>
+                                </div>
                             </div>
 
                         </div>
                     </div >
                 </div>
                 <button type="button" className="fixed top-0 -right-2 md:right-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-next>
-                    <span className="inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full border-[#888888] border-2">
-                        <svg aria-hidden="true" className="w-6 h-6 text-[#888888] dark:text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 5l7 7-7 7"></path></svg>
-                        <span className="sr-only">Next</span>
-                    </span>
+                    <NextUser />
                 </button>
                 {
                     reporteModal &&

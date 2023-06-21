@@ -57,7 +57,7 @@ export default function PhoneNumberPage() {
                             maxLength="15"
                         />
                     </div>
-                    <hr className="w-4/5 2xl:w-2/3 h-px mx-auto my-3 border-0 bg-buleLight" />
+                    <hr className="w-4/5 2xl:w-2/3 h-px mx-auto my-3 border-0 bg-blueLight" />
                     {errMessage &&
                         < span className="w-4/5 2xl:w-2/3 h-px mx-auto pt-2 text-sm text-red-500">
                             Please enter the correct number.
