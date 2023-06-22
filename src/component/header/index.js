@@ -14,7 +14,7 @@ export default function Header() {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
-    const { user } = UserAuth();
+    const { user, logOut } = UserAuth();
     const [pictures, setPictures] = useState([]);
     const [page, setPage] = useState("");
 
@@ -130,7 +130,9 @@ export default function Header() {
                         <DiAptana />
                         Settings
                     </div>
-                    <div className="py-1 px-5 hover:text-white hover:bg-pinkLight items-center border-t-[0.1px] border-dotted border-t-[#888888] flex gap-2">
+                    <div className="py-1 px-5 hover:text-white hover:bg-pinkLight items-center border-t-[0.1px] border-dotted border-t-[#888888] flex gap-2" onClick={()=> {
+                        logOut();
+                    }}>
                         <FaSignOutAlt />
                         Sign out
                     </div>
