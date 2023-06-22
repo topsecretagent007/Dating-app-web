@@ -24,7 +24,6 @@ export default function PhoneVerification() {
     const sendCode = async () => {
         await setPhoneNumber(value);
         await setEnterCode(true);
-        await console.log("number", phoneNumber)
     }
 
     const VerifyCode = async () => {

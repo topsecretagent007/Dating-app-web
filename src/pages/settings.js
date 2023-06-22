@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { FiPlus, FiChevronUp, FiChevronDown, FiCopy } from "react-icons/fi";
+import { FiPlus, FiSave } from "react-icons/fi";
 import { FaSignOutAlt } from "react-icons/fa";
 import { MdDelete, MdVideoLibrary, MdNotifications } from "react-icons/md";
 import { GoChevronRight } from "react-icons/go";
@@ -18,9 +18,18 @@ import Distance from "../component/other/distance";
 import AgeRange from "../component/other/agerange";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
+import { UserAuth } from "../context/AuthContext";
+import { db } from "../firebase";
+import LoadingModal from "../component/loadingPage";
+import { useNavigate } from "react-router-dom";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { showData } from "../config/constant";
+
 
 
 export default function SettingsPage() {
+    const navigate = useNavigate();
+    const { user } = UserAuth();
     const [inviteModal, setInviteModal] = useState(false);
     const [logoutModal, setLogoutModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -30,9 +39,35 @@ export default function SettingsPage() {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
+    const [phoneNumber, setPhoneNumber] = useState();
+    const [loading, setLoading] = useState(false);
+    const [fristAge, setFristAge] = useState("");
+    const [lastAge, setLastAge] = useState("");
+    const [distance, setDistance] = useState(0);
+    const [miles, setMiles] = useState(false);
+    const [address, setAddress] = useState('');
+    const [countryID, setCountryID] = useState('');
+    const [countryName, setCountryName] = useState('');
+    const [userShow, setUserShow] = useState([]);
 
-
-
+    const SettingSave = async () => {
+        setLoading(true);
+        await updateDoc(doc(db, "Users", user.uid), {
+            age_range: {
+                max: lastAge,
+                min: fristAge
+            },
+            showGender: userShow,
+            location: {
+                address: address,
+                countryID: countryID,
+                countryName: countryName
+            },
+            maximum_distance: distance,
+            miles: miles,
+        });
+        setLoading(false);
+    }
 
     useEffect(() => {
         function handleScroll() {
@@ -40,7 +75,6 @@ export default function SettingsPage() {
             setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [prevScrollPos]);
@@ -64,7 +98,36 @@ export default function SettingsPage() {
         };
     }, [menuDropdown]);
 
-    
+
+    useEffect(() => {
+        setLoading(true);
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setFristAge(userData.age_range?.min);
+                setLastAge(userData.age_range?.max);
+                setPhoneNumber(userData.phoneNumber);
+                setDistance(userData.maximum_distance);
+                setMiles(userData.miles);
+                setAddress(userData.location?.address);
+                setCountryID(userData.location?.countryID);
+                setCountryName(userData.location?.countryName);
+                setUserShow(userData.showGender);
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user])
+
+    const goToPage = (url) => {
+        navigate(url);
+    }
 
     return (
         <div>
@@ -98,7 +161,7 @@ export default function SettingsPage() {
                                 <div onClick={() => setPhoneVerification(!phoneVerification)} className="text-sm lg:text-lg gap-6 py-2 po xl:texl-xl justify-between text-start flex items-center cursor-pointer">
                                     <div className="w-full justify-between md:flex pl-5">
                                         <div className="justify-start w-full">Phone Number</div>
-                                        <div className="justify-end md:text-end w-full">+1 661 237 3792</div>
+                                        <div className="justify-end md:text-end w-full">{phoneNumber}</div>
                                     </div>
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />
@@ -128,7 +191,7 @@ export default function SettingsPage() {
                                 <div className="text-sm gap-6 py-2 lg:texl-lg justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
                                     <div className="w-full justify-between md:flex pl-5">
                                         <div className="justify-start w-full">Current location</div>
-                                        <div className="justify-end md:text-end w-full text-blue-500 font-bold">Denver CO United States, 80260</div>
+                                        <div className="justify-end md:text-end w-full text-blue-500 font-bold">{address} {countryID} {countryName}, 80260</div>
                                     </div>
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />
@@ -142,35 +205,33 @@ export default function SettingsPage() {
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
                                     <div className="px-5">Search settings</div>
                                 </div>
-                                <SettingShow />
+                                <SettingShow text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
                                 <div className="gap-6 py-1 justify-between text-start items-center border-b-2 border-b-black/5">
                                     <div className="w-full pl-5 text-sm xl:text-lg py-2">
                                         <div className="justify-start w-full font-bold">Maximum distance</div>
-                                        <Distance />
+                                        <Distance distance={distance} miles={miles} onMiles={e => setMiles(e)} onDistance={e => setDistance(e)} />
                                     </div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 xl:texl-xl justify-between text-start items-center">
                                     <div className="w-full pl-5 py-">
                                         <div className="justify-start w-full font-bold">Age range</div>
-                                        <AgeRange />
+                                        <AgeRange frist={fristAge} last={lastAge} onFristAge={e => setFristAge(e)} onLastAge={e => setLastAge(e)} />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="w-full xl:w-1/3  md:px-14 xl:px-5">
-                        <a href="/notification">
-                            <button className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
-                                <div className="w-48 xl:w-64 items-center flex">
-                                    <div className="w-1/6">
-                                        <MdNotifications />
-                                    </div>
-                                    <div className="w-5/6 text-start font-bold">
-                                        Notifications
-                                    </div>
+                        <button onClick={() => goToPage("/notification")} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                            <div className="w-48 xl:w-64 items-center flex">
+                                <div className="w-1/6">
+                                    <MdNotifications />
                                 </div>
-                            </button>
-                        </a>
+                                <div className="w-5/6 text-start font-bold">
+                                    Notifications
+                                </div>
+                            </div>
+                        </button>
                         <button onClick={() => setInviteModal(!inviteModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
@@ -211,18 +272,26 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </button>
-                        <a href="/tutorial">
-                            <button className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
-                                <div className="w-48 xl:w-64 items-center flex">
-                                    <div className="w-1/6">
-                                        <MdVideoLibrary />
-                                    </div>
-                                    <div className="w-5/6 text-start font-bold">
-                                        Tutorial
-                                    </div>
+                        <button onClick={() => goToPage("/tutorial")} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                            <div className="w-48 xl:w-64 items-center flex">
+                                <div className="w-1/6">
+                                    <MdVideoLibrary />
                                 </div>
-                            </button>
-                        </a>
+                                <div className="w-5/6 text-start font-bold">
+                                    Tutorial
+                                </div>
+                            </div>
+                        </button>
+                        <button onClick={() => SettingSave()} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                            <div className="w-48 xl:w-64 items-center flex">
+                                <div className="w-1/6">
+                                    <FiSave />
+                                </div>
+                                <div className="w-5/6 text-start font-bold">
+                                    Save
+                                </div>
+                            </div>
+                        </button>
                     </div>
                 </div>
 
@@ -288,6 +357,10 @@ export default function SettingsPage() {
                 }
             </div >
             <Footer />
+            {
+                loading &&
+                <LoadingModal />
+            }
         </div >
     )
 }

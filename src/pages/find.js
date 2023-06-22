@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { AiTwotoneFlag, AiOutlineClose } from "react-icons/ai";
 import { MdOutlineLocationOn } from "react-icons/md";
 import { BsHeartFill } from "react-icons/bs";
@@ -11,6 +10,7 @@ import PrevUser from "../component/other/prevuser";
 import NextUser from "../component/other/nextuser";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
+import LoadingModal from "../component/loadingPage";
 
 export default function FindPage() {
     const [reporteModal, setReportoModal] = useState(false);
@@ -18,6 +18,10 @@ export default function FindPage() {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
+
+
+
+    const [loading, setLoading] = useState(false);
 
     const openUserModal = () => {
         setReportUser(false);
@@ -72,28 +76,28 @@ export default function FindPage() {
                             </div>
                             <div className="flex text-md xl:text-2xl items-center gap-2">
                                 <div className="text-pinkLight text-2xl" >
-                                    <MdOutlineLocationOn fillOpacity={0.5} />
+                                    <MdOutlineLocationOn />
                                 </div>
                                 <div>
                                     Location
                                 </div>
                             </div>
                             <div className="text-start py-5">
-                                <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Desires</div>
+                                <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">About me</div>
                                 <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
                                     Single, no kids, always looking forward to life, searching for covid unvaxed soul mate, I have a good job, great house and I am looking for someone to share my life with 3 let me know if you might be interested.
                                 </div>
                             </div>
                             <div className="text-start py-5">
-                                <div className="text-md md:text-lg lg:text-xl xl:text-2xl">Desires</div>
+                                <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Desires</div>
                                 <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">Relationship</div>
                             </div>
                             <div className="text-start py-5">
-                                <div className="text-md md:text-lg lg:text-xl xl:text-2xl">Interest</div>
+                                <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Interest</div>
                                 <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">Smart girl</div>
                             </div>
                             <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
-                                <div className="justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2">
+                                <div className="justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2" onClick={() => setLoading(true)}>
                                     <BsHeartFill />
                                     <div>Like</div>
                                 </div>
@@ -132,6 +136,10 @@ export default function FindPage() {
                             </div>
                         </div >
                     </div>
+                }
+                {
+                    loading &&
+                    < LoadingModal />
                 }
             </div>
             <Footer />

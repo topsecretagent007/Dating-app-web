@@ -132,9 +132,10 @@
   background-color: #ffc5f0 !important;
 }
 
-.css-6hp17o-MuiList-root-MuiMenu-list{
+.css-6hp17o-MuiList-root-MuiMenu-list {
   padding: 0 !important;
 }
+
 /* 
 path {
   color: #E50AAC;
@@ -146,4 +147,8 @@ path {
 
 .css-m5hdmq-MuiInputBase-root-MuiInput-root-MuiSelect-root:after {
   border-bottom: nome !important;
+}
+
+.locationcolor {
+  color: #E50AAC !important
 }

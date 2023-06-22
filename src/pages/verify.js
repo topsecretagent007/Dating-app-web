@@ -5,25 +5,71 @@ import SimpleImg from "../assets/image4.png"
 import ModelLogo from "../assets/Modal-Logo.png"
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
+import GenerateRandomNumber from "../component/other/randomnumber"
+import LoadingModal from '../component/loadingPage';
+import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
+import { UserAuth } from "../context/AuthContext";
+import { db } from "../firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase";  // Import the firebase storage object
 
 
 export default function Verify() {
+    const { user } = UserAuth();
     const [verifycationCode, setVeryficationCode] = useState(false);
     const [alretUploadPhoto, setAlretUploadPhoto] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState();
     const [visible, setVisible] = useState(true);
-
+    const [loading, setLoading] = useState(false);
+    const [verifyCode, setVerifyCode] = useState(0);
+    const [name, setName] = useState("");
     const [images, setImages] = React.useState([]);
     const maxNumber = 100;
 
-    const onChange = (imageList, addUpdateIndex) => {
-        // data for submit
-        console.log(imageList, addUpdateIndex);
-        setImages(imageList);
-    };
-
-    const uploadPhote = () => {
+    const uploadPhote = async () => {
+        setLoading(true);
+        const codeImageUrl = await uploadImage(images[0]);
+        
+        await setDoc(doc(db, "Verify", user.uid), {
+            code: verifyCode,
+            date_updated: new Date(),
+            idUser: user.uid,
+            imageUrl: codeImageUrl,
+            name: name,
+            reason_verified: "",
+            verified: 2
+        });
+        setLoading(false);
         setAlretUploadPhoto(true);
+    }
+
+    const uploadImage = async (image) => {
+        if (!image) {
+            return null;
+        }
+        if (image.url.includes("https://")) return image.url;
+
+        const filename = `${Date.now()}-${image.file.name}`;
+        const storageRef = ref(storage, `verify/${user.uid}/${filename}`);
+
+        return new Promise((resolve, reject) => {
+            const uploadTask = uploadBytesResumable(storageRef, image.file);
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {
+                    const percent = Math.round(
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    );
+                },
+                (err) => console.log(err),
+                async () => {
+                    // download url
+                    getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                        return resolve(url);
+                    }).catch((e) => reject(e));
+                }
+            );
+        });
 
     }
 
@@ -58,6 +104,24 @@ export default function Verify() {
         };
     }, [menuDropdown]);
 
+    useEffect(() => {
+        setLoading(true);
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setName(userData.UserName);
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user])
+
     return (
         <div>
             <Header />
@@ -71,21 +135,15 @@ export default function Verify() {
                         </div>
                         {verifycationCode ?
                             <div>
-                                <div className="text-sm lg:text-lg xl:text-xl 2xl:text-2xl py-3">
-                                    Your verification code
-                                    <br />
-                                    <div className="font-bold">
-                                        35713
-                                    </div>
-                                </div>
+                                <GenerateRandomNumber generate={setVerifyCode} />
 
                                 <div className="flex justify-center bg-[#FFFBFE]">
                                     <div className="PhotoUpload">
                                         <ImageUploading
                                             value={images}
-                                            onChange={onChange}
+                                            onChange={(imageList) => setImages(imageList)}
                                             maxNumber={maxNumber}
-                                            dataURLKey="data_url"
+                                            dataURLKey="url"
                                         >
                                             {({
                                                 imageList,
@@ -99,7 +157,7 @@ export default function Verify() {
                                                     <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar.png')] mx-auto rounded-3xl bg-cover">
                                                         {imageList.map((image, index) => (
                                                             <div key={index} className="image-item">
-                                                                <img src={image['data_url']} alt="" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />
+                                                                <img src={image['url']} alt="" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />
                                                             </div>
                                                         ))}
                                                     </div>
@@ -166,6 +224,10 @@ export default function Verify() {
                 </div>
             </div>
             <Footer />
+            {
+                loading &&
+                <LoadingModal />
+            }
         </div >
     )
 }

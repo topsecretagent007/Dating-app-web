@@ -1,27 +1,91 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { AiOutlineDelete } from 'react-icons/ai'
-
-
 import ImageUploading from 'react-images-uploading';
 import { FcCamera, FcPicture } from "react-icons/fc";
 import Logo from "../../assets/Logo1.svg";
+import { UserAuth } from "../../context/AuthContext";
+import { db } from "../../firebase";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import LoadingModal from "../../component/loadingPage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase";  // Import the firebase storage object
 
-
+const maxNumber = 6;
+const numbers = [1, 2, 3, 4, 5, 6];
+const listItems = numbers.map((numbers) =>
+    <div key={numbers} className="w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
 
 export default function PhotoAddMore() {
-    const [images, setImages] = React.useState([]);
-    const maxNumber = 6;
-    const numbers = [1, 2, 3, 4, 5, 6];
-    const listItems = numbers.map((numbers) =>
-        <div key={numbers} className="w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
+    const navigate = useNavigate();
+    const { user } = UserAuth();
+    const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const onChange = (imageList, addUpdateIndex) => {
-        // data for submit
-        console.log(imageList, addUpdateIndex);
-        setImages(imageList);
-    };
+    const uploadImage = async (image) => {
+        if (!image) {
+            return null;
+        }
+        if (image.url.includes("https://")) return image.url;
+
+        const filename = `${Date.now()}-${image.file.name}`;
+        const storageRef = ref(storage, `users/${user.uid}/${filename}`);
+
+        return new Promise((resolve, reject) => {
+            const uploadTask = uploadBytesResumable(storageRef, image.file);
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {
+                    const percent = Math.round(
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    );
+                },
+                (err) => console.log(err),
+                async () => {
+                    // download url
+                    getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                        return resolve(url);
+                    }).catch((e) => reject(e));
+                }
+            );
+        });
+
+    }
+    useEffect(() => {
+        setLoading(true);
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setImages(userData.Pictures)
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user])
+
+    const addUpdataImageList = async () => {
+        setLoading(true);
+        let pictures = [];
+        for (var i = 0; i < images.length; i++) {
+            pictures.push({
+                show: true,
+                url: await uploadImage(images[i])
+            });
+        }
+        await updateDoc(doc(db, "Users", user.uid), {
+            Pictures: pictures
+        });
+        setLoading(false);
+        navigate('/profile/description')
+    }
+
 
     return (
         <div className="bg-[#FFFBFE] justify-center rounded-xl w-full h-full min-h-screen flex pt-10 pb-20">
@@ -40,9 +104,9 @@ export default function PhotoAddMore() {
                             <ImageUploading
                                 multiple
                                 value={images}
-                                onChange={onChange}
+                                onChange={(imageList) => setImages(imageList)}
                                 maxNumber={maxNumber}
-                                dataURLKey="data_url"
+                                dataURLKey="url"
                             >
                                 {({
                                     imageList,
@@ -63,7 +127,7 @@ export default function PhotoAddMore() {
                                                         <AiOutlineDelete />
                                                     </button>
 
-                                                    <img src={image['data_url']}
+                                                    <img src={image['url']}
                                                         className="absolute z-5 w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto object-cover rounded-xl" />
                                                 </div>
                                             ))}
@@ -94,11 +158,16 @@ export default function PhotoAddMore() {
                         The more images you show other members the greater your chances are of <br />
                         matching with them.
                     </div>
-                    <Link to="/profile/description" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</Link>
+                    <button onClick={() => addUpdataImageList()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
+
                 </div>
             </div>
             <div className="pt-20 pr-2 md:pr-5 xl:pr-20 2xl:pr-40">
             </div>
+            {
+                loading &&
+                <LoadingModal />
+            }
         </div>
     )
 }

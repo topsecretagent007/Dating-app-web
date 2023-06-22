@@ -1,89 +1,32 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ImageUploading from 'react-images-uploading';
 import { FcCamera, FcPicture } from "react-icons/fc";
-import UserContext from "../../context/userContext";
 import Logo from "../../assets/Logo1.svg";
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getStorage } from "firebase/storage"
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getStorage } from "firebase/storage";
 import { storage } from "../../firebase";  // Import the firebase storage object
+import { UserAuth } from "../../context/AuthContext";
+import { db } from "../../firebase";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import LoadingModal from "../../component/loadingPage";
+
 
 export default function PhotoUpload() {
+    const navigate = useNavigate();
+    const { user } = UserAuth();
+    const [originalImages, setOriginalImages] = useState([]);
     const [images, setImages] = useState([]);
-    const maxNumber = 5;
-    const [inputImage, setInputIamge] = useState(false);
-    const { userImages, setUserImages } = useContext(UserContext);
-    const { userId } = useContext(UserContext);
-
-
+    const maxNumber = 100;
+    const [loading, setLoading] = useState(false);
 
     const uploadImage = async (image) => {
-
         if (!image) {
-            alert("Please choose a image first!")
+            return null;
         }
+        if (image.url.includes("https://")) return image.url;
 
-        // Create a unique filename for the image
         const filename = `${Date.now()}-${image.file.name}`;
-
-        if (userImages == "") {
-            // Create a reference to the image in Firebase Storage
-            const storageRef = ref(storage, `users/${userId}/${filename}`);
-
-            return new Promise((resolve, reject) => {
-                const uploadTask = uploadBytesResumable(storageRef, image.file);
-                uploadTask.on(
-                    "state_changed",
-                    (snapshot) => {
-                        const percent = Math.round(
-                            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                        );
-
-                        console.log(percent, "percent")
-                    },
-                    (err) => console.log(err),
-                    async () => {
-                        // download url
-                        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                            return resolve(url);
-                        }).catch((e) => reject(e));
-                    }
-                );
-            });
-        } else {
-            const storageImage = getStorage();
-            const deleteDate = ref(storageImage, `users/${userId}`);
-            deleteObject(deleteDate).then(() => {
-                // File deleted successfully
-            }).catch((error) => {
-                // Uh-oh, an error occurred!
-            });
-            // Create a reference to the image in Firebase Storage
-            const storageRef = ref(storage, `users/${userId}/${filename}`);
-
-            return new Promise((resolve, reject) => {
-                const uploadTask = uploadBytesResumable(storageRef, image.file);
-                uploadTask.on(
-                    "state_changed",
-                    (snapshot) => {
-                        const percent = Math.round(
-                            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                        );
-
-                        console.log(percent, "percent")
-                    },
-                    (err) => console.log(err),
-                    async () => {
-                        // download url
-                        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                            return resolve(url);
-                        }).catch((e) => reject(e));
-                    }
-                );
-            });
-        }
-
-        // Create a reference to the image in Firebase Storage
-        const storageRef = ref(storage, `users/${userId}/${filename}`);
+        const storageRef = ref(storage, `users/${user.uid}/${filename}`);
 
         return new Promise((resolve, reject) => {
             const uploadTask = uploadBytesResumable(storageRef, image.file);
@@ -93,8 +36,6 @@ export default function PhotoUpload() {
                     const percent = Math.round(
                         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                     );
-
-                    console.log(percent, "percent")
                 },
                 (err) => console.log(err),
                 async () => {
@@ -105,21 +46,39 @@ export default function PhotoUpload() {
                 }
             );
         });
+
     }
 
-    const onChange = async (imageList) => {
-        console.log(imageList);
-        try {
-            // Upload the first image in the list and set its download URL as the value for the "images" state
-            const downloadURL = await uploadImage(imageList[0]);
-            setInputIamge(true);
-            setUserImages(downloadURL);
-            console.log(downloadURL, "downloadURL");
-        } catch (e) {
-            console.log("Image upload Error: ", e);
+    useEffect(() => {
+        setLoading(true);
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setOriginalImages(userData.Pictures);
+                setImages([userData.Pictures[0]])
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
         }
-        setImages(imageList);
-    };
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user]);
+
+    const updateAvatar = async () => {
+        setLoading(true);
+        const firstNewImage = await uploadImage(images[0]);
+        const [first, ...rest] = originalImages;
+        const pictures = [{ url: firstNewImage, show: true }, ...rest];
+        await updateDoc(doc(db, "Users", user.uid), {
+            Pictures: pictures
+        });
+        setLoading(false);
+        navigate("/profile/photoaddmore");
+    }
 
     return (
         <div className="bg-[#FFFBFE] min-h-screen justify-center rounded-xl w-full h-full flex pt-10 pb-32">
@@ -132,9 +91,9 @@ export default function PhotoUpload() {
                         <div className="PhotoUpload">
                             <ImageUploading
                                 value={images}
-                                onChange={onChange}
+                                onChange={(imageList) => setImages(imageList)}
                                 maxNumber={maxNumber}
-                                dataURLKey="data_url"
+                                dataURLKey="url"
                             >
                                 {({
                                     imageList,
@@ -142,15 +101,12 @@ export default function PhotoUpload() {
                                     isDragging,
                                     dragProps,
                                 }) => (
-                                    // write your building UI
-
                                     <div className="upload__image-wrapper">
                                         <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar.png')] mx-auto rounded-3xl bg-cover">
-                                            {imageList.map((image, index) => (
-                                                <div key={index} className="image-item">
-                                                    <img src={image['data_url']} alt="" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />
-                                                </div>
-                                            ))}
+                                            <div className="image-item">
+                                                {images[0] && images[0]['url']!="" && <img src={images[0]['url']} alt="Avatar" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />}
+                                            </div>
+
                                         </div>
                                         <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
                                             <div className="justify-center flex mx-auto gap-48 lg:gap-80">
@@ -181,14 +137,15 @@ export default function PhotoUpload() {
                         <br />
                         Your profile image must not contain any nudity and be only of yourself.
                     </div>
-                    {
-                        inputImage ?
-                            <Link to="/profile/photoaddmore" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</Link>
-                            :
-                            <Link to="" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</Link>
-                    }
+
+                    <button onClick={() => updateAvatar()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
+
                 </div>
             </div>
+            {
+                loading &&
+                <LoadingModal />
+            }
         </div>
     )
 }
