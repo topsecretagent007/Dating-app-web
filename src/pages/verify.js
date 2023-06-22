@@ -7,12 +7,11 @@ import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import GenerateRandomNumber from "../component/other/randomnumber"
 import LoadingModal from '../component/loadingPage';
-import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";  // Import the firebase storage object
-
 
 export default function Verify() {
     const { user } = UserAuth();

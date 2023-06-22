@@ -25,8 +25,6 @@ import { useNavigate } from "react-router-dom";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { showData } from "../config/constant";
 
-
-
 export default function SettingsPage() {
     const navigate = useNavigate();
     const { user } = UserAuth();
@@ -121,6 +119,7 @@ export default function SettingsPage() {
             }
         }
         if (user && user.uid) {
+            console.log(user)
             getUserInfo();
         }
     }, [user])

@@ -52,7 +52,7 @@ export default function ProfilePage() {
 
                     }
                     <div className="text-xl xl:text-2xl font-bold pt-6 xl:pt-10">{name}</div>
-                    <div className="justify-center flex mx-auto gap-24 xl:gap-52 -mt-10">
+                    <div className="justify-center flex mx-auto gap-44 xl:gap-52 -mt-10">
                         <div onClick={()=> goToPage("/settings")} >
                             <button className="justify-start cursor-pointer text-xl xl:text-5xl p-2 rounded-full bg-blueLight border-4 xl:border-8 border-white"
                             >

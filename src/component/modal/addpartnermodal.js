@@ -1,8 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import React from "react";
 import Users from "../users/partnerUser";
-
 
 export default function AddPartnerModal() {
 

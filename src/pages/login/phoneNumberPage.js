@@ -4,7 +4,6 @@ import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
 import ReactCodeInput from 'react-code-input';
 import { FiArrowLeft } from "react-icons/fi";
-
 import ModelLogo from "../../assets/Modal-Logo.png"
 import Image1 from "../../assets/image-1.png"
 import EhterCodeImg from "../../assets/3d-mobile-phone-with-security-code-padlock.png"
@@ -12,8 +11,6 @@ import { UserAuth } from "../../context/AuthContext";
 import LoadingModal from "../../component/loadingPage";
 import { getDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-
-
 
 export default function PhoneNumberPage() {
     const navigate = useNavigate();
@@ -61,7 +58,7 @@ export default function PhoneNumberPage() {
             } else {
                 const loginData = { apple: "", fb: "", google: "", phone: "" };
                 if (user.providerData[0].providerId == 'google.com') loginData.google = user.uid;
-                if (user.providerData[0].providerId == 'phone') loginData.phone = user.uid;
+                if (user.providerData[0].providerId == 'phone') loginData.phone = user.uid
                 if (user.providerData[0].providerId == 'apple.com') loginData.apple = user.uid;
                 if (user.providerData[0].providerId == 'facebook.com') loginData.fb = user.uid;
                 const data = {
@@ -84,7 +81,7 @@ export default function PhoneNumberPage() {
                     },
                     showGender: [],
                     desires: [],
-                    status: ""
+                    status: "",
                 };
                 await setDoc(doc(db, "Users", user.uid), data);
                 setLoading(false);
@@ -127,9 +124,7 @@ export default function PhoneNumberPage() {
                             </span>
                         }
                     </div>
-                    <div className="w-full mx-auto">
-                        <div id="recaptcha-container" className="mx-auto" />
-                    </div>
+                    <div id="recaptcha-container" className="" />
                     <div className="text-sm xl:text-lg justify-center my-5 xl:my-8 leading-relaxed">
                         Please enter your mobile number to receive a verification code. <br />Message and data rates may apply.
                     </div>
@@ -143,7 +138,7 @@ export default function PhoneNumberPage() {
                     <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <img src={ModelLogo} alt="ModelLogo" />
                     </h2>
-                    <button onClick={() => setFlag(false)} >
+                    <button onClick={() => setFlag(false)} className="mr-[100%]">
                         <FiArrowLeft className="text-pinkLight text-sm md:text-xl lg:text-2xl xl:text-4xl mt-8 xl:mt-10" />
                     </button>
                     <img src={EhterCodeImg} alt="EhterCodeImg" className="mx-auto w-60 xl:w-64 justify-center" />

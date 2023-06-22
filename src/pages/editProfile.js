@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef, Fragment } from "react";
-import { AiOutlineDelete, AiOutlinePlus, AiFillEye, AiOutlineClose } from 'react-icons/ai';
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { AiOutlineDelete, AiOutlinePlus, AiFillEye } from 'react-icons/ai';
+import { useNavigate } from "react-router-dom";
 import { FcCamera, FcPicture } from "react-icons/fc";
 import ModelLogo from "../assets/Modal-Logo.png"
 import ImageUploading from 'react-images-uploading';
@@ -13,8 +13,6 @@ import { sexData, oriData, statusData, lookingForData, showData } from "../confi
 import LoadingModal from "../component/loadingPage";
 import AddInterested from "../component/other/addinterested";
 import { storage } from "../firebase";  // Import the firebase storage object
-
-
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 
@@ -95,7 +93,7 @@ export default function EditProfilePage() {
         };
     }, [menuDropdown]);
     
-    const onChange = (imageList, addUpdateIndex) => {
+    const onChange = (imageList) => {
         // data for submit
         setImages(imageList);
         setUploadModal(false);
