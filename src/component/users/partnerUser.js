@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-
+import React from "react";
 import Avatar from "../../assets/istockphoto-1167582073-612x6121.png"
-
 
 export default function PartnerUser() {
     const numbers = [1];

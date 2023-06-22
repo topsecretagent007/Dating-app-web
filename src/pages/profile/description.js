@@ -27,12 +27,14 @@ export default function ProfileDescription() {
                     min: "18"
                 },
                 maximum_distance: 400,
-                miles: true,
+                miles: false,
 
             });
             setLoading(false);
             navigate("/");
         } catch (err) {
+            setLoading(false);
+            navigate("/description");
             console.log(err);
         }
     }

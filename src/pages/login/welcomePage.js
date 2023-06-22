@@ -8,7 +8,7 @@ import ModelLogo from "../../assets/Modal-Logo.png";
 import { UserAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
 import { db } from "../../firebase";
-import { collection, query, where, getDoc, doc, setDoc } from "firebase/firestore";
+import { getDoc, doc, setDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
 export default function WelcomePage() {
@@ -28,6 +28,11 @@ export default function WelcomePage() {
         } else {
             setCheckboxColor(false);
         }
+    }
+
+    const goToPhoneInputPage = () => {
+        if(agreeCheck) navigate("/login/phoneinput")
+        else setCheckboxColor(false);
     }
 
     useEffect(() => {
@@ -90,17 +95,9 @@ export default function WelcomePage() {
                     By signing in, you are indicating that you have read the Privacy Policy and
                     agree to the Terms of Service
                 </span>
-                <div className="w-full">
-                    {agreeCheck ?
-                        <button to="/login/phoneinput" className="w-5/6 xl:w-2/3 px-6 py-3 bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3  text-white gap-1">
-                            <BsTelephone /> <div className="text-sm xl:text-lg">Continue with Phone Number</div>
-                        </button>
-                        :
-                        <button to="" className="w-5/6 xl:w-2/3 px-6 py-3 bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3  text-white gap-1">
-                            <BsTelephone /> <div className="text-sm xl:text-lg">Continue with Phone Number</div>
-                        </button>
-                    }
-                </div>
+                <button className="w-5/6 xl:w-2/3 px-6 py-3 bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3  text-white gap-1" onClick={goToPhoneInputPage}>
+                    <BsTelephone /> <div className="text-sm xl:text-lg">Continue with Phone Number</div>
+                </button>
                 <div className="lg:my-6 2xl:my-10 my-3">
                     <div className="inline-flex items-center justify-center w-full">
                         <hr className="w-full h-px my-8 border-0 bg-[#888888]" />
@@ -117,7 +114,7 @@ export default function WelcomePage() {
                         Google
                     </div>
                 </div>
-                <div className={`${checkboxColor ? "text-black" : "text-red-600"} w-full xl:w-1/2  xl:text-end items-center my-5 text-sm`}>
+                <div className={`${checkboxColor ? "text-black" : "text-red-600"} w-full mx-auto items-center my-5 text-lg`}>
                     <input id="default-checkbox" type="checkbox" value={agreeCheck} className="accent-pinkLight bg-gray-100 rounded-xl mr-1" onChange={() => setAgreeCheck(!agreeCheck)} />
                     I agree to terms and conditions
                 </div>

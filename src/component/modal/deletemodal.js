@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-
 import ModelLogo from "../../assets/Modal-Logo.png"
-
 
 export default function DeleteModal() {
 

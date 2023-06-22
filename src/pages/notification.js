@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-
 import MatchesPage from "../component/notificationalert/matches";
 import AlertsPage from "../component/notificationalert/alrets";
 import LikesPage from "../component/notificationalert/likes";
-
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
-
 
 export default function NotificationPage() {
     const [page, setPage] = useState("matches");

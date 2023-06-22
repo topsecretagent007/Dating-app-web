@@ -11,7 +11,6 @@ export default function Search() {
                 placeholder="Search"
                 aria-label="Search"
                 aria-describedby="button-addon1" />
-            {/* <!--Search button--> */}
             <button
                 className="relative z-[2] flex items-center rounded-r bg-pinkLight px-6 py-2.5 text-xs font-medium uppercase leading-tight text-white shadow-md "
                 type="button"

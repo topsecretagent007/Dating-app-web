@@ -18,9 +18,6 @@ export default function FindPage() {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
-
-
-
     const [loading, setLoading] = useState(false);
 
     const openUserModal = () => {

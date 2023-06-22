@@ -16,7 +16,6 @@ import Verify from './pages/verify';
 
 import WelcomePage from "./pages/login/welcomePage";
 import PhoneNumberPage from "./pages/login/phoneNumberPage";
-import EnterCode from "./pages/login/enterCode";
 import Age from "./pages/profile/age";
 import FriendShip from "./pages/profile/friendship";
 import ProfileData from "./pages/profile/profileData";
@@ -39,7 +38,6 @@ function App() {
               <Route exact path="/" element={<Protected><Home /></Protected>} />
               <Route exact path="/login" element={<WelcomePage />} />
               <Route exact path="/login/phoneinput" element={<PhoneNumberPage />} />
-              <Route exact path="/login/enter" element={<EnterCode />} />
 
               <Route exact path="/profile/age" element={<Protected><Age /></Protected>} />
               <Route exact path="/profile/friendship" element={<Protected><FriendShip /></Protected>} />

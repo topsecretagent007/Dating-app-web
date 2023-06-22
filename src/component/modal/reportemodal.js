@@ -1,8 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import React from "react";
 import ModelLogo from "../../assets/Modal-Logo.png"
-
 
 export default function ReporteModal({closeModal}) {
 

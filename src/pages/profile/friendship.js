@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
-
 import Logo from "../../assets/Logo1.svg";
 
 export default function FriendShip() {

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { IoMdAddCircle } from "react-icons/io";
 
-
 export default function AddInterested() {
     const [inputVisible, setInputVisible] = useState(false);
     const [value, setValue] = useState('');

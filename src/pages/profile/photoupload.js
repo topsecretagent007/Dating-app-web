@@ -10,7 +10,6 @@ import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
-
 export default function PhotoUpload() {
     const navigate = useNavigate();
     const { user } = UserAuth();

@@ -6,7 +6,7 @@ import Logo from "../../assets/Logo1.svg";
 import Image3 from "../../assets/image-3.png"
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import axios from 'axios';
 
 export default function Location() {

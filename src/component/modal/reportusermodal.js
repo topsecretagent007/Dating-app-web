@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
 import { BsFillShieldFill } from "react-icons/bs";
 import { FcCompactCamera } from "react-icons/fc";
 import { BiAngry } from "react-icons/bi";

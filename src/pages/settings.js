@@ -25,8 +25,6 @@ import { useNavigate } from "react-router-dom";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { showData } from "../config/constant";
 
-
-
 export default function SettingsPage() {
     const navigate = useNavigate();
     const { user } = UserAuth();
@@ -121,6 +119,7 @@ export default function SettingsPage() {
             }
         }
         if (user && user.uid) {
+            console.log(user)
             getUserInfo();
         }
     }, [user])
@@ -132,7 +131,7 @@ export default function SettingsPage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen pb-40 lg:pb-64 pt-28 lg:pt-16" >
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen pb-40 lg:pb-64 pt-28" >
                 <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 xl:px-20 mx-auto xl:pt-32 xl:flex gap-12">
                     <div className="w-full xl:w-2/3">
                         <div className="w-full  xl:flex gap-5">
