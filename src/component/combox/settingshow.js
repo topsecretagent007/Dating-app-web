@@ -1,6 +1,4 @@
-import * as React from 'react';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
+import React, { useState, useEffect } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
@@ -18,63 +16,43 @@ const MenuProps = {
     },
 };
 
-
-export default function MultipleSelectCheckmarks() {
-
-    const names = [
-        "MAN",
-        "WOMAN",
-        "MAN + WOMAN COUPLE",
-        "MAN + MAN COUPLE",
-        "WOMAN + WOMAN COUPLE",
-        "GENDER FLUID",
-        "GENDER NON CONFORMING",
-        "GENDER QUEER",
-        "AGENDER",
-        "ANDROGYNOUS",
-        "GENDER QUESTIONING",
-        "INTERSEX",
-        "NON-BINARY",
-        "PANGENDER",
-        "TRANS HUMAN",
-        "TRANS MAN",
-        "TRANS WOMAN",
-        "TRANSFEMINIME",
-        "TRANSMASCULINE",
-        "TWO-SPIRIT",
-    ];
-
-    const [showMe, setShowMe] = React.useState([]);
-
+export default function DropDown({ text, value, items, onHandleChange, multiple = false }) {
+    const [data, setData] = useState([]);
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        setShowMe(
-            // On autofill we get a stringified value..substring(0, 8)
-            typeof value === 'string' ? value.split(',') : value,
-        );
+        setData(typeof value === 'string' ? value.split(',') : value);
+        onHandleChange(typeof value === 'string' ? value.split(',') : value)
     };
+
+    useEffect(() => {
+        setData(value)
+    }, [value])
 
     return (
         <div>
             <div className="text-lg xl:text-xl w-full 2xl:text-3xl text-start ">
                 <FormControl variant="standard" className='w-full' sx={{ my: 2 }}>
-                    <div className='absolute z-50 left-5 text-lg '>show me</div>
-
+                    <div className='absolute z-50 left-1 md:left-5 text-base '>{text}</div>
                     <Select
-                        label="Age"
-                        multiple
-                        value={showMe}
+                        labelId="demo-multiple-checkbox-label"
+                        id="demo-multiple-checkbox"
+                        multiple={multiple}
+                        value={data}
                         onChange={(event) => handleChange(event)}
-                        renderValue={(selected) => selected.join(', ')}
+                        className='pl-[30%] max-w-2xl text-end'
+                        renderValue={(selected) => {
+                            return multiple == true ? selected.join(", ") : items.find((value) => value == selected);
+                        }}
                         MenuProps={MenuProps}
-                        className='pl-[40%] bg-white pb-3 text-[#888888] max-w-2xl'
                     >
-                        {names.map((name) => (
-                            <MenuItem key={name} value={name}  >
-                                <Checkbox checked={showMe.indexOf(name) > -1} />
-                                <ListItemText primary={name} />
+
+                        {items.map((item) => (
+                            <MenuItem key={item} value={item}>
+                                {multiple && <Checkbox checked={data.includes(item)} />}
+                                {!multiple && <Checkbox checked={data == item} />}
+                                <ListItemText primary={item} />
                             </MenuItem>
                         ))}
                     </Select>

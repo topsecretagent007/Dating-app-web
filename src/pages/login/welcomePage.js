@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
@@ -9,47 +9,70 @@ import { UserAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
 import { db } from "../../firebase";
 import { collection, query, where, getDoc, doc, setDoc } from "firebase/firestore";
+import LoadingModal from "../../component/loadingPage";
 
 export default function WelcomePage() {
     const navigate = useNavigate();
     const [agreeCheck, setAgreeCheck] = useState(false);
     const [checkboxColor, setCheckboxColor] = useState(true);
     const { googleSignIn, user } = UserAuth();
+    const [loading, setLoading] = useState(false);
 
     const handleGoogleSignIn = async () => {
-        try {
-            await googleSignIn()
-        } catch (error) {
-            console.log(error)
+        if (agreeCheck == true) {
+            try {
+                await googleSignIn()
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            setCheckboxColor(false);
         }
     }
 
     useEffect(() => {
         const setUserInfo = async () => {
+            setLoading(true);
             const docRef = doc(db, "Users", user.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                console.log("Document data:", docSnap.data());
+                setLoading(false);
+                navigate("/");
             } else {
                 const loginData = { apple: "", fb: "", google: "", phone: "" };
-                if(user.providerData[0].providerId=='google.com') loginData.google = user.uid;
-                if(user.providerData[0].providerId=='phone') loginData.phone = user.uid;
-                if(user.providerData[0].providerId=='apple.com') loginData.apple = user.uid;
-                if(user.providerData[0].providerId=='facebook.com') loginData.fb = user.uid;
+                if (user.providerData[0].providerId == 'google.com') loginData.google = user.uid;
+                if (user.providerData[0].providerId == 'phone') loginData.phone = user.uid;
+                if (user.providerData[0].providerId == 'apple.com') loginData.apple = user.uid;
+                if (user.providerData[0].providerId == 'facebook.com') loginData.fb = user.uid;
                 const data = {
                     LoginID: loginData,
                     timestamp: new Date(),
                     userId: user.uid,
                     metode: user.providerData[0].providerId,
-                    verified: 0
-                }
+                    verified: 0,
+                    UserName: "",
+                    user_DOB: "",
+                    age: "",
+                    editInfo: {
+                        showOnProfile: false,
+                        university: "",
+                        userGender: ""
+                    },
+                    sexualOrientation: {
+                        orientation: "",
+                        showOnProfile: false
+                    },
+                    showGender: [],
+                    desires: [],
+                    status: ""
+                };
                 await setDoc(doc(db, "Users", user.uid), data);
-                navigate("/profile/age")
+                setLoading(false);
+                navigate("/profile/age");
             }
         }
         if (user != null && user.uid != null) {
             setUserInfo();
-            //navigate("/profile/age")
         }
     }, [user])
 
@@ -59,7 +82,7 @@ export default function WelcomePage() {
                 <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <img src={ModelLogo} alt="ModelLogo" />
                 </h2>
-                <Link to='/'>
+                <Link to='https://unjabbed.app/web-app/'>
                     <FiArrowLeft className="text-pinkLight text-sm md:text-xl lg:text-2xl xl:text-4xl mt-8 xl:mt-10" />
                 </Link>
                 <p className="text-lg lg:text-xl xl:text-3xl font-bold my-3">Welcome!</p>
@@ -69,13 +92,13 @@ export default function WelcomePage() {
                 </span>
                 <div className="w-full">
                     {agreeCheck ?
-                        <Link to="/login/phoneinput" className="w-5/6 xl:w-2/3 px-6 py-3 bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3  text-white gap-1">
+                        <button to="/login/phoneinput" className="w-5/6 xl:w-2/3 px-6 py-3 bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3  text-white gap-1">
                             <BsTelephone /> <div className="text-sm xl:text-lg">Continue with Phone Number</div>
-                        </Link>
+                        </button>
                         :
-                        <Link to="" className="w-5/6 xl:w-2/3 px-6 py-3 bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3  text-white gap-1">
+                        <button to="" className="w-5/6 xl:w-2/3 px-6 py-3 bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3  text-white gap-1">
                             <BsTelephone /> <div className="text-sm xl:text-lg">Continue with Phone Number</div>
-                        </Link>
+                        </button>
                     }
                 </div>
                 <div className="lg:my-6 2xl:my-10 my-3">
@@ -94,12 +117,17 @@ export default function WelcomePage() {
                         Google
                     </div>
                 </div>
-                <div className="w-full xl:w-1/2  xl:text-end items-center my-5 text-sm">
-                    <input id="default-checkbox" type="checkbox" value={agreeCheck} className={`${checkboxColor ? "text-black" : "text-red-600"} accent-pinkLight bg-gray-100 rounded-xl mr-1`} onChange={() => setAgreeCheck(!agreeCheck)} />
+                <div className={`${checkboxColor ? "text-black" : "text-red-600"} w-full xl:w-1/2  xl:text-end items-center my-5 text-sm`}>
+                    <input id="default-checkbox" type="checkbox" value={agreeCheck} className="accent-pinkLight bg-gray-100 rounded-xl mr-1" onChange={() => setAgreeCheck(!agreeCheck)} />
                     I agree to terms and conditions
                 </div>
                 <div className="text-pinkLight text-sm justify-center my-6 ">Terms of use & Privacy Policy</div>
             </div>
+            {
+                loading &&
+                <LoadingModal />
+            }
+
         </div >
     )
 }

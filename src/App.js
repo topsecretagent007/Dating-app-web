@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 import UserContext from './context/userContext';
 import { AuthContextProvider, UserAuth } from "./context/AuthContext"
-import Landing from "./pages/landing";
+import Home from "./pages/home";
 import FindPage from './pages/find';
 import ProfileSetting from './pages/profile';
 import Notification from './pages/notification';
@@ -28,23 +28,15 @@ import Protected from './component/Protected';
 
 function App() {
   const [phoneNumber, setPhoneNumber] = useState();
-  const [userSex, setUserSex] = useState("");
-  const [userSexual, setUserSexual] = useState("");
-  const [userStatus, setUserStatus] = useState("");
-  const [userLooking, setUserLooking] = useState([]);
-  const [userShow, setUserShow] = useState([]);
-  const [userDescription, setUserDescription] = useState("");
-  const [userAge, setUserAge] = useState();
-  const [userId, setUserId] = useState();
-  const [userImages, setUserImages] = useState([]);
+  const [userAvatar, setUserAvatar] = useState();
 
   return (
     <AuthContextProvider>
-      <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userDescription, setUserDescription, userAge, setUserAge, userId, setUserId, userImages, setUserImages }}>
+      <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userAvatar, setUserAvatar }}>
         <div className="App">
           <Router >
             <Routes>
-              <Route exact path="/" element={<Protected><Landing /></Protected>} />
+              <Route exact path="/" element={<Protected><Home /></Protected>} />
               <Route exact path="/login" element={<WelcomePage />} />
               <Route exact path="/login/phoneinput" element={<PhoneNumberPage />} />
               <Route exact path="/login/enter" element={<EnterCode />} />

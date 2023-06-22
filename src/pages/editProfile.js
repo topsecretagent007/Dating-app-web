@@ -1,27 +1,76 @@
 import React, { useEffect, useState, useRef, Fragment } from "react";
 import { AiOutlineDelete, AiOutlinePlus, AiFillEye, AiOutlineClose } from 'react-icons/ai';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FcCamera, FcPicture } from "react-icons/fc";
 import ModelLogo from "../assets/Modal-Logo.png"
 import ImageUploading from 'react-images-uploading';
-// import MeDropdown from "../component/combox/dropdown";
-// import SexualDropdown from "../component/combox/sexualdropdown";
-// import StatusDropdown from "../component/combox/statusdropdown";
-// import LookDropdown from "../component/combox/lookingdropdown";
-// import ShowDropdown from "../component/combox/showdropdown";
+import Dropdown from "../component/combox/dropdown";
+import { UserAuth } from "../context/AuthContext";
+import { db } from "../firebase";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { sexData, oriData, statusData, lookingForData, showData } from "../config/constant";
+import LoadingModal from "../component/loadingPage";
 import AddInterested from "../component/other/addinterested";
+import { storage } from "../firebase";  // Import the firebase storage object
+
 
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 
 
 export default function EditProfilePage() {
+    const navigate = useNavigate();
+    const { user } = UserAuth();
     const [uploadModal, setUploadModal] = useState(false);
     const [images, setImages] = React.useState([]);
     const menuDropdown = useRef(null)
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
+    const [userSex, setUserSex] = useState("");
+    const [userOri, setUserOri] = useState("");
+    const [userStatus, setUserStatus] = useState("");
+    const [userLooking, setUserLooking] = useState([]);
+    const [userShow, setUserShow] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [description, setDescription] = useState("");
+    const maxNumber = 6;
+    const numbers = [1, 2, 3, 4, 5, 6];
+    const listItems = numbers.map((numbers) =>
+        <div key={numbers} className="w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
 
+    const dataSave = async () => {
+        setLoading(true);
+        let pictures = [];
+        for (var i = 0; i < images.length; i++) {
+            pictures.push({
+                show: true,
+                url: await uploadImage(images[i])
+            });
+        }
+        await updateDoc(doc(db, "Users", user.uid), {
+            Pictures: pictures,
+            editInfo: {
+                showOnProfile: false,
+                university: "",
+                userGender: userSex,
+                about: description
+            },
+            sexualOrientation: {
+                orientation: userOri,
+                showOnProfile: false
+            },
+            showGender: userShow,
+            desires: userLooking,
+            status: userStatus,
+            currentPoint: {
+                geohash: "",
+                geopoint: [0, 0]
+            },
+        });
+        setLoading(false);
+        navigate("/profile");
+    }
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
@@ -32,7 +81,6 @@ export default function EditProfilePage() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [prevScrollPos]);
-
     useEffect(() => {
         function handleClickOutside(event) {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
@@ -46,26 +94,74 @@ export default function EditProfilePage() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [menuDropdown]);
-
-
-    const maxNumber = 99;
-    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    const listItems = numbers.map((numbers) =>
-        <div key={numbers} className="w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
-
+    
     const onChange = (imageList, addUpdateIndex) => {
         // data for submit
-        console.log(imageList, addUpdateIndex);
         setImages(imageList);
         setUploadModal(false);
 
     };
 
+    const uploadImage = async (image) => {
+        if (!image) {
+            return null;
+        }
+        if (image.url.includes("https://")) return image.url;
+
+        const filename = `${Date.now()}-${image.file.name}`;
+        const storageRef = ref(storage, `users/${user.uid}/${filename}`);
+
+        return new Promise((resolve, reject) => {
+            const uploadTask = uploadBytesResumable(storageRef, image.file);
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {
+                    const percent = Math.round(
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    );
+                },
+                (err) => console.log(err),
+                async () => {
+                    // download url
+                    getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                        return resolve(url);
+                    }).catch((e) => reject(e));
+                }
+            );
+        });
+
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setImages(userData.Pictures)
+                setDescription(userData.editInfo?.about)
+                setUserSex(userData.editInfo?.userGender)
+                setUserOri(userData.sexualOrientation?.orientation);
+                setUserStatus(userData.status);
+                setUserLooking(userData.desires);
+                setUserShow(userData.showGender);
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+
+    }, [user])
+
     return (
         <div>
             <Header />
             <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-20">
-                <div className="w-[300px] md:w-[600px] xl:w-[1100px] 2xl:w-[1750px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
+                <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
                     <div className="w-full xl:px-10 2xl:px-40 pb-20">
                         <div className="w-full lg:flex lg:justify-between items-center">
                             <div className="text-lg font-bold text-center lg:text-start xl:text-3xl">Edit Profile</div>
@@ -89,7 +185,7 @@ export default function EditProfilePage() {
                                     value={images}
                                     onChange={onChange}
                                     maxNumber={maxNumber}
-                                    dataURLKey="data_url"
+                                    dataURLKey="url"
                                 >
                                     {({
                                         imageList,
@@ -100,7 +196,7 @@ export default function EditProfilePage() {
                                     }) => (
                                         // write your building UI
                                         <div className="upload__image-wrapper">
-                                            <div className="w-[256px] h-[175px] lg:w-[512px] lg:h-[344px] justify-center mx-auto p-2 rounded-xl gap-2 grid grid-cols-3">
+                                            <div className="w-[256px] h-[175px] lg:w-[512px] lg:h-[344px]  mx-auto p-2 rounded-xl gap-2 grid grid-cols-3">
                                                 <div className="absolute z-1 justify-center gap-2 grid grid-cols-3">
                                                     {listItems}
                                                 </div>
@@ -110,7 +206,7 @@ export default function EditProfilePage() {
                                                             <AiOutlineDelete />
                                                         </button>
 
-                                                        <img src={image['data_url']}
+                                                        <img src={image['url']}
                                                             className="absolute z-5 w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto object-cover rounded-xl" />
                                                     </div>
                                                 ))}
@@ -148,7 +244,7 @@ export default function EditProfilePage() {
                                             }
 
                                             <div className="px-8 md:px-44 lg:px-20">
-                                                <button className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mt-32 lg:mt-48 justify-center gap-2 items-center flex hover:bg-pinkLight hover:text-white"
+                                                <button className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mt-10 lg:mt-16 justify-center gap-2 items-center flex hover:bg-pinkLight hover:text-white"
                                                     onClick={() => setUploadModal(!uploadModal)}>
                                                     <AiOutlinePlus />Add Media
                                                 </button>
@@ -174,25 +270,31 @@ export default function EditProfilePage() {
                                                 placeholder="Write something about yourself."
                                                 rows={4}
                                                 cols={40}
+                                                value={description}
+                                                onChange={(e) => setDescription(e.target.value)}
                                             >
                                             </textarea>
                                         </div>
                                     </div>
                                     <div className="grid md:grid-cols-2 md:justify-between gap-5 pb-56">
-                                        {/* <MeDropdown />
-                                        <SexualDropdown />
-                                        <StatusDropdown />
-                                        <LookDropdown />
-                                        <ShowDropdown /> */}
+                                        <Dropdown text="I am a " value={userSex} items={sexData} onHandleChange={e => setUserSex(e[0])} />
+                                        <Dropdown text="My sexual orientation " value={userOri} items={oriData} onHandleChange={e => setUserOri(e[0])} />
+                                        <Dropdown text="My Status is " value={userStatus} items={statusData} onHandleChange={e => setUserStatus(e[0])} />
+                                        <Dropdown text="I am looking for " value={userLooking} items={lookingForData} onHandleChange={e => setUserLooking(e)} multiple={true} />
+                                        <Dropdown text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <Link to="/profile" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</Link>
+                        <button onClick={() => dataSave()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</button>
                     </div>
                 </div>
             </div>
             <Footer />
+            {
+                loading &&
+                <LoadingModal />
+            }
         </div >
     )
 }

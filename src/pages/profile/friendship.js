@@ -7,7 +7,7 @@ import Logo from "../../assets/Logo1.svg";
 export default function FriendShip() {
 
     return (
-        <div className="bg-[#FFFBFE] rounded-xl w-full h-full h-min-screen flex py-10">
+        <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen flex py-10">
             <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
                 <Link to='/profile/age' className="">
                     <FiArrowLeft className="text-pinkLight text-xl lg:text-2xl xl:text-4xl my-3" />

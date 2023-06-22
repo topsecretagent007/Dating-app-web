@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
-
 import { FiArrowLeft } from "react-icons/fi";
 import UserContext from "../../context/userContext";
 

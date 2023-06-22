@@ -1,72 +1,66 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Logo from "../../assets/Logo1.svg";
-import UserContext from "../../context/userContext";
-import { collection, addDoc, setDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase';
+import LoadingModal from "../../component/loadingPage";
+import { UserAuth } from "../../context/AuthContext";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 export default function ProfileDescription() {
+    const navigate = useNavigate();
+    const { user } = UserAuth();
+    const [loading, setLoading] = useState(false);
     const [description, setDescription] = useState("");
-    const { userDescription, setUserDescription } = useContext(UserContext);
-    const { userName } = useContext(UserContext);
-    const { userBrithday } = useContext(UserContext);
-    const { userSex } = useContext(UserContext);
-    const { userSexual } = useContext(UserContext);
-    const { userStatus } = useContext(UserContext);
-    const { userLooking } = useContext(UserContext);
-    const { userShow } = useContext(UserContext);
-    const { userAge } = useContext(UserContext);
-    const { phoneNumber } = useContext(UserContext);
-    const { userImages } = useContext(UserContext);
-    const { userTmpl } = useContext(UserContext)
+    const [originalEditInfo, setOriginalEditInfo] = useState(null);
 
-
-    const inputDescription = (e) => {
-        setDescription(e.target.value)
-    }
-
-    const updataProfile = async () => {
-        console.log(userName, ",", userBrithday, ",", userSex, ",", userSexual, ",", userStatus, ",", userLooking, ",", userShow, ",", userDescription, ",", userAge, ",")
-
+    const updataProfileData = async () => {
+        setLoading(true);
+        const { about:_, ...temp } = originalEditInfo;
+        const newEditInfo = {about: description, ...temp};
         try {
-            const updateUserId = doc(db, "Users", userTmpl.uid)
-            await updateDoc(updateUserId, {
-                Pictures: [{ show: "ture", url: userImages },],
-                UserName: userName,
-                user_DOB: userBrithday,
-                sexualOrientation: { orientation: userSexual, showOnProfile: false },
-                status: userStatus,
-                desires: userLooking,
-                editInfo: { showOnProfile: false, university: "", userGender: userSex },
-                showGender: userShow,
-                discription: userDescription,
-                age: userAge,
-                verified: 0,
-                phoneNumber: phoneNumber,
-                showdesires: true,
-                showstatus: false,
-                gerHash: "",
-                geolocation: [],
+            await updateDoc(doc(db, "Users", user.uid), {
+                editInfo: newEditInfo,
                 listSwipedUser: [],
-                location: { address: "", countryID: "", countryName: "", latitude: 1.2312, longitude: 34.565467 },
-                point: { geohash: "", geopoint: [] },
-            })
-            window.location.reload();
+                age_range: {
+                    max: "99",
+                    min: "18"
+                },
+                maximum_distance: 400,
+                miles: true,
+
+            });
+            setLoading(false);
+            navigate("/");
         } catch (err) {
             console.log(err);
         }
     }
 
     useEffect(() => {
-        setUserDescription(description);
-    }, [description])
+        setLoading(true);
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setOriginalEditInfo(userData.editInfo);
+                setDescription(userData.editInfo?.about);
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user])
 
     return (
         <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen justify-center pt-10 pb-20">
             <div className="flex">
                 <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
-                    <Link to='/profile/photoaddmore' className="">
+                    <Link to='/profile/photoaddmore'>
                         <FiArrowLeft className="text-pinkLight text-xl lg:text-2xl xl:text-4xl my-3" />
                     </Link>
                 </div>
@@ -89,15 +83,19 @@ export default function ProfileDescription() {
                             rows={4}
                             cols={40}
                             value={description}
-                            onChange={(e) => inputDescription(e)}
+                            onChange={(e) => setDescription(e.target.value)}
                         >
                         </textarea>
                     </div>
-                    <Link to="/" onClick={() => updataProfile()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</Link>
+                    <button onClick={() => updataProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
                 </div>
                 <div className="pt-20 pr-2 md:pr-5 xl:pr-20 2xl:pr-40">
                 </div>
             </div>
+            {
+                loading &&
+                <LoadingModal />
+            }
         </div>
     )
 }

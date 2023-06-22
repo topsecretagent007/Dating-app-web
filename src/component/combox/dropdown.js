@@ -4,7 +4,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
-import Select, { selectClasses } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 
 const ITEM_HEIGHT = 48;
@@ -18,13 +18,12 @@ const MenuProps = {
     },
 };
 
-export default function DropDown({ text, value, items, onHandleChange, multiple=false }) {
+export default function DropDown({ text, value, items, onHandleChange, multiple = false }) {
     const [data, setData] = useState([]);
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        console.log( value)
         setData(typeof value === 'string' ? value.split(',') : value);
         onHandleChange(typeof value === 'string' ? value.split(',') : value)
     };
@@ -35,8 +34,8 @@ export default function DropDown({ text, value, items, onHandleChange, multiple=
 
     return (
         <div>
-            <div className="text-lg xl:text-xl w-full 2xl:text-3xl text-start mx-auto">
-                <div className="py-2 font-bold w-full">{ text }</div>
+            <div className="text-lg xl:text-xl w-full 2xl:text-2xl text-start mx-auto">
+                <div className="py-2 font-bold w-full">{text}</div>
                 <FormControl className='w-full' sx={{ m: 1, }}>
                     <InputLabel id="demo-multiple-checkbox-label">Please Select</InputLabel>
                     <Select
@@ -47,15 +46,15 @@ export default function DropDown({ text, value, items, onHandleChange, multiple=
                         onChange={(event) => handleChange(event)}
                         input={<OutlinedInput label="Please Select" />}
                         renderValue={(selected) => {
-                            return multiple==true ? selected.join(", ") : items.find((value) => value == selected ); 
+                            return multiple == true ? selected.join(", ") : items.find((value) => value == selected);
                         }}
                         MenuProps={MenuProps}
                     >
 
                         {items.map((item) => (
                             <MenuItem key={item} value={item}>
-                                { multiple && <Checkbox checked={data.includes(item)} /> }
-                                { !multiple && <Checkbox checked={data==item} /> }
+                                {multiple && <Checkbox checked={data.includes(item)} />}
+                                {!multiple && <Checkbox checked={data == item} />}
                                 <ListItemText primary={item} />
                             </MenuItem>
                         ))}

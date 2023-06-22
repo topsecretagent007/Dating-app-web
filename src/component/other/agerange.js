@@ -16,22 +16,12 @@ const MenuProps = {
     },
 };
 
-export default function DistanceSlider() {
+export default function DistanceSlider({ frist, last, onFristAge, onLastAge }) {
     const [listAge, setListAge] = useState([]);
-    const [fristAge, setFristAge] = useState(18);
-    const [lastAge, setLastAge] = useState(99);
-    const [length, setLength] = useState(0);
-    const [unit, setUnit] = useState(false);
+    const [fristAge, setFristAge] = useState(frist);
+    const [lastAge, setLastAge] = useState(last);
 
 
-    useEffect(() => {
-        if (unit === false) {
-            setLength(parseInt(length * 4 / 2.48));
-
-        } else {
-            setLength(parseInt(length * 2.48 / 4));
-        }
-    }, [unit])
 
     const fristAgeSelect = listAge.map((listAge, index) => (
         <MenuItem key={listAge} value={listAge} className="text-pinkLight ageSelect">
@@ -40,12 +30,28 @@ export default function DistanceSlider() {
     ))
 
     const fristAgeChange = (event) => {
-        setFristAge(event.target.value);
+        if (event.target.value > lastAge) {
+            setFristAge(lastAge - 1);
+            onFristAge(lastAge - 1);
+        } else {
+            setFristAge(event.target.value);
+            onFristAge(event.target.value);
+        }
+
     };
 
     const lastAgeChange = (event) => {
-        setLastAge(event.target.value);
+        if (event.target.value < fristAge) {
+            setLastAge(fristAge + 1);
+            onLastAge(fristAge + 1);
+
+        } else {
+            setLastAge(event.target.value);
+            onLastAge(event.target.value);
+        }
+
     }
+
 
     useEffect(() => {
         const allAge = [];
@@ -107,13 +113,9 @@ export default function DistanceSlider() {
     }));
 
     useEffect(() => {
-        if (unit === false) {
-            setLength(parseInt(length * 4 / 2.48));
-
-        } else {
-            setLength(parseInt(length * 2.48 / 4));
-        }
-    }, [unit])
+        setFristAge(frist);
+        setLastAge(last);
+    }, [frist, last])
 
     return (
         <div className="justify-start grid md:grid-cols-2 gap-4 items-center py-3">
@@ -146,7 +148,6 @@ export default function DistanceSlider() {
                         inputProps={{ 'aria-label': 'Without label' }}
                         MenuProps={MenuProps}
                         className="outline-none"
-
                     >
                         {fristAgeSelect}
                     </Select>

@@ -4,19 +4,22 @@ import { Slider } from "@material-tailwind/react";
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 
-export default function DistanceSlider() {
-    const [unit, setUnit] = useState(false);
-    const [length, setLength] = useState(0);
+export default function DistanceSlider({ distance, miles, onMiles, onDistance }) {
+    const [unit, setUnit] = useState(miles);
+    const [length, setLength] = useState(distance);
+    const [valueLength, setValueLangth] = useState();
 
     const selectLength = (e) => {
         e.preventDefault();
         const totalLength = (e.target.value);
         if (unit === false) {
             setLength(parseInt(totalLength * 4));
+            onDistance(parseInt(totalLength * 4));
         } else {
             setLength(parseInt(totalLength * 2.48));
+            onDistance(parseInt(totalLength * 2.48));
         }
-    }
+    };
     const IOSSwitch = styled((props) => (
         <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
     ))(({ theme }) => ({
@@ -69,18 +72,43 @@ export default function DistanceSlider() {
     }));
 
     useEffect(() => {
+        onMiles(unit);
         if (unit === false) {
             setLength(parseInt(length * 4 / 2.48));
-
+            onDistance(parseInt(length * 4 / 2.48));
         } else {
             setLength(parseInt(length * 2.48 / 4));
+            onDistance(parseInt(length * 2.48 / 4));
         }
-    }, [unit])
+    }, [unit]);
+
+    useEffect(() => {
+        const distanceValue = () => {
+            if (unit) {
+                setValueLangth(distance / 2.48)
+            } else {
+                setValueLangth(distance / 4)
+            }
+        }
+        if (distance && miles) {
+            distanceValue();
+        }
+    }, []);
+
+    useEffect(() => {
+        if (miles == true && distance > 248) {
+            setLength(248);
+        } else if (miles == false && distance > 400) {
+            setLength(400);
+        } else {
+            setLength(distance);
+        }
+    }, [distance])
 
     return (
         <div className="p-3">
             <div className="justify-start">{length}{unit ? "Mile" : "Km"}</div>
-            <Slider size="sm" defaultValue={length} onChange={(e) => selectLength(e)} />
+            <Slider size="sm" defaultValue={valueLength} onChange={(e) => selectLength(e)} />
             <div className="justify-start flex gap-4 items-center mt-5">
                 <div>Miles</div>
                 <div className="relative inline-flex items-center cursor-pointer">

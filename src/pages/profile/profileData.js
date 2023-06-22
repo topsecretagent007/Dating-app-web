@@ -1,13 +1,13 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Logo from "../../assets/Logo1.svg";
 import Dropdown from "../../component/combox/dropdown";
-
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { sexData, oriData, statusData, lookingForData, showData } from "../../config/constant";
+import LoadingModal from "../../component/loadingPage";
 
 export default function ProfileData() {
     const navigate = useNavigate();
@@ -15,12 +15,13 @@ export default function ProfileData() {
     const [name, setName] = useState("");
     const [brithday, setBrithday] = useState("");
     const [nextPage, setNextPage] = useState(false);
-    const [ userAge, setUserAge ] = useState(0);
-    const [ userSex, setUserSex ] = useState("");
-    const [ userOri, setUserOri ] = useState("");
-    const [ userStatus, setUserStatus ] = useState("");
-    const [ userLooking, setUserLooking ] = useState([]);
-    const [ userShow, setUserShow ] = useState([]);
+    const [userAge, setUserAge] = useState(0);
+    const [userSex, setUserSex] = useState("");
+    const [userOri, setUserOri] = useState("");
+    const [userStatus, setUserStatus] = useState("");
+    const [userLooking, setUserLooking] = useState([]);
+    const [userShow, setUserShow] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const nameChange = (event) => {
         setName(event.target.value);
@@ -41,6 +42,7 @@ export default function ProfileData() {
 
     const updateProfileData = async () => {
         if (name !== "" && brithday !== "" && userSex !== "" && userOri !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
+            setLoading(true);
             await updateDoc(doc(db, "Users", user.uid), {
                 UserName: name,
                 user_DOB: brithday,
@@ -56,11 +58,32 @@ export default function ProfileData() {
                 },
                 showGender: userShow,
                 desires: userLooking,
-                status: userStatus
+                status: userStatus,
+                currentPoint: {
+                    geohash: "",
+                    geopoint: [0, 0]
+                },
+                geoHash: "",
+                geoLocation: [0, 0],
+                location: {
+                    address: "",
+                    countryID: "",
+                    countryName: "",
+                    latitude: 0,
+                    longitude: 0
+                },
+                point: {
+                    geohash: "",
+                    geopoint: [0, 0]
+                },
+                interest: "",
+                phoneNumber: ""
             });
+            setLoading(false);
             navigate("/profile/location");
         }
     }
+
     useEffect(() => {
         if (name !== "" && brithday !== "" && userSex !== "" && userOri !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
             setNextPage(true);
@@ -70,6 +93,7 @@ export default function ProfileData() {
     }, [name, brithday, userSex, userOri, userStatus, userLooking, userShow])
 
     useEffect(() => {
+        setLoading(true);
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
@@ -81,16 +105,16 @@ export default function ProfileData() {
                 setUserStatus(userData.status);
                 setUserLooking(userData.desires);
                 setUserShow(userData.showGender);
-                console.log(userData.editInfo?.userGender)
+                setLoading(false);
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         }
-        if(user && user.uid) {
+        if (user && user.uid) {
             getUserInfo();
         }
-        
+
     }, [user])
 
 
@@ -128,11 +152,15 @@ export default function ProfileData() {
                     nextPage ?
                         <button onClick={() => updateProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</button>
                         :
-                        <Link to="" onClick={() => updateProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</Link>
+                        <button className="bg-pink-950 justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</button>
                 }
             </div>
             <div className=" pt-20 pl-[8%]">
             </div>
+            {
+                loading &&
+                <LoadingModal />
+            }
         </div>
     )
 }
