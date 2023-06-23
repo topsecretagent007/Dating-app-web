@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageUploading from 'react-images-uploading';
 import { FcCamera, FcPicture } from "react-icons/fc";
@@ -9,6 +9,8 @@ import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
+import { toast } from 'react-toastify';
+import AlertModal from "../../component/modal/alertmodal";
 
 export default function PhotoUpload() {
     const navigate = useNavigate();
@@ -17,13 +19,18 @@ export default function PhotoUpload() {
     const [images, setImages] = useState([]);
     const maxNumber = 100;
     const [loading, setLoading] = useState(false);
+    const [alertModal, setAlertModal] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const menuDropdown = useRef(null);
+    const [prevScrollPos, setPrevScrollPos] = useState(0);
 
     const uploadImage = async (image) => {
         if (!image) {
             return null;
         }
         if (image.url.includes("https://")) return image.url;
-
+        if (image.file == null) return null;
+        console.log("here")
         const filename = `${Date.now()}-${image.file.name}`;
         const storageRef = ref(storage, `users/${user.uid}/${filename}`);
 
@@ -45,7 +52,6 @@ export default function PhotoUpload() {
                 }
             );
         });
-
     }
 
     useEffect(() => {
@@ -70,14 +76,43 @@ export default function PhotoUpload() {
     const updateAvatar = async () => {
         setLoading(true);
         const firstNewImage = await uploadImage(images[0]);
-        const [first, ...rest] = originalImages;
-        const pictures = [{ url: firstNewImage, show: true }, ...rest];
-        await updateDoc(doc(db, "Users", user.uid), {
-            Pictures: pictures
-        });
-        setLoading(false);
-        navigate("/profile/photoaddmore");
+        if (firstNewImage != null) {
+            const [first, ...rest] = originalImages;
+            const pictures = [{ url: firstNewImage, show: true }, ...rest];
+            await updateDoc(doc(db, "Users", user.uid), {
+                Pictures: pictures
+            });
+            setLoading(false);
+            navigate("/profile/photoaddmore");
+        } else {
+            setAlertModal(true);
+            setLoading(false);
+        }
     }
+
+    useEffect(() => {
+        function handleScroll() {
+            const currentScrollPos = window.pageYOffset;
+            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
+            setPrevScrollPos(currentScrollPos);
+        }
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [prevScrollPos]);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
+                setAlertModal(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [menuDropdown]);
 
     return (
         <div className="bg-[#FFFBFE] min-h-screen justify-center rounded-xl w-full h-full flex pt-10 pb-32">
@@ -103,7 +138,7 @@ export default function PhotoUpload() {
                                     <div className="upload__image-wrapper">
                                         <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar.png')] mx-auto rounded-3xl bg-cover">
                                             <div className="image-item">
-                                                {images[0] && images[0]['url']!="" && <img src={images[0]['url']} alt="Avatar" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />}
+                                                {images[0] && images[0]['url'] != "" && images[0]['url'] != null && <img src={images[0]['url']} alt="Avatar" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />}
                                             </div>
 
                                         </div>
@@ -144,6 +179,16 @@ export default function PhotoUpload() {
             {
                 loading &&
                 <LoadingModal />
+            }
+            {
+                alertModal &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <AlertModal text="Please select your avatar." />
+                        </div>
+                    </div >
+                </div>
             }
         </div>
     )

@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import FindImage from "../../assets/findImage.png"
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-
-const images = [FindImage, FindImage, FindImage];
 
 const arrowStyles = {
   position: 'absolute',
@@ -43,22 +41,14 @@ const nextArrow = (onClickHandler, hasNext, label) => {
     </svg>
   </span>
 }
-export default function sfsdfCarousel() {
-  const onChange = (index, item) => {
-  };
+export default function UserCarousel() {
+  const [images, setImages] = useState([FindImage, FindImage, FindImage]);
 
-  const onClickItem = (index, item) => {
-  };
 
-  const onClickThumb = (index, item) => {
-  };
 
   return (
     <Carousel
       showArrows={true}
-      onChange={onChange}
-      onClickItem={onClickItem}
-      onClickThumb={onClickThumb}
       showThumbs={false}
       axis='vertical'
       infiniteLoop={true}

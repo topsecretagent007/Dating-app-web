@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Logo from "../../assets/Logo1.svg";
@@ -8,6 +8,7 @@ import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { sexData, oriData, statusData, lookingForData, showData } from "../../config/constant";
 import LoadingModal from "../../component/loadingPage";
+import AlertModal from "../../component/modal/alertmodal";
 
 export default function ProfileData() {
     const navigate = useNavigate();
@@ -22,6 +23,10 @@ export default function ProfileData() {
     const [userLooking, setUserLooking] = useState([]);
     const [userShow, setUserShow] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [alertModal, setAlertModal] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const menuDropdown = useRef(null);
+    const [prevScrollPos, setPrevScrollPos] = useState(0);
 
     const nameChange = (event) => {
         setName(event.target.value);
@@ -40,47 +45,75 @@ export default function ProfileData() {
         event.preventDefault();
     }
 
+    useEffect(() => {
+        function handleScroll() {
+            const currentScrollPos = window.pageYOffset;
+            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
+            setPrevScrollPos(currentScrollPos);
+        }
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [prevScrollPos]);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
+                setAlertModal(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [menuDropdown]);
+
     const updateProfileData = async () => {
-        if (name !== "" && brithday !== "" && userSex !== "" && userOri !== "" && userStatus !== "" && userLooking !== "" && userShow !== "") {
-            setLoading(true);
-            await updateDoc(doc(db, "Users", user.uid), {
-                UserName: name,
-                user_DOB: brithday,
-                age: userAge,
-                editInfo: {
-                    showOnProfile: false,
-                    university: "",
-                    userGender: userSex
-                },
-                sexualOrientation: {
-                    orientation: userOri,
-                    showOnProfile: false
-                },
-                showGender: userShow,
-                desires: userLooking,
-                status: userStatus,
-                currentPoint: {
-                    geohash: "",
-                    geopoint: [0, 0]
-                },
-                geoHash: "",
-                geoLocation: [0, 0],
-                location: {
-                    address: "",
-                    countryID: "",
-                    countryName: "",
-                    latitude: 0,
-                    longitude: 0
-                },
-                point: {
-                    geohash: "",
-                    geopoint: [0, 0]
-                },
-                interest: "",
-                phoneNumber: ""
-            });
-            setLoading(false);
-            navigate("/profile/location");
+        if (nextPage) {
+            if (name !== "" && brithday !== "" && userSex !== "" && userOri !== "" && userStatus !== "" && userLooking !== [] && userShow !== []) {
+                setLoading(true);
+                await updateDoc(doc(db, "Users", user.uid), {
+                    UserName: name,
+                    user_DOB: brithday,
+                    age: userAge,
+                    editInfo: {
+                        showOnProfile: false,
+                        university: "",
+                        userGender: userSex
+                    },
+                    sexualOrientation: {
+                        orientation: userOri,
+                        showOnProfile: false
+                    },
+                    showGender: userShow,
+                    desires: userLooking,
+                    status: userStatus,
+                    currentPoint: {
+                        geohash: "",
+                        geopoint: [0, 0]
+                    },
+                    geoHash: "",
+                    geoLocation: [0, 0],
+                    location: {
+                        address: "",
+                        countryID: "",
+                        countryName: "",
+                        latitude: 0,
+                        longitude: 0
+                    },
+                    point: {
+                        geohash: "",
+                        geopoint: [0, 0]
+                    },
+                    interest: "",
+                    phoneNumber: ""
+                });
+                setLoading(false);
+                navigate("/profile/location");
+            }
+        } else {
+            setAlertModal(true);
         }
     }
 
@@ -148,18 +181,23 @@ export default function ProfileData() {
                         <Dropdown text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
                     </div>
                 </div>
-                {
-                    nextPage ?
-                        <button onClick={() => updateProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</button>
-                        :
-                        <button className="bg-pink-950 justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Got it</button>
-                }
+                <button onClick={() => updateProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Continue</button>
             </div>
             <div className=" pt-20 pl-[8%]">
             </div>
             {
                 loading &&
                 <LoadingModal />
+            }
+            {
+                alertModal &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <AlertModal text="Please fill all the fields." />
+                        </div>
+                    </div >
+                </div>
             }
         </div>
     )

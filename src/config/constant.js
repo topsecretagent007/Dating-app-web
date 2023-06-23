@@ -53,11 +53,9 @@ export const lookingForData = [
     "RELATIONSHIP",
     "FRIENDSHIP",
     "CASUAL",
-    "FWB",
     "FUN",
     "DATES",
     "TEXTING",
-    "THREESOME",
 ];
 export const showData = [
     "MAN",

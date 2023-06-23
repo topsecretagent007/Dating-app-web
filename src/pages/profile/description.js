@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Logo from "../../assets/Logo1.svg";
@@ -6,6 +6,7 @@ import { db } from '../../firebase';
 import LoadingModal from "../../component/loadingPage";
 import { UserAuth } from "../../context/AuthContext";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
+import AlertModal from "../../component/modal/alertmodal";
 
 export default function ProfileDescription() {
     const navigate = useNavigate();
@@ -13,11 +14,16 @@ export default function ProfileDescription() {
     const [loading, setLoading] = useState(false);
     const [description, setDescription] = useState("");
     const [originalEditInfo, setOriginalEditInfo] = useState(null);
+    const [inputText, setInputText] = useState(false)
+    const [alertModal, setAlertModal] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const menuDropdown = useRef(null);
+    const [prevScrollPos, setPrevScrollPos] = useState(0);
 
     const updataProfileData = async () => {
         setLoading(true);
-        const { about:_, ...temp } = originalEditInfo;
-        const newEditInfo = {about: description, ...temp};
+        const { about: _, ...temp } = originalEditInfo;
+        const newEditInfo = { about: description, ...temp };
         try {
             await updateDoc(doc(db, "Users", user.uid), {
                 editInfo: newEditInfo,
@@ -26,7 +32,7 @@ export default function ProfileDescription() {
                     max: "99",
                     min: "18"
                 },
-                maximum_distance: 400,
+                maximum_distance: 200,
                 miles: false,
 
             });
@@ -34,10 +40,34 @@ export default function ProfileDescription() {
             navigate("/");
         } catch (err) {
             setLoading(false);
-            navigate("/description");
-            console.log(err);
+            setInputText(true);
+            setAlertModal(true);
         }
     }
+
+    useEffect(() => {
+        function handleScroll() {
+            const currentScrollPos = window.pageYOffset;
+            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
+            setPrevScrollPos(currentScrollPos);
+        }
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [prevScrollPos]);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
+                setAlertModal(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [menuDropdown]);
 
     useEffect(() => {
         setLoading(true);
@@ -78,7 +108,7 @@ export default function ProfileDescription() {
                     </div>
                     <div className="mt-10 text-sm lg:text-xl mb-20 leading-relaxed">
                         <textarea
-                            className="border-[#888888] border-2 mx-auto bg-white rounded-xl w-full p-4 md:w-1/2 xl:w-1/3 h-[400px] placeholder:italic placeholder:text-slate-400 block  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 resize-none"
+                            className={`${inputText ? "border-red-600" : "border-[888888]"} border-2 mx-auto bg-white rounded-xl w-full p-4 md:w-1/2 xl:w-1/3 h-[400px] placeholder:italic placeholder:text-slate-400 block  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 resize-none`}
                             type="text"
                             name="discription"
                             placeholder="Write something about yourself."
@@ -97,6 +127,16 @@ export default function ProfileDescription() {
             {
                 loading &&
                 <LoadingModal />
+            }
+            {
+                alertModal &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <AlertModal text="Please tell me about yourself." />
+                        </div>
+                    </div >
+                </div>
             }
         </div>
     )

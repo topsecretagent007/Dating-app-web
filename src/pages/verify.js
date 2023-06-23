@@ -12,6 +12,7 @@ import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";  // Import the firebase storage object
+import AlertModal from "../component/modal/alertmodal";
 
 export default function Verify() {
     const { user } = UserAuth();
@@ -23,23 +24,30 @@ export default function Verify() {
     const [verifyCode, setVerifyCode] = useState(0);
     const [name, setName] = useState("");
     const [images, setImages] = React.useState([]);
+    const [alertModal, setAlertModal] = useState(false);
+    const menuDropdown = useRef(null)
     const maxNumber = 100;
 
     const uploadPhote = async () => {
         setLoading(true);
         const codeImageUrl = await uploadImage(images[0]);
-        
-        await setDoc(doc(db, "Verify", user.uid), {
-            code: verifyCode,
-            date_updated: new Date(),
-            idUser: user.uid,
-            imageUrl: codeImageUrl,
-            name: name,
-            reason_verified: "",
-            verified: 2
-        });
-        setLoading(false);
-        setAlretUploadPhoto(true);
+        if (codeImageUrl == "" || codeImageUrl == null) {
+            setLoading(false);
+            setAlertModal(true);
+        } else {
+            await setDoc(doc(db, "Verify", user.uid), {
+                code: verifyCode,
+                date_updated: new Date(),
+                idUser: user.uid,
+                imageUrl: codeImageUrl,
+                name: name,
+                reason_verified: "",
+                verified: 2
+            });
+            setLoading(false);
+            setAlretUploadPhoto(true);
+        }
+
     }
 
     const uploadImage = async (image) => {
@@ -69,14 +77,12 @@ export default function Verify() {
                 }
             );
         });
-
     }
 
     useEffect(() => {
         setVeryficationCode(false);
     }, [])
 
-    const menuDropdown = useRef(null)
 
     useEffect(() => {
         function handleScroll() {
@@ -93,6 +99,7 @@ export default function Verify() {
         function handleClickOutside(event) {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setAlretUploadPhoto(false);
+                setAlertModal(false)
             }
         }
 
@@ -219,6 +226,16 @@ export default function Verify() {
                                 </div >
                             </div>
                         }
+                        {
+                            alertModal &&
+                            <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                                <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                                    <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                                        <AlertModal text="please agree to our terms of use and privacy policy by checking the box below." />
+                                    </div>
+                                </div >
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -227,6 +244,7 @@ export default function Verify() {
                 loading &&
                 <LoadingModal />
             }
+
         </div >
     )
 }
