@@ -6,7 +6,7 @@ import Logo from "../../assets/Logo1.svg";
 export default function FriendShip() {
 
     return (
-        <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen flex py-10">
+        <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen flex pt-10 pb-32">
             <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
                 <Link to='/profile/age' className="">
                     <FiArrowLeft className="text-pinkLight text-xl lg:text-2xl xl:text-4xl my-3" />
@@ -35,7 +35,7 @@ export default function FriendShip() {
                         <div>Always report bad behavior.</div>
                     </div>
                 </div>
-                <Link to="/profile/profiledata" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20 2xl:py-6 2xl:px-40">Got it</Link>
+                <Link to="/profile/profiledata" className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20 2xl:py-6 2xl:px-40">Continue</Link>
 
             </div>
             <div className="pt-20 pr-2 md:pr-5 xl:pr-20 2xl:pr-40">

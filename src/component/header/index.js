@@ -63,9 +63,6 @@ export default function Header() {
         }
     }, [user])
 
-    useEffect(() => {
-        setPage(window.location.pathname)
-    },[])
 
 
     return (
@@ -130,7 +127,7 @@ export default function Header() {
                         <DiAptana />
                         Settings
                     </div>
-                    <div className="py-1 px-5 hover:text-white hover:bg-pinkLight items-center border-t-[0.1px] border-dotted border-t-[#888888] flex gap-2" onClick={()=> {
+                    <div className="py-1 px-5 hover:text-white hover:bg-pinkLight items-center border-t-[0.1px] border-dotted border-t-[#888888] flex gap-2" onClick={() => {
                         logOut();
                     }}>
                         <FaSignOutAlt />

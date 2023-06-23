@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
@@ -6,9 +6,9 @@ import { BsTelephone, BsFacebook } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import ModelLogo from "../../assets/Modal-Logo.png";
 import { UserAuth } from "../../context/AuthContext";
-import { useEffect } from "react";
 import { db } from "../../firebase";
 import { getDoc, doc, setDoc } from "firebase/firestore";
+import AlertModal from "../../component/modal/alertmodal";
 import LoadingModal from "../../component/loadingPage";
 
 export default function WelcomePage() {
@@ -17,6 +17,11 @@ export default function WelcomePage() {
     const [checkboxColor, setCheckboxColor] = useState(true);
     const { googleSignIn, user } = UserAuth();
     const [loading, setLoading] = useState(false);
+    const [alertModal, setAlertModal] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const menuDropdown = useRef(null);
+    const [prevScrollPos, setPrevScrollPos] = useState(0);
+
 
     const handleGoogleSignIn = async () => {
         if (agreeCheck == true) {
@@ -27,13 +32,45 @@ export default function WelcomePage() {
             }
         } else {
             setCheckboxColor(false);
+            setAlertModal(true);
         }
     }
 
     const goToPhoneInputPage = () => {
-        if(agreeCheck) navigate("/login/phoneinput")
-        else setCheckboxColor(false);
+        if (agreeCheck) {
+            navigate("/login/phoneinput")
+        } else {
+            setCheckboxColor(false);
+            setAlertModal(true);
+        }
     }
+
+
+    useEffect(() => {
+        function handleScroll() {
+            const currentScrollPos = window.pageYOffset;
+            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
+            setPrevScrollPos(currentScrollPos);
+        }
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [prevScrollPos]);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
+                setAlertModal(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [menuDropdown]);
+
+
 
     useEffect(() => {
         const setUserInfo = async () => {
@@ -123,6 +160,16 @@ export default function WelcomePage() {
             {
                 loading &&
                 <LoadingModal />
+            }
+            {
+                alertModal &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <AlertModal text="Please agree to our terms of use and privacy policy by checking the box below." />
+                        </div>
+                    </div >
+                </div>
             }
 
         </div >

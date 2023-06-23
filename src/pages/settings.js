@@ -157,7 +157,7 @@ export default function SettingsPage() {
                                         <GoChevronRight />
                                     </div>
                                 </div>
-                                <div onClick={() => setPhoneVerification(!phoneVerification)} className="text-sm lg:text-lg gap-6 py-2 po xl:texl-xl justify-between text-start flex items-center cursor-pointer">
+                                <div onClick={() => setPhoneVerification(!phoneVerification)} className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center cursor-pointer">
                                     <div className="w-full justify-between md:flex pl-5">
                                         <div className="justify-start w-full">Phone Number</div>
                                         <div className="justify-end md:text-end w-full">{phoneNumber}</div>
@@ -190,7 +190,7 @@ export default function SettingsPage() {
                                 <div className="text-sm gap-6 py-2 lg:texl-lg justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
                                     <div className="w-full justify-between md:flex pl-5">
                                         <div className="justify-start w-full">Current location</div>
-                                        <div className="justify-end md:text-end w-full text-blue-500 font-bold">{address} {countryID} {countryName}, 80260</div>
+                                        <div className="justify-end md:text-end w-full text-blue-500 font-bold">{address} {countryID} {countryName}</div>
                                     </div>
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />

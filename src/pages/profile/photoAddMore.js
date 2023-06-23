@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { AiOutlineDelete } from 'react-icons/ai'
@@ -11,6 +11,7 @@ import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../firebase";  // Import the firebase storage object
+import AlertModal from "../../component/modal/alertmodal";
 
 const maxNumber = 6;
 const numbers = [1, 2, 3, 4, 5, 6];
@@ -22,6 +23,10 @@ export default function PhotoAddMore() {
     const { user } = UserAuth();
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [alertModal, setAlertModal] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const menuDropdown = useRef(null);
+    const [prevScrollPos, setPrevScrollPos] = useState(0);
 
     const uploadImage = async (image) => {
         if (!image) {
@@ -52,6 +57,7 @@ export default function PhotoAddMore() {
         });
 
     }
+
     useEffect(() => {
         setLoading(true);
         const getUserInfo = async () => {
@@ -79,13 +85,42 @@ export default function PhotoAddMore() {
                 url: await uploadImage(images[i])
             });
         }
-        await updateDoc(doc(db, "Users", user.uid), {
-            Pictures: pictures
-        });
-        setLoading(false);
-        navigate('/profile/description')
+        if (pictures[0]?.url != null && pictures[0]?.url != "") {
+            await updateDoc(doc(db, "Users", user.uid), {
+                Pictures: pictures
+            });
+            setLoading(false);
+            navigate('/profile/description')
+        } else {
+            setAlertModal(true);
+            setLoading(false);
+        }
+
     }
 
+    useEffect(() => {
+        function handleScroll() {
+            const currentScrollPos = window.pageYOffset;
+            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
+            setPrevScrollPos(currentScrollPos);
+        }
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [prevScrollPos]);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
+                setAlertModal(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [menuDropdown]);
 
     return (
         <div className="bg-[#FFFBFE] justify-center rounded-xl w-full h-full min-h-screen flex pt-10 pb-20">
@@ -167,6 +202,16 @@ export default function PhotoAddMore() {
             {
                 loading &&
                 <LoadingModal />
+            }
+            {
+                alertModal &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <AlertModal text="Please add your photo at lease one." />
+                        </div>
+                    </div >
+                </div>
             }
         </div>
     )

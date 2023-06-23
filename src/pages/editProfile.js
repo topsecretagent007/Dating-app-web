@@ -15,7 +15,8 @@ import AddInterested from "../component/other/addinterested";
 import { storage } from "../firebase";  // Import the firebase storage object
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
-
+import MyProfile from "../component/modal/previewprofile"
+import AlertModal from "../component/modal/alertmodal";
 
 export default function EditProfilePage() {
     const navigate = useNavigate();
@@ -32,43 +33,69 @@ export default function EditProfilePage() {
     const [userShow, setUserShow] = useState([]);
     const [loading, setLoading] = useState(false);
     const [description, setDescription] = useState("");
+    const [interests, setInterests] = useState([]);
+    const [profileState, setProfileState] = useState(false);
+    const [alertModal, setAlertModal] = useState(false);
+    const [editModal, setEditModal] = useState(false);
+
     const maxNumber = 6;
     const numbers = [1, 2, 3, 4, 5, 6];
     const listItems = numbers.map((numbers) =>
         <div key={numbers} className="w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
 
-    const dataSave = async () => {
-        setLoading(true);
-        let pictures = [];
-        for (var i = 0; i < images.length; i++) {
-            pictures.push({
-                show: true,
-                url: await uploadImage(images[i])
-            });
-        }
-        await updateDoc(doc(db, "Users", user.uid), {
-            Pictures: pictures,
-            editInfo: {
-                showOnProfile: false,
-                university: "",
-                userGender: userSex,
-                about: description
-            },
-            sexualOrientation: {
-                orientation: userOri,
-                showOnProfile: false
-            },
-            showGender: userShow,
-            desires: userLooking,
-            status: userStatus,
-            currentPoint: {
-                geohash: "",
-                geopoint: [0, 0]
-            },
-        });
-        setLoading(false);
-        navigate("/profile");
+    const addInterest = (value) => {
+        setInterests([...interests, value]);
     }
+
+    const removeInterest = (value) => {
+        setInterests(interests.filter((item) => { return item !== value }))
+    }
+
+    const dataSave = async () => {
+        //console.log(interests); return;
+        setLoading(true);
+        if (images.length != 0 && description != "") {
+            let pictures = [];
+            for (var i = 0; i < images.length; i++) {
+                pictures.push({
+                    show: true,
+                    url: await uploadImage(images[i])
+                });
+            }
+            await updateDoc(doc(db, "Users", user.uid), {
+                Pictures: pictures,
+                editInfo: {
+                    showOnProfile: false,
+                    university: "",
+                    userGender: userSex,
+                    about: description
+                },
+                sexualOrientation: {
+                    orientation: userOri,
+                    showOnProfile: false
+                },
+                showGender: userShow,
+                desires: userLooking,
+                status: userStatus,
+                currentPoint: {
+                    geohash: "",
+                    geopoint: [0, 0]
+                },
+                interest: interests
+            });
+            setLoading(false);
+            navigate("/profile")
+        } else {
+            setAlertModal(true);
+            if (images.length != 0) {
+                setEditModal(true);
+            } else if (description != "") {
+                setEditModal(false);
+            }
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
@@ -79,25 +106,27 @@ export default function EditProfilePage() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [prevScrollPos]);
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setUploadModal(false);
+                setAlertModal(false);
+
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [menuDropdown]);
-    
+
     const onChange = (imageList) => {
         // data for submit
         setImages(imageList);
         setUploadModal(false);
-
+        setAlertModal(false);
     };
 
     const uploadImage = async (image) => {
@@ -143,6 +172,7 @@ export default function EditProfilePage() {
                 setUserStatus(userData.status);
                 setUserLooking(userData.desires);
                 setUserShow(userData.showGender);
+                setInterests(userData.interest);
                 setLoading(false);
             } else {
                 // docSnap.data() will be undefined in this case
@@ -162,14 +192,14 @@ export default function EditProfilePage() {
                 <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
                     <div className="w-full xl:px-10 2xl:px-40 pb-20">
                         <div className="w-full lg:flex lg:justify-between items-center">
-                            <div className="text-lg font-bold text-center lg:text-start xl:text-3xl">Edit Profile</div>
+                            <div className="text-2xl font-bold text-center lg:text-start xl:text-3xl">Edit Profile</div>
                             <div className="px-8 md:px-44 lg:px-0">
                                 <button className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                                     <div className="w-40 lg:px-3 xl:w-60 items-center flex">
                                         <div className="w-1/6">
                                             <AiFillEye />
                                         </div>
-                                        <div className="w-5/6">
+                                        <div onClick={() => setProfileState(true)} className="w-5/6">
                                             Preview Profile
                                         </div>
                                     </div>
@@ -223,11 +253,11 @@ export default function EditProfilePage() {
                                                             </span>
                                                             <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
                                                                 <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-                                                                    <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                                    <button className="justify-start text-xl p-2 lg:text-3xl lg:p-4 rounded-full bg-pinkLight border-8 border-white"
                                                                     >
                                                                         <FcCamera />
                                                                     </button>
-                                                                    <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                                    <button className="justify-start text-xl p-2 lg:text-3xl lg:p-4 rounded-full bg-pinkLight border-8 border-white"
                                                                         style={isDragging ? { color: 'red' } : undefined}
                                                                         onClick={onImageUpload}
                                                                         {...dragProps}
@@ -253,14 +283,20 @@ export default function EditProfilePage() {
                                 </ImageUploading>
                                 <div className="w-full items-center">
                                     <div className="text-lg font-bold text-center xl:text-2xl lg:py-8">Interest</div>
-                                    <AddInterested />
+                                    <AddInterested data={interests} onAddInterest={
+                                        value => addInterest(value)
+                                    }
+                                        onRemoveInterest={
+                                            value => removeInterest(value)
+                                        }
+                                    />
                                 </div>
                             </div>
                             <div className="w-full xl:w-1/2">
                                 <div className="mb-5">
-                                    <div className="text-lg xl:text-xl 2xl:text-3xl xl:text-start">
+                                    <div className="text-xl 2xl:text-2xl lg:text-start">
                                         <div className="mb-5 font-bold">About</div>
-                                        <div className="text-sm md:text-base lg:text-lg 2xl:text-xl mb-20 leading-relaxed">
+                                        <div className="text-sm w-full lg:w-3/4 mx-auto md:text-base lg:text-lg 2xl:text-xl mb-8 leading-relaxed">
                                             <textarea
                                                 className="border-[#dddddd] border-[0.5px] mx-auto bg-white rounded-xl w-full p-4 md:w-2/3 lg:w-full h-[200px] xl:h-[400px] placeholder:italic placeholder:text-slate-400 block  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500/80 focus:ring-1 resize-none  shadow-cyan-500/50"
                                                 type="text"
@@ -274,7 +310,7 @@ export default function EditProfilePage() {
                                             </textarea>
                                         </div>
                                     </div>
-                                    <div className="grid md:grid-cols-2 md:justify-between gap-5 pb-56">
+                                    <div className="grid md:grid-cols-2 md:justify-between gap-5 pb-16">
                                         <Dropdown text="I am a " value={userSex} items={sexData} onHandleChange={e => setUserSex(e[0])} />
                                         <Dropdown text="My sexual orientation " value={userOri} items={oriData} onHandleChange={e => setUserOri(e[0])} />
                                         <Dropdown text="My Status is " value={userStatus} items={statusData} onHandleChange={e => setUserStatus(e[0])} />
@@ -287,7 +323,34 @@ export default function EditProfilePage() {
                         <button onClick={() => dataSave()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</button>
                     </div>
                 </div>
+                {/* {
+                    profileState &&
+                    <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                        <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                                <MyProfile />
+                            </div>
+                        </div >
+                    </div>
+                } */}
+
+
             </div>
+            {
+                alertModal &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            {
+                                editModal ?
+                                    <AlertModal text="Please tell me about yourself." />
+                                    :
+                                    <AlertModal text="Please add your photo at least one." />
+                            }
+                        </div>
+                    </div >
+                </div>
+            }
             <Footer />
             {
                 loading &&
