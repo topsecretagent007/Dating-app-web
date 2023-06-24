@@ -9,7 +9,6 @@ import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
-import { toast } from 'react-toastify';
 import AlertModal from "../../component/modal/alertmodal";
 
 export default function PhotoUpload() {
@@ -23,6 +22,57 @@ export default function PhotoUpload() {
     const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
+    const [isCameraConnected, setIsCameraConnected] = useState(false);
+    const [cameraConnected, setCameraConnected] = useState(false);
+    const [imagePath, setImagePath] = useState('');
+
+    const handleTakePhoto = async () => {
+        try {
+            const mediaDevices = navigator.mediaDevices;
+            if (!mediaDevices || !mediaDevices.getUserMedia) {
+                return alert('Camera not available on this device');
+            }
+
+            const stream = await mediaDevices.getUserMedia({ video: true });
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.play();
+
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL('image/png');
+            setImagePath(dataUrl);
+
+            // Here you can save the image using the imagePath
+            // For example:
+            // fetch('/api/save-image', {
+            //   method: 'POST',
+            //   body: JSON.stringify({
+            //     imagePath,
+            //   }),
+            // });
+            console.log(dataUrl, "image url >>>>>>>>>>>>>>>>>")
+
+            stream.getTracks().forEach((track) => track.stop());
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // const handleConnectCamera = async () => {
+    //     try {
+    //         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    //         setIsCameraConnected(true);
+    //         // Do something with the stream, like display it in a video element
+    //     } catch (error) {
+    //         console.error(error);
+    //         setCameraConnected(true);
+    //         // alert('Please connect the camera');
+    //     }
+    // };
 
     const uploadImage = async (image) => {
         if (!image) {
@@ -104,6 +154,8 @@ export default function PhotoUpload() {
         function handleClickOutside(event) {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setAlertModal(false);
+                setIsCameraConnected(false);
+                setCameraConnected(false);
             }
         }
 
@@ -144,7 +196,7 @@ export default function PhotoUpload() {
                                         </div>
                                         <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
                                             <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-                                                <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                <button onClick={handleTakePhoto} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
                                                 >
                                                     <FcCamera />
                                                 </button>
@@ -190,6 +242,27 @@ export default function PhotoUpload() {
                     </div >
                 </div>
             }
+            {
+                isCameraConnected &&
+                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <AlertModal text="Camera connected successfully!" />
+                        </div>
+                    </div >
+                </div>
+            }
+            {
+                cameraConnected &&
+                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <AlertModal text="Please connect the camera." />
+                        </div>
+                    </div >
+                </div>
+            }
+            {imagePath && <img src={imagePath} />}
         </div>
     )
 }

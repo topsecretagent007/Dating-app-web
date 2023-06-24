@@ -94,7 +94,7 @@ export default function FindPage() {
                                 <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">Smart girl</div>
                             </div>
                             <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
-                                <div className="justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2" onClick={() => setLoading(true)}>
+                                <div className="justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2" >
                                     <BsHeartFill />
                                     <div>Like</div>
                                 </div>

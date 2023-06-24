@@ -13,6 +13,8 @@ import Setting from './pages/settings';
 import Tutorial from './pages/tutorial';
 import EditProfile from './pages/editProfile';
 import Verify from './pages/verify';
+import ProfilePreview from './pages/profilepreview';
+import CameraPic from './component/other/camera';
 
 import WelcomePage from "./pages/login/welcomePage";
 import PhoneNumberPage from "./pages/login/phoneNumberPage";
@@ -60,6 +62,11 @@ function App() {
               <Route exact path="/editprofile" element={<Protected><EditProfile /></Protected>} />
 
               <Route exact path="/verifyprofile" element={<Protected><Verify /></Protected>} />
+              <Route exact path="/profilepreview" element={<Protected><ProfilePreview /></Protected>} />
+              <Route exact path="/camera" element={<Protected><CameraPic /></Protected>} />
+
+
+
 
 
             </Routes>

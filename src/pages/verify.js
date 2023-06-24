@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import ImageUploading from 'react-images-uploading';
 import { FcCamera, FcPicture } from "react-icons/fc";
+import { Navigate, useNavigate } from "react-router-dom";
 import SimpleImg from "../assets/image4.png"
 import ModelLogo from "../assets/Modal-Logo.png"
 import Header from "../component/header/index";
@@ -16,6 +17,7 @@ import AlertModal from "../component/modal/alertmodal";
 
 export default function Verify() {
     const { user } = UserAuth();
+    const navigate = useNavigate();
     const [verifycationCode, setVeryficationCode] = useState(false);
     const [alretUploadPhoto, setAlretUploadPhoto] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState();
@@ -25,8 +27,26 @@ export default function Verify() {
     const [name, setName] = useState("");
     const [images, setImages] = React.useState([]);
     const [alertModal, setAlertModal] = useState(false);
-    const menuDropdown = useRef(null)
+    const menuDropdown = useRef(null);
+    const [isCameraConnected, setIsCameraConnected] = useState(false);
+    const [cameraConnected, setCameraConnected] = useState(false);
     const maxNumber = 100;
+
+    const handleConnectCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ viedo: true });
+            setIsCameraConnected(true);
+            navigate("/camera");
+            // Do something with the stream, like display it in a video element
+        } catch (error) {
+            console.error(error);
+            setCameraConnected(true);
+            // alert('Please connect the camera');
+        }
+    };
+
+
+
 
     const uploadPhote = async () => {
         setLoading(true);
@@ -100,6 +120,8 @@ export default function Verify() {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setAlretUploadPhoto(false);
                 setAlertModal(false)
+                setIsCameraConnected(false)
+                setCameraConnected(false)
             }
         }
 
@@ -169,10 +191,13 @@ export default function Verify() {
                                                     </div>
                                                     <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
                                                         <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-                                                            <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+
+
+                                                            <button onClick={() => handleConnectCamera()} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
                                                             >
                                                                 <FcCamera />
                                                             </button>
+
                                                             <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
                                                                 style={isDragging ? { color: 'red' } : undefined}
                                                                 onClick={onImageUpload}
@@ -232,6 +257,18 @@ export default function Verify() {
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                                     <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
                                         <AlertModal text="please agree to our terms of use and privacy policy by checking the box below." />
+                                    </div>
+                                </div >
+                            </div>
+                        }
+                        {
+                            isCameraConnected && <p>Camera connected successfully!</p>
+                        }
+                        {cameraConnected &&
+                            <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                                <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                                    <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                                        <AlertModal text="Please connect the camera." />
                                     </div>
                                 </div >
                             </div>

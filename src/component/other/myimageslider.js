@@ -1,4 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import { UserAuth } from "../../context/AuthContext";
+import { db } from "../../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import LoadingModal from "../../component/loadingPage";
+
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -41,25 +46,53 @@ const nextArrow = (onClickHandler, hasNext, label) => {
     </span>
 }
 
-export default function MyCarousel({ myImages }) {
-    console.log(myImages)
-    const [images, setImages] = useState(myImages)
+export default function MyCarousel() {
+    const { user } = UserAuth();
+    const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setLoading(true);
+
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setImages(userData.Pictures)
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user])
 
     return (
-        <Carousel
-            showArrows={true}
-            showThumbs={false}
-            axis='vertical'
-            infiniteLoop={true}
-            dynamicHeight
-            renderArrowPrev={prevArrow}
-            renderArrowNext={nextArrow}
-        >
-            {images.map((image, index) => (
-                <div key={index}>
-                    <img src={image} alt={`image-${index}`} />
-                </div>
-            ))}
-        </Carousel>
+        <>
+            <>
+                <Carousel
+                    showArrows={true}
+                    showThumbs={false}
+                    axis='vertical'
+                    infiniteLoop={true}
+                    dynamicHeight
+                    renderArrowPrev={prevArrow}
+                    renderArrowNext={nextArrow}
+                >
+                    {images.map((image, index) => (
+                        <div key={index}>
+                            <img src={image.url} alt={`image-${index}`} className="rounded-xl" />
+                        </div>
+                    ))}
+                </Carousel>
+            </>
+            {
+                loading &&
+                <LoadingModal />
+            }
+        </>
     );
 }
