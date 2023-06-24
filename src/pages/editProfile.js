@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { AiOutlineDelete, AiOutlinePlus, AiFillEye } from 'react-icons/ai';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { FcCamera, FcPicture } from "react-icons/fc";
 import ModelLogo from "../assets/Modal-Logo.png"
 import ImageUploading from 'react-images-uploading';
@@ -15,14 +16,14 @@ import AddInterested from "../component/other/addinterested";
 import { storage } from "../firebase";  // Import the firebase storage object
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
-import MyProfile from "../component/modal/previewprofile"
 import AlertModal from "../component/modal/alertmodal";
 
 export default function EditProfilePage() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user } = UserAuth();
     const [uploadModal, setUploadModal] = useState(false);
-    const [images, setImages] = React.useState([]);
+    const [images, setImages] = useState([]);
     const menuDropdown = useRef(null)
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
@@ -34,7 +35,6 @@ export default function EditProfilePage() {
     const [loading, setLoading] = useState(false);
     const [description, setDescription] = useState("");
     const [interests, setInterests] = useState([]);
-    const [profileState, setProfileState] = useState(false);
     const [alertModal, setAlertModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
 
@@ -51,6 +51,14 @@ export default function EditProfilePage() {
         setInterests(interests.filter((item) => { return item !== value }))
     }
 
+    const myPreview = async () => {
+        await dataSave();
+        goToPage("/profilepreview");
+    }
+
+    const goToPage = (url) => {
+        navigate(url);
+    }
     const dataSave = async () => {
         //console.log(interests); return;
         setLoading(true);
@@ -83,8 +91,8 @@ export default function EditProfilePage() {
                 },
                 interest: interests
             });
+            console.log("update finished...")
             setLoading(false);
-            navigate("/profile")
         } else {
             setAlertModal(true);
             if (images.length != 0) {
@@ -112,7 +120,6 @@ export default function EditProfilePage() {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setUploadModal(false);
                 setAlertModal(false);
-
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
@@ -182,7 +189,6 @@ export default function EditProfilePage() {
         if (user && user.uid) {
             getUserInfo();
         }
-
     }, [user])
 
     return (
@@ -199,7 +205,7 @@ export default function EditProfilePage() {
                                         <div className="w-1/6">
                                             <AiFillEye />
                                         </div>
-                                        <div onClick={() => setProfileState(true)} className="w-5/6">
+                                        <div onClick={() => myPreview()} className="w-5/6">
                                             Preview Profile
                                         </div>
                                     </div>
@@ -279,7 +285,6 @@ export default function EditProfilePage() {
                                             </div>
                                         </div>
                                     )}
-
                                 </ImageUploading>
                                 <div className="w-full items-center">
                                     <div className="text-lg font-bold text-center xl:text-2xl lg:py-8">Interest</div>
@@ -323,18 +328,6 @@ export default function EditProfilePage() {
                         <button onClick={() => dataSave()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</button>
                     </div>
                 </div>
-                {/* {
-                    profileState &&
-                    <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                                <MyProfile />
-                            </div>
-                        </div >
-                    </div>
-                } */}
-
-
             </div>
             {
                 alertModal &&
