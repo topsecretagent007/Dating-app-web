@@ -20,6 +20,10 @@ export default function ProfileDescription() {
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
+    const modalClose = () => {
+        setAlertModal(false);
+    }
+    
     const updataProfileData = async () => {
         setLoading(true);
         const { about: _, ...temp } = originalEditInfo;
@@ -132,8 +136,8 @@ export default function ProfileDescription() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                            <AlertModal text="Please tell me about yourself." />
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
+                            <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()}/>
                         </div>
                     </div >
                 </div>

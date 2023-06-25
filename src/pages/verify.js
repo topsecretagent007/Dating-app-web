@@ -45,8 +45,11 @@ export default function Verify() {
         }
     };
 
-
-
+    const modalClose = () => {
+        setCameraConnected(false);
+        setAlertModal(false);
+        setAlretUploadPhoto(false);
+    }
 
     const uploadPhote = async () => {
         setLoading(true);
@@ -240,13 +243,16 @@ export default function Verify() {
                         {alretUploadPhoto &&
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                                    <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
-                                        <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-6">
+                                    <AlertModal text="Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile." onCloseModal={() => modalClose()} />
+
+                                        {/* <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                                             <img src={ModelLogo} alt="ModelLogo" />
                                         </h2>
                                         <p className="text-lg lg:text-xl xl:text-3xl font-bold my-3 text-pinkLight">Information</p>
                                         <span className="text-sm xl:text-lg 2xl:text-xl my-3 lg:leading-relaxed">
-                                            Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile.                            </span>
+                                            Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile.
+                                        </span> */}
                                     </div>
                                 </div >
                             </div>
@@ -255,8 +261,8 @@ export default function Verify() {
                             alertModal &&
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                                    <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                                        <AlertModal text="please agree to our terms of use and privacy policy by checking the box below." />
+                                    <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-6">
+                                        <AlertModal text="Please agree to our terms of use and privacy policy by checking the box below." onCloseModal={() => modalClose()} />
                                     </div>
                                 </div >
                             </div>
@@ -267,8 +273,8 @@ export default function Verify() {
                         {cameraConnected &&
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                                    <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                                        <AlertModal text="Please connect the camera." />
+                                    <div ref={menuDropdown} className="w-80 bg-white rounded-xl px-3 relative  py-6">
+                                        <AlertModal text="Please connect the camera." onCloseModal={() => modalClose()} />
                                     </div>
                                 </div >
                             </div>

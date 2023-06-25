@@ -26,6 +26,10 @@ export default function PhotoUpload() {
     const [cameraConnected, setCameraConnected] = useState(false);
     const [imagePath, setImagePath] = useState('');
 
+    const modalClose = () => {
+        setAlertModal(false);
+    }
+    
     const handleTakePhoto = async () => {
         try {
             const mediaDevices = navigator.mediaDevices;
@@ -188,7 +192,7 @@ export default function PhotoUpload() {
                                     dragProps,
                                 }) => (
                                     <div className="upload__image-wrapper">
-                                        <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar.png')] mx-auto rounded-3xl bg-cover">
+                                        <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar1.png')] mx-auto rounded-3xl bg-cover">
                                             <div className="image-item">
                                                 {images[0] && images[0]['url'] != "" && images[0]['url'] != null && <img src={images[0]['url']} alt="Avatar" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />}
                                             </div>
@@ -236,8 +240,8 @@ export default function PhotoUpload() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                            <AlertModal text="Please select your avatar." />
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
+                            <AlertModal text="Please select your avatar." onCloseModal={() => modalClose()}/>
                         </div>
                     </div >
                 </div>
@@ -246,8 +250,8 @@ export default function PhotoUpload() {
                 isCameraConnected &&
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                            <AlertModal text="Camera connected successfully!" />
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
+                            <AlertModal text="Camera connected successfully!" onCloseModal={() => modalClose()}/>
                         </div>
                     </div >
                 </div>
@@ -256,8 +260,8 @@ export default function PhotoUpload() {
                 cameraConnected &&
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                            <AlertModal text="Please connect the camera." />
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
+                            <AlertModal text="Please connect the camera." onCloseModal={() => modalClose()} />
                         </div>
                     </div >
                 </div>
