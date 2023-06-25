@@ -82,7 +82,7 @@ export default function FindUser({ usersId }) {
 
     return (
         < div className="w-full xl:flex gap-14" >
-            <div className="w-full">
+            <div className="w-full max-w-2xl ">
                 <ImageSlider userImage={usersId} />
             </div>
             <div className="w-full pt-5 xl:pt-0 xl:w-2/5">
@@ -111,7 +111,7 @@ export default function FindUser({ usersId }) {
                 </div>
                 <div className="text-start py-5">
                     <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Desires</div>
-                    <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
+                    <div className="grid grid-cols-2 xl:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
                         {userLooking.map((item, index) => (
                             <div key={index} className="px-1">
                                 <div >{item}</div>
@@ -120,9 +120,9 @@ export default function FindUser({ usersId }) {
                     </div>
                 </div>
                 <div className="text-start py-5">
-                    <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Interest</div>
+                    <div className=" text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Interest</div>
                     {interests != [] &&
-                        <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
+                        <div className="grid grid-cols-2 xl:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
                             {interests.map((item, index) => (
                                 <div key={index} className="px-1">
                                     <div >{item}</div>
@@ -133,11 +133,11 @@ export default function FindUser({ usersId }) {
                     }
                 </div>
                 <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
-                    <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2" >
+                    <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" >
                         <BsHeartFill />
                         <div>Like</div>
                     </div>
-                    <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex text-[#888888]">
+                    <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]">
                         <AiOutlineClose />
                         <div>Dislike</div>
                     </div>

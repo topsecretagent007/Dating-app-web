@@ -1,7 +1,7 @@
 import React from "react";
 import ModelLogo from "../../assets/Modal-Logo.png"
 
-export default function SaveAvatar({ onSaveImage, onCanselImage }) {
+export default function SaveAvatar({ onSaveImage, onCloseImage }) {
 
     return (
         <>
@@ -17,7 +17,7 @@ export default function SaveAvatar({ onSaveImage, onCanselImage }) {
                 <button onClick={() => onSaveImage()} className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white">
                     <div className="text-sm xl:text-lg font-bold">Save</div>
                 </button>
-                <button onClick={() => onCanselImage()} className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white">
+                <button onClick={() => onCloseImage()} className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white">
                     <div className="text-sm xl:text-lg font-bold">Cancel</div>
                 </button>
             </div>

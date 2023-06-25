@@ -43,6 +43,10 @@ export default function EditProfilePage() {
     const listItems = numbers.map((numbers) =>
         <div key={numbers} className="w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
 
+    const modalClose = () => {
+        setAlertModal(false);
+    }
+
     const addInterest = (value) => {
         setInterests([...interests, value]);
     }
@@ -333,12 +337,12 @@ export default function EditProfilePage() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
                             {
                                 editModal ?
-                                    <AlertModal text="Please tell me about yourself." />
+                                    <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()} />
                                     :
-                                    <AlertModal text="Please add your photo at least one." />
+                                    <AlertModal text="Please add your photo at least one." onCloseModal={() => modalClose()} />
                             }
                         </div>
                     </div >

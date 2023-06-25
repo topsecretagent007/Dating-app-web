@@ -44,7 +44,7 @@ export default function AddInterested({ data, onAddInterest, onRemoveInterest })
                 {inputVisible && (
                     <div className='items-center flex '>
                         <input type="text" className='w-full py-2 px-3 border-pinkLight border-2 rounded-l-xl' onChange={handleInputChange} />
-                        <button onClick={() => handleAddInterest()} className='py-2 px-1  border-pinkLight border-2 rounded-r-xl bg-pinkLight'>Add</button>
+                        <button onClick={() => handleAddInterest()} className='py-2 px-1 text-white border-pinkLight border-2 rounded-r-xl bg-pinkLight'>Add</button>
                     </div>
                 )}
                 <button onClick={() => handleButtonClick()} className='items-center text-3xl ml-12 py-2'>

@@ -84,7 +84,7 @@ export default function MyCarousel() {
                 >
                     {images.map((image, index) => (
                         <div key={index}>
-                            <img src={image.url} alt={`image-${index}`} className="rounded-xl" />
+                            <img src={image.url} alt={`image-${index}`} className="rounded-xl " />
                         </div>
                     ))}
                 </Carousel>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Search from "../component/other/search";
 import PrevUser from "../component/other/prevuser";
 import NextUser from "../component/other/nextuser";
@@ -20,6 +20,8 @@ export default function FindPage() {
     const [lastAge, setlastAge] = useState("");
     const [otherUserId, setOtherUserId] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
+    const [usersData, setUsersData] = useState(false);
+    const [SearchUsers, setSearchUsers] = useState(false);
 
     const prevPage = () => {
         if (currentPage == 0) {
@@ -36,6 +38,7 @@ export default function FindPage() {
             setCurrentPage(currentPage + 1);
         }
     }
+    
 
     useEffect(() => {
         setLoading(true);
@@ -45,7 +48,6 @@ export default function FindPage() {
             const userData = await docSnap.data();
             const otherUser = [];
             const searchedUserId = [];
-
             if (docSnap.exists()) {
                 setUserLooking(userData.desires);
                 setUserShow(userData.showGender);
@@ -66,6 +68,10 @@ export default function FindPage() {
                 if (userData.showGender.includes(otherUserData.editInfo?.userGender) && firstAge <= otherUserData.age && otherUserData.age <= lastAge) {
                     searchedUserId.push(otherUserData.userId);
                     setOtherUserId(searchedUserId);
+                    if (searchedUserId.length < 2) setUsersData(false);
+                    else setUsersData(true);
+                    if (searchedUserId == []) setSearchUsers(false);
+                    else setSearchUsers(true);
                     console.log(searchedUserId)
                 }
             }
@@ -80,16 +86,24 @@ export default function FindPage() {
         <div>
             <Header />
             <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] pt-28 xl:pt-36 bg-[#FFFBFE] py-48" >
-                <button onClick={() => prevPage()} type="button" className="fixed top-0 -left-2 md:left-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-prev>
-                    <PrevUser />
-                </button>
+                {usersData &&
+                    <button onClick={() => prevPage()} type="button" className="fixed top-0 -left-2 md:left-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-prev>
+                        <PrevUser />
+                    </button>
+                }
                 <div>
                     <Search />
-                    <FindUser usersId={otherUserId[currentPage]} />
+                    {SearchUsers ?
+                        <FindUser usersId={otherUserId[currentPage]} />
+                        :
+                        <p className="text-lg font-bold items-center pt-10 text-[#5A5A5A]">No search results were found.</p>
+                    }
                 </div>
-                <button onClick={() => nextPage()} type="button" className="fixed top-0 -right-2 md:right-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-next>
-                    <NextUser />
-                </button>
+                {usersData &&
+                    <button onClick={() => nextPage()} type="button" className="fixed top-0 -right-2 md:right-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-next>
+                        <NextUser />
+                    </button>
+                }
                 {
                     loading &&
                     < LoadingModal />
@@ -98,4 +112,5 @@ export default function FindPage() {
             <Footer />
         </div >
     )
+    
 }
