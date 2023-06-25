@@ -103,13 +103,13 @@
   transform: translateX(1rem);
 }
 
-#fristage::-webkit-outer-spin-button,
-#fristage::-webkit-inner-spin-button {
+#firstage::-webkit-outer-spin-button,
+#firstage::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-#fristage[type=number] {
+#firstage[type=number] {
   -moz-appearance: textfield;
 }
 
@@ -151,4 +151,8 @@ path {
 
 .locationcolor {
   color: #E50AAC !important
+}
+
+.css-e363es-MuiFormControl-root {
+  margin: 0 !important;
 }

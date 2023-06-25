@@ -32,7 +32,6 @@ export default function PreviewProfile() {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
-                setImages(userData.Pictures)
                 setDescription(userData.editInfo?.about)
                 setUserName(userData.UserName)
                 setUserLooking(userData.desires)
@@ -54,9 +53,8 @@ export default function PreviewProfile() {
             <Header />
             <div className="w-full h-full min-h-screen bg-cover px-[13%] pt-28 xl:pt-36 bg-[#FFFBFE] py-48">
                 <div className="w-full md:flex justify-center gap-14 mx-auto">
-
                     <div className="w-full max-w-lg">
-                        <ImageSlider myImages={images} />
+                        <ImageSlider  />
                     </div>
                     <div className="w-full xl:w-1/2 max-w-lg">
                         <div className="justify-between flex">
