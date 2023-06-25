@@ -198,7 +198,7 @@ export default function EditProfilePage() {
                 <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
                     <div className="w-full xl:px-10 2xl:px-40 pb-20">
                         <div className="w-full lg:flex lg:justify-between items-center">
-                            <div className="text-2xl font-bold text-center lg:text-start xl:text-3xl">Edit Profile</div>
+                            <div className="text-xl font-bold text-center lg:text-start text-[#5A5A5A]">Edit Profile</div>
                             <div className="px-8 md:px-44 lg:px-0">
                                 <button className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                                     <div className="w-40 lg:px-3 xl:w-60 items-center flex">
@@ -287,7 +287,7 @@ export default function EditProfilePage() {
                                     )}
                                 </ImageUploading>
                                 <div className="w-full items-center">
-                                    <div className="text-lg font-bold text-center xl:text-2xl lg:py-8">Interest</div>
+                                    <div className="text-lg font-bold text-center xl:text-xl lg:py-8 text-[#5A5A5A]">Interest</div>
                                     <AddInterested data={interests} onAddInterest={
                                         value => addInterest(value)
                                     }
@@ -299,8 +299,8 @@ export default function EditProfilePage() {
                             </div>
                             <div className="w-full xl:w-1/2">
                                 <div className="mb-5">
-                                    <div className="text-xl 2xl:text-2xl lg:text-start">
-                                        <div className="mb-5 font-bold">About</div>
+                                    <div className="text-xl lg:text-start">
+                                        <div className="mb-5 font-bold text-[#5A5A5A]">About</div>
                                         <div className="text-sm w-full lg:w-3/4 mx-auto md:text-base lg:text-lg 2xl:text-xl mb-8 leading-relaxed">
                                             <textarea
                                                 className="border-[#dddddd] border-[0.5px] mx-auto bg-white rounded-xl w-full p-4 md:w-2/3 lg:w-full h-[200px] xl:h-[400px] placeholder:italic placeholder:text-slate-400 block  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500/80 focus:ring-1 resize-none  shadow-cyan-500/50"
