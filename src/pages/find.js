@@ -9,7 +9,7 @@ import FindUser from "../component/findUser";
 
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, where, query } from "firebase/firestore";
 
 export default function FindPage() {
     const { user } = UserAuth();
@@ -29,6 +29,7 @@ export default function FindPage() {
         } else {
             setCurrentPage(currentPage - 1);
         }
+
     }
 
     const nextPage = () => {
@@ -38,13 +39,11 @@ export default function FindPage() {
             setCurrentPage(currentPage + 1);
         }
     }
-    
 
     useEffect(() => {
         setLoading(true);
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
-            const querySnapshot = await getDocs(collection(db, "Users"));
             const userData = await docSnap.data();
             const otherUser = [];
             const searchedUserId = [];
@@ -53,27 +52,29 @@ export default function FindPage() {
                 setUserShow(userData.showGender);
                 setFirstAge(userData.age_range?.min)
                 setlastAge(userData.age_range?.max)
+                console.log(userData.showGender);
+                const querySnapshot = await getDocs(
+                    query(
+                        collection(db, "Users"),
+                        where("age", ">=", userData.age_range?.min),
+                        where("age", "<=", userData.age_range?.max),
+                        where("editInfo.userGender", "in", userData.showGender)
+                    )
+                );
+                const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId !== user.uid);
+                filteredSnapshot.forEach((doc) => {
+                    console.log(doc.data().userId, "AAAAA")
+                    searchedUserId.push(doc.data().userId);
+                });
+                setOtherUserId(searchedUserId);
+                console.log(otherUserId)
+                if (searchedUserId.length < 2) setUsersData(false);
+                else setUsersData(true);
+                if (searchedUserId == [] && searchedUserId == undefined) setSearchUsers(false);
+                else setSearchUsers(true);
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
-            }
-            querySnapshot.forEach((doc) => {
-                if (doc.id != user.uid) otherUser.push(doc.id);
-            });
-            console.log(otherUser);
-            for (let i = 0; i < otherUser.length; i++) {
-                const docOtherSnap = await getDoc(doc(db, "Users", otherUser[i]));
-                const otherUserData = docOtherSnap.data();
-                console.log(userData.showGender.includes(otherUserData.editInfo?.userGender))
-                if (userData.showGender.includes(otherUserData.editInfo?.userGender) && firstAge <= otherUserData.age && otherUserData.age <= lastAge) {
-                    searchedUserId.push(otherUserData.userId);
-                    setOtherUserId(searchedUserId);
-                    if (searchedUserId.length < 2) setUsersData(false);
-                    else setUsersData(true);
-                    if (searchedUserId == []) setSearchUsers(false);
-                    else setSearchUsers(true);
-                    console.log(searchedUserId)
-                }
             }
             setLoading(false);
         }
@@ -81,6 +82,7 @@ export default function FindPage() {
             getUserInfo();
         }
     }, [user])
+
 
     return (
         <div>
@@ -112,5 +114,5 @@ export default function FindPage() {
             <Footer />
         </div >
     )
-    
+
 }

@@ -2,14 +2,35 @@ import React, { useEffect, useState, useRef } from "react";
 import { BsFillShieldFill } from "react-icons/bs";
 import { FcCompactCamera } from "react-icons/fc";
 import { BiAngry } from "react-icons/bi";
-import { AiFillWarning } from "react-icons/ai"
-import { GiAlienEgg } from "react-icons/gi"
+import { AiFillWarning } from "react-icons/ai";
+import { GiAlienEgg } from "react-icons/gi";
+import LoadingModal from "../../component/loadingPage";
+import { UserAuth } from "../../context/AuthContext";
+import { db } from "../../firebase";
+import { doc, getDoc, collection, addDoc } from "firebase/firestore";
 
-export default function ReportUserModal({ openModal }) {
+
+export default function ReportUserModal({ openModal, usersId }) {
+    const { user } = UserAuth();
     const [userModal, setUserModal] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
+    const [myId, setMyId] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [reportedText, setReportedText] = useState("");
+
+    const userReport = async (usersId, text) => {
+        setLoading(true);
+        await addDoc(collection(db, "Reports"), {
+            reason: text,
+            reported_by: user.uid,
+            timestamp: new Date(),
+            victim_id: usersId
+        });
+        openModal();
+        setLoading(false);
+    }
 
     useEffect(() => {
         function handleScroll() {
@@ -28,13 +49,30 @@ export default function ReportUserModal({ openModal }) {
                 setUserModal(false);
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [menuDropdown]);
+
+    useEffect(() => {
+        setLoading(true);
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setMyId(userData.userId);
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user])
 
     return (
         <>
@@ -47,27 +85,27 @@ export default function ReportUserModal({ openModal }) {
                 !userModal ?
                     <>
                         <div className="w-full md:w-2/3 xl:w-1/2 mx-auto">
-                            <button className="w-full xl:w-80 items-center flex">
+                            <button className="w-full xl:w-80 items-center flex" onClick={() => userReport(usersId, "Inappropriate Photos")}>
                                 <div className="w-1/3">
                                     <FcCompactCamera className="mx-auto text-xl lg:text-3xl 2xl:text-5xl" />
                                 </div>
-                                <div onClick={openModal} className="w-2/3 text-start lg:text-base 2xl:text-xl">
+                                <div className="w-2/3 text-start lg:text-base 2xl:text-xl">
                                     Inappropriate Photos
                                 </div>
                             </button>
-                            <button className="w-full xl:w-80 items-center flex">
+                            <button className="w-full xl:w-80 items-center flex" onClick={() => userReport(usersId, "Feels Like Spam")}>
                                 <div className="w-1/3">
                                     <BiAngry className="mx-auto text-xl lg:text-3xl 2xl:text-5xl text-yellow-500" />
                                 </div>
-                                <div onClick={openModal} className="w-2/3 text-start lg:text-base 2xl:text-xl">
+                                <div className="w-2/3 text-start lg:text-base 2xl:text-xl">
                                     Feels Like Spam
                                 </div>
                             </button>
-                            <button className="w-full xl:w-80 items-center flex">
+                            <button className="w-full xl:w-80 items-center flex" onClick={() => userReport(usersId, "User is underage")}>
                                 <div className="w-1/3">
                                     <GiAlienEgg className="mx-auto text-xl lg:text-3xl 2xl:text-5xl text-yellow-500" />
                                 </div>
-                                <div onClick={openModal} className="w-2/3 text-start lg:text-base 2xl:text-xl">
+                                <div className="w-2/3 text-start lg:text-base 2xl:text-xl">
                                     User is underage
                                 </div>
                             </button>
@@ -84,12 +122,17 @@ export default function ReportUserModal({ openModal }) {
                     :
                     <>
                         <div className="w-full py-3">
-                            <input className="border-[0.5px] w-5/6 xl:w-2/3 border-[#888888] bg-white rounded-xl  2xl:text-2xl py-2 px-3 text-black text-base" placeholder="Additional Info(optional)" />
-                            <button onClick={openModal} className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white gap-1" >
+                            <input className="border-[0.5px] w-5/6 xl:w-2/3 border-[#888888] bg-white rounded-xl  2xl:text-2xl py-2 px-3 text-black text-base" placeholder="Additional Info(optional)" value={reportedText}
+                                onChange={(e) => setReportedText(e.target.value)} />
+                            <button className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white gap-1" onClick={() => userReport(usersId, reportedText)}>
                                 <div className="text-sm xl:text-lg">Continue</div>
                             </button>
                         </div>
                     </>
+            }
+            {
+                loading &&
+                < LoadingModal />
             }
         </>
     )

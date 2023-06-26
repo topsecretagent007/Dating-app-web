@@ -245,14 +245,6 @@ export default function Verify() {
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                                     <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-6">
                                     <AlertModal text="Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile." onCloseModal={() => modalClose()} />
-
-                                        {/* <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                            <img src={ModelLogo} alt="ModelLogo" />
-                                        </h2>
-                                        <p className="text-lg lg:text-xl xl:text-3xl font-bold my-3 text-pinkLight">Information</p>
-                                        <span className="text-sm xl:text-lg 2xl:text-xl my-3 lg:leading-relaxed">
-                                            Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile.
-                                        </span> */}
                                     </div>
                                 </div >
                             </div>
