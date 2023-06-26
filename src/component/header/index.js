@@ -66,8 +66,8 @@ export default function Header() {
 
 
     return (
-        <div className="relative ">
-            <div className={`w-full fixed z-[9999] flex bg-[#000000]/80 justify-between items-center transition-all duration-300 px-5 md:px-10 lg:px-16 ${visible ? 'top-0' : '-translate-y-full'}`} >
+        <div className=" ">
+            <div className={`w-full z-[9999] flex bg-[#000000]/80 justify-between items-center transition-all px-5 md:px-10 lg:px-16 `} >
                 <img onClick={() => goToPage("/")} src={Logo} alt="LogoImg" className="cursor-pointer w-40 justify-start py-5" />
                 <div className="hidden xl:flex w-full text-start text-white text-xl 2xl:text-2xl 2xl:gap-2 mx-16 ">
                     <div onClick={() => goToPage("/")} className={`${page === "/" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} cursor-pointer border-t-4  hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `} >

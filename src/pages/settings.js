@@ -131,8 +131,8 @@ export default function SettingsPage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen pb-40 lg:pb-64 pt-28" >
-                <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 xl:px-20 mx-auto xl:pt-32 xl:flex gap-12">
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-14" >
+                <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 xl:px-20 mx-auto  xl:flex gap-12">
                     <div className="w-full xl:w-2/3">
                         <div className="w-full  xl:flex gap-5">
                             <div className="w-full xl:w-1/2 rounded-xl bg-white border-2 border-black/5 mb-5">

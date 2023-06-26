@@ -14,6 +14,8 @@ import Tutorial from './pages/tutorial';
 import EditProfile from './pages/editProfile';
 import Verify from './pages/verify';
 import ProfilePreview from './pages/profilepreview';
+import LikedUserProfile from './pages/likedUserProfile';
+
 import CameraPic from './component/other/camera';
 
 import WelcomePage from "./pages/login/welcomePage";
@@ -63,6 +65,8 @@ function App() {
 
               <Route exact path="/verifyprofile" element={<Protected><Verify /></Protected>} />
               <Route exact path="/profilepreview" element={<Protected><ProfilePreview /></Protected>} />
+              <Route exact path="/likedUsers/:id" element={<Protected><LikedUserProfile /></Protected>} />
+
               <Route exact path="/camera" element={<Protected><CameraPic /></Protected>} />
 
 

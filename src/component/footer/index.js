@@ -3,8 +3,7 @@ import React from "react";
 export default function Footer() {
 
     return (
-        <div className="w-full fixed z-[9999] block lg:flex bg-black text-white py-4 justify-between
-         bottom-0 px-20" >
+        <div className="w-full z-[9999] block lg:flex bg-black text-white py-4 justify-between bottom-0 px-20" >
             <span className="justify-start text-sm md:text-base lg:text-xl">Copyright 2023 Unjabbed All rights reserved.</span>
             <div className="justify-end pt-4 lg:pt-0 lg:flex">
                 <a href="https://unjabbed.app/privacy-policy/">

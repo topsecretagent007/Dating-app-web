@@ -63,7 +63,6 @@ export default function FindPage() {
                 );
                 const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId !== user.uid);
                 filteredSnapshot.forEach((doc) => {
-                    console.log(doc.data().userId, "AAAAA")
                     searchedUserId.push(doc.data().userId);
                 });
                 setOtherUserId(searchedUserId);
@@ -87,7 +86,7 @@ export default function FindPage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] pt-28 xl:pt-36 bg-[#FFFBFE] py-48" >
+            <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] py-14  bg-[#FFFBFE]" >
                 {usersData &&
                     <button onClick={() => prevPage()} type="button" className="fixed top-0 -left-2 md:left-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-prev>
                         <PrevUser />

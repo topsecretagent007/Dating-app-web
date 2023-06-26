@@ -51,7 +51,7 @@ export default function PreviewProfile() {
     return (
         <>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover px-[13%] pt-28 xl:pt-36 bg-[#FFFBFE] py-48">
+            <div className="w-full h-full min-h-screen bg-cover px-[13%]bg-[#FFFBFE] py-14">
                 <div className="w-full md:flex justify-center gap-14 mx-auto">
                     <div className="w-full max-w-2xl">
                         <ImageSlider  />

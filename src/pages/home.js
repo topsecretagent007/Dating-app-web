@@ -7,9 +7,9 @@ export default function Landing() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full absolute min-h-screen bg-cover flex bg-[url('./assets/5232845.png')] justify-between items-center" >
+            <div className="w-full h-full relative min-h-screen top-0 bg-cover flex bg-[url('./assets/5232845.png')] justify-between items-center z-10" >
             </div >
-            <Footer />
+            <Footer  />
         </div >
     )
 }
