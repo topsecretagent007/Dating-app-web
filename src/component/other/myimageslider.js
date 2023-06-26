@@ -63,9 +63,6 @@ export default function MyCarousel() {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
-            if (!carouselElement) {
-                carouselElement.current.moveTo(0);
-            }
             setLoading(false);
 
         }

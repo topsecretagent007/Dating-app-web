@@ -60,17 +60,22 @@ export default function UserCarousel({ userImage }) {
         // docSnap.data() will be undefined in this case
         console.log("No such document!");
       }
-      if( !carouselElement ) {
-        carouselElement.current.moveTo(0);
-      }
+
       setLoading(false);
 
     }
     if (userImage) {
       getUserInfo();
-    }
+    } 
+    
 
   }, [userImage])
+
+  useEffect(() => {
+    if (carouselElement && carouselElement.current) {
+      carouselElement.current.moveTo(0);
+    }
+  }, [userImage, carouselElement])
 
   return (
     <>
