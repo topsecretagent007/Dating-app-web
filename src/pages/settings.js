@@ -39,8 +39,8 @@ export default function SettingsPage() {
     const menuDropdown = useRef(null);
     const [phoneNumber, setPhoneNumber] = useState();
     const [loading, setLoading] = useState(false);
-    const [firstAge, setFirstAge] = useState("");
-    const [lastAge, setLastAge] = useState("");
+    const [firstAge, setFirstAge] = useState(18);
+    const [lastAge, setLastAge] = useState(99);
     const [distance, setDistance] = useState(0);
     const [miles, setMiles] = useState(false);
     const [address, setAddress] = useState('');
