@@ -16,34 +16,34 @@ const MenuProps = {
     },
 };
 
-export default function DistanceSlider({ frist, last, onFristAge, onLastAge }) {
+export default function DistanceSlider({ first, last, onFirstAge, onLastAge }) {
     const [listAge, setListAge] = useState([]);
-    const [fristAge, setFristAge] = useState(frist);
+    const [firstAge, setFirstAge] = useState(first);
     const [lastAge, setLastAge] = useState(last);
 
 
 
-    const fristAgeSelect = listAge.map((listAge, index) => (
+    const firstAgeSelect = listAge.map((listAge, index) => (
         <MenuItem key={listAge} value={listAge} className="text-pinkLight ageSelect">
             <em className="ml-auto text-pinkLight font-bold">{listAge}</em>
         </MenuItem>
     ))
 
-    const fristAgeChange = (event) => {
+    const firstAgeChange = (event) => {
         if (event.target.value > lastAge) {
-            setFristAge(lastAge - 1);
-            onFristAge(lastAge - 1);
+            setFirstAge(lastAge - 1);
+            onFirstAge(lastAge - 1);
         } else {
-            setFristAge(event.target.value);
-            onFristAge(event.target.value);
+            setFirstAge(event.target.value);
+            onFirstAge(event.target.value);
         }
 
     };
 
     const lastAgeChange = (event) => {
-        if (event.target.value < fristAge) {
-            setLastAge(fristAge + 1);
-            onLastAge(fristAge + 1);
+        if (event.target.value < firstAge) {
+            setLastAge(firstAge + 1);
+            onLastAge(firstAge + 1);
 
         } else {
             setLastAge(event.target.value);
@@ -113,9 +113,9 @@ export default function DistanceSlider({ frist, last, onFristAge, onLastAge }) {
     }));
 
     useEffect(() => {
-        setFristAge(frist);
+        setFirstAge(first);
         setLastAge(last);
-    }, [frist, last])
+    }, [first, last])
 
     return (
         <div className="justify-start grid md:grid-cols-2 gap-4 items-center py-3">
@@ -125,14 +125,14 @@ export default function DistanceSlider({ frist, last, onFristAge, onLastAge }) {
                 </div>
                 <FormControl sx={{ m: 1, minWidth: 120 }} className="bg-white text-end" >
                     <Select
-                        value={fristAge}
-                        onChange={(e) => fristAgeChange(e)}
+                        value={firstAge}
+                        onChange={(e) => firstAgeChange(e)}
                         displayEmpty
                         inputProps={{ 'aria-label': 'Without label' }}
                         MenuProps={MenuProps}
                         className="outline-none"
                     >
-                        {fristAgeSelect}
+                        {firstAgeSelect}
                     </Select>
                 </FormControl>
             </div>
@@ -149,7 +149,7 @@ export default function DistanceSlider({ frist, last, onFristAge, onLastAge }) {
                         MenuProps={MenuProps}
                         className="outline-none"
                     >
-                        {fristAgeSelect}
+                        {firstAgeSelect}
                     </Select>
                 </FormControl>
             </div>

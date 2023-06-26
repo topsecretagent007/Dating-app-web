@@ -39,7 +39,7 @@ export default function SettingsPage() {
     const menuDropdown = useRef(null);
     const [phoneNumber, setPhoneNumber] = useState();
     const [loading, setLoading] = useState(false);
-    const [fristAge, setFristAge] = useState("");
+    const [firstAge, setFirstAge] = useState("");
     const [lastAge, setLastAge] = useState("");
     const [distance, setDistance] = useState(0);
     const [miles, setMiles] = useState(false);
@@ -53,7 +53,7 @@ export default function SettingsPage() {
         await updateDoc(doc(db, "Users", user.uid), {
             age_range: {
                 max: lastAge,
-                min: fristAge
+                min: firstAge
             },
             showGender: userShow,
             location: {
@@ -103,7 +103,7 @@ export default function SettingsPage() {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
-                setFristAge(userData.age_range?.min);
+                setFirstAge(userData.age_range?.min);
                 setLastAge(userData.age_range?.max);
                 setPhoneNumber(userData.phoneNumber);
                 setDistance(userData.maximum_distance);
@@ -214,7 +214,7 @@ export default function SettingsPage() {
                                 <div className="text-sm lg:text-lg gap-6 xl:texl-xl justify-between text-start items-center">
                                     <div className="w-full pl-5 py-">
                                         <div className="justify-start w-full font-bold">Age range</div>
-                                        <AgeRange frist={fristAge} last={lastAge} onFristAge={e => setFristAge(e)} onLastAge={e => setLastAge(e)} />
+                                        <AgeRange first={firstAge} last={lastAge} onFirstAge={e => setFirstAge(e)} onLastAge={e => setLastAge(e)} />
                                     </div>
                                 </div>
                             </div>

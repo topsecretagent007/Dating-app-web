@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -50,20 +50,24 @@ export default function MyCarousel() {
     const { user } = UserAuth();
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
+    const carouselElement = useRef(null);
 
     useEffect(() => {
-        setLoading(true);
-
         const getUserInfo = async () => {
+            setLoading(true);
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
                 setImages(userData.Pictures)
-                setLoading(false);
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
+            if (!carouselElement) {
+                carouselElement.current.moveTo(0);
+            }
+            setLoading(false);
+
         }
         if (user && user.uid) {
             getUserInfo();
@@ -73,21 +77,26 @@ export default function MyCarousel() {
     return (
         <>
             <>
-                <Carousel
-                    showArrows={true}
-                    showThumbs={false}
-                    axis='vertical'
-                    infiniteLoop={true}
-                    dynamicHeight
-                    renderArrowPrev={prevArrow}
-                    renderArrowNext={nextArrow}
-                >
-                    {images.map((image, index) => (
-                        <div key={index}>
-                            <img src={image.url} alt={`image-${index}`} className="rounded-xl " />
-                        </div>
-                    ))}
-                </Carousel>
+                {
+                    images.length > 0 &&
+                    <Carousel
+                        ref={carouselElement}
+
+                        showArrows={true}
+                        showThumbs={false}
+                        axis='vertical'
+                        infiniteLoop={true}
+                        dynamicHeight
+                        renderArrowPrev={prevArrow}
+                        renderArrowNext={nextArrow}
+                    >
+                        {images.map((image, index) => (
+                            <div key={index} style={{ height: "720px", width: '100%' }}>
+                                <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
+                            </div>
+                        ))}
+                    </Carousel>
+                }
             </>
             {
                 loading &&

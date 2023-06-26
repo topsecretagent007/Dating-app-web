@@ -33,8 +33,8 @@ export default function ProfileDescription() {
                 editInfo: newEditInfo,
                 listSwipedUser: [],
                 age_range: {
-                    max: "99",
-                    min: "18"
+                    max: 99,
+                    min: 18
                 },
                 maximum_distance: 200,
                 miles: false,

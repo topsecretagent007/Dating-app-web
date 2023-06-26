@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
@@ -46,11 +46,12 @@ const nextArrow = (onClickHandler, hasNext, label) => {
 export default function UserCarousel({ userImage }) {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const carouselElement = useRef(null);
 
   useEffect(() => {
-    setLoading(true);
 
     const getUserInfo = async () => {
+      setLoading(true);
       const docSnap = await getDoc(doc(db, "Users", userImage));
       if (docSnap.exists()) {
         const userData = docSnap.data();
@@ -59,33 +60,42 @@ export default function UserCarousel({ userImage }) {
         // docSnap.data() will be undefined in this case
         console.log("No such document!");
       }
+      if( !carouselElement ) {
+        carouselElement.current.moveTo(0);
+      }
       setLoading(false);
 
     }
     if (userImage) {
       getUserInfo();
     }
+
   }, [userImage])
 
   return (
     <>
       <>
-        <Carousel
-          showArrows={true}
-          showThumbs={false}
-          axis='vertical'
-          infiniteLoop={true}
-          dynamicHeight
-          renderArrowPrev={prevArrow}
-          renderArrowNext={nextArrow}
-        >
-          {images.map((image, index) => (
-            <div key={index}>
-              <img src={image.url} alt={`image-${index}`} className="rounded-xl" />
-            </div>
-          ))}
-        </Carousel>
+        {
+          images.length > 0 &&
+
+          <Carousel
+            ref={carouselElement}
+            showArrows={true}
+            showThumbs={false}
+            axis='vertical'
+            infiniteLoop={true}
+            renderArrowPrev={prevArrow}
+            renderArrowNext={nextArrow}
+          >
+            {images.map((image, index) => (
+              <div key={index} style={{ height: "720px", width: '100%' }}>
+                <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
+              </div>
+            ))}
+          </Carousel>
+        }
       </>
+
       {
         loading &&
         <LoadingModal />

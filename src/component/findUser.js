@@ -10,7 +10,7 @@ import LoadingModal from "../component/loadingPage";
 
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, setdoc } from "firebase/firestore";
 
 export default function FindUser({ usersId }) {
     const { user } = UserAuth();
@@ -25,6 +25,7 @@ export default function FindUser({ usersId }) {
     const [userLooking, setUserLooking] = useState([]);
     const [interests, setInterests] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [myId, setMyId] = useState("");
 
 
 
@@ -80,9 +81,65 @@ export default function FindUser({ usersId }) {
         }
     }, [usersId])
 
+
+    const lickBtn = async (myid, usersId, value) => {
+        console.log(myid, usersId, value);
+        const otherUsers = await getDoc(doc(db, "Users", usersId));
+        const docSnap = await getDoc(doc(db, "Users", user.uid));
+        const otherUsersData = otherUsers.data();
+        const userData = docSnap.data();
+
+        if (value == true) {
+            const docChecked = await setDoc(doc(db, "Users", user.uid, "CheckedUser", usersId), {
+                LikedUser: usersId,
+                pictureUrl: otherUsersData.Pictures[0]?.url,
+                timestamp: new Date(),
+                userName: otherUsersData.UserName
+            });
+            const docLikedBy = await setDoc(doc(db, "Users", usersId, "LikedBy", user.uid), {
+                LikedBy: user.uid,
+                pictureUrl: userData.Pictures[0]?.url,
+                timestamp: new Date(),
+                userName: userData.UserName
+            })
+        } else {
+            const docChecked = await setDoc(doc(db, "Users", user.uid, "CheckedUser", usersId), {
+                DislikedUser: usersId,
+                pictureUrl: otherUsersData.Pictures[0]?.url,
+                timestamp: new Date(),
+                userName: otherUsersData.UserName
+            });
+        }
+
+        // if(docChecked.exists()){
+        //     console.log("true")
+        // } else {
+        //     console.log("err")
+        // }
+    }
+
+
+    useEffect(() => {
+        setLoading(true);
+        const getUserInfo = async () => {
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setMyId(userData.userId);
+                setLoading(false);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user])
+
     return (
         < div className="w-full xl:flex gap-14" >
-            <div className="w-full max-w-2xl ">
+            <div className="w-full max-w-2xl">
                 <ImageSlider userImage={usersId} />
             </div>
             <div className="w-full pt-5 xl:pt-0 xl:w-2/5">
@@ -133,11 +190,11 @@ export default function FindUser({ usersId }) {
                     }
                 </div>
                 <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
-                    <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" >
+                    <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => lickBtn(myId, usersId, true)} >
                         <BsHeartFill />
                         <div>Like</div>
                     </div>
-                    <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]">
+                    <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]" onClick={() => lickBtn(myId, usersId, false)}>
                         <AiOutlineClose />
                         <div>Dislike</div>
                     </div>
@@ -163,7 +220,7 @@ export default function FindUser({ usersId }) {
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                             <ReportUserModal
-                                openModal={() => openUserModal()}
+                                openModal={() => openUserModal()} usersId={usersId}
                             />
                         </div>
                     </div >

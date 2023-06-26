@@ -21,7 +21,7 @@
     "react-cropper": "^2.3.3",
     "react-dom": "^18.2.0",
     "react-icons": "^4.9.0",
-    "react-image-crop": "^10.1.4",
+    "react-image-crop": "^10.1.5",
     "react-images-uploading": "^3.1.7",
     "react-phone-number-input": "^3.2.23",
     "react-redux": "^8.1.0",

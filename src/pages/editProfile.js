@@ -204,7 +204,7 @@ export default function EditProfilePage() {
                         <div className="w-full lg:flex lg:justify-between items-center">
                             <div className="text-xl font-bold text-center lg:text-start text-[#5A5A5A]">Edit Profile</div>
                             <div className="px-8 md:px-44 lg:px-0">
-                                <button className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                                <button onClick={() => myPreview()} className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                                     <div className="w-40 lg:px-3 xl:w-60 items-center flex">
                                         <div className="w-1/6">
                                             <AiFillEye />
