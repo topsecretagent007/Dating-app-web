@@ -19,8 +19,8 @@ export default function PreviewProfile() {
     const [userLooking, setUserLooking] = useState([]);
     const [interests, setInterests] = useState([]);
     const [loading, setLoading] = useState(false);
-    
-    
+
+
     const goToPage = (url) => {
         navigate(url);
     }
@@ -51,10 +51,10 @@ export default function PreviewProfile() {
     return (
         <>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover px-[13%] pt-28 xl:pt-36 bg-[#FFFBFE] py-48">
+            <div className="w-full h-full min-h-screen bg-cover px-[13%] bg-[#FFFBFE] py-14">
                 <div className="w-full md:flex justify-center gap-14 mx-auto">
                     <div className="w-full max-w-2xl">
-                        <ImageSlider  />
+                        <ImageSlider />
                     </div>
                     <div className="w-full xl:w-1/2 max-w-lg">
                         <div className="justify-between flex">
@@ -87,11 +87,17 @@ export default function PreviewProfile() {
                         </div>
                         <div className="text-start py-5">
                             <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Interest</div>
-                            <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed list-none">{interests.map((item, index) => (
-                                <div key={index} className="px-1">
-                                    <div >{item}</div>
-                                </div>
-                            ))}</div>
+                            <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed list-none">
+                                {interests != [] &&
+                                    <>
+                                        {interests.map((item, index) => (
+                                            <div key={index} className="px-1">
+                                                <div >{item}</div>
+                                            </div>
+                                        ))}
+                                    </>
+                                }
+                            </div>
                         </div>
                         <div onClick={() => goToPage('/editprofile')} className="mt-16 md:mt-6 justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2 text-xl" >
                             <div>OK</div>

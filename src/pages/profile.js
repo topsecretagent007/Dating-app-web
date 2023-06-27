@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageUploading from 'react-images-uploading';
-import { FcSettings, FcSupport } from "react-icons/fc";
-import { GoAlert } from "react-icons/go";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../component/loadingPage";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../firebase";  // Import the firebase storage object
-import ImageSaveModal from "../component/modal/imagesave"
+import ImageSaveModal from "../component/modal/imagesave";
+import { GiCheckMark } from "react-icons/gi";
+import { TiEdit } from "react-icons/ti";
+import { BiError } from "react-icons/bi";
+import { MdSettingsSuggest } from "react-icons/md";
+import ImageCropper from '../component/imageCropper'
+import { uploadImage } from "../config/helpers";
 
 
 export default function ProfilePage() {
@@ -25,8 +27,9 @@ export default function ProfilePage() {
     const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
+    const [croppedImage, setCroppedImage] = useState(null);
     const maxNumber = 100;
-
+    const [userVerified, setUserVerified] = useState(false)
 
     const goToPage = (url) => {
         navigate(url);
@@ -47,39 +50,11 @@ export default function ProfilePage() {
         setLoading(false);
     }
 
-    const uploadImage = async (image) => {
-        if (!image) {
-            return null;
-        }
-        if (image.url.includes("https://")) return image.url;
-
-        const filename = `${Date.now()}-${image.file.name}`;
-        const storageRef = ref(storage, `verify/${user.uid}/${filename}`);
-
-        return new Promise((resolve, reject) => {
-            const uploadTask = uploadBytesResumable(storageRef, image.file);
-            uploadTask.on(
-                "state_changed",
-                (snapshot) => {
-                    const percent = Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    );
-                },
-                (err) => console.log(err),
-                async () => {
-                    // download url
-                    getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                        return resolve(url);
-                    }).catch((e) => reject(e));
-                }
-            );
-        });
-    }
 
     const updateAvatar = async () => {
-        console.log("upload", uploadImage(images[0]))
+        if (croppedImage == null) return;
         setLoading(true);
-        const firstNewImage = await uploadImage(images[0]);
+        const firstNewImage = await uploadImage(croppedImage, "users", user.uid);
         if (firstNewImage != null) {
             const [first, ...rest] = originalImages;
             const pictures = [{ url: firstNewImage, show: true }, ...rest];
@@ -88,6 +63,7 @@ export default function ProfilePage() {
             });
             setLoading(false);
             setImageSave(false);
+            setImages([{ url: firstNewImage }]);
         } else {
             console.log("error")
             setLoading(false);
@@ -104,11 +80,19 @@ export default function ProfilePage() {
                 setName(userData.UserName);
                 setOriginalImages(userData.Pictures);
                 setImages([userData.Pictures[0]])
-                setLoading(false);
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
+            const docVerifySnap = await getDoc(doc(db, "Verify", user.uid));
+            if (docVerifySnap.exists()) {
+                const userData = docVerifySnap.data();
+                if (userData.verified == 3) setUserVerified(true);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+            setLoading(false);
         }
         if (user && user.uid) {
             getUserInfo();
@@ -142,8 +126,8 @@ export default function ProfilePage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen pt-10 pb-28" >
-                <div className="w-full px-5 pt-20 xl:px-[24%] xl:pt-32">
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-14" >
+                <div className="w-full px-5 xl:px-[24%]">
                     <div className="text-2xl font-bold justify-start xl:absolute z-10">My Profile</div>
                     <ImageUploading
                         value={images}
@@ -156,7 +140,7 @@ export default function ProfilePage() {
                             isDragging,
                             dragProps,
                         }) => (
-                            <div className="upload__image-wrapper ">
+                            <div className="upload__image-wrapper pt-8">
                                 <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar.png')] mx-auto rounded-full bg-cover">
                                     <div className="image-item">
                                         {images[0] && images[0]['url'] != "" && images[0]['url'] != null &&
@@ -172,27 +156,40 @@ export default function ProfilePage() {
                     <div className="text-xl xl:text-2xl font-bold pt-6 xl:pt-10">{name}</div>
                     <div className="justify-center flex mx-auto gap-44 xl:gap-52 -mt-10">
                         <div onClick={() => goToPage("/settings")} >
-                            <button className="justify-start cursor-pointer text-xl xl:text-5xl p-2 rounded-full bg-blueLight border-4 xl:border-8 border-white"
+                            <button className="justify-start cursor-pointer text-pinkLight text-xl lg:text-5xl p-2 rounded-full  border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight "
                             >
-                                <FcSettings />
+                                <MdSettingsSuggest />
                             </button>
                             <div className="block xl:text-xl text-[#888888]">Setting</div>
                         </div>
                         <div onClick={() => goToPage("/editprofile")}>
-                            <button className="justify-start text-xl xl:text-5xl p-2 rounded-full bg-green-600 border-4 xl:border-8 border-white"
+                            <button className="justify-start text-pinkLight text-xl lg:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
                             >
-                                <FcSupport />
+                                <TiEdit />
                             </button>
                             <div className="block xl:text-xl text-[#888888]">Edit Info</div>
                         </div>
                     </div>
                     <div className="justify-center flex mx-auto -mt-6 xl:-mt-12">
                         <div onClick={() => goToPage("/verifyprofile")}>
-                            <button className="justify-start text-xl xl:text-5xl p-2 rounded-full text-yellow-500 bg-red-600 border-4 xl:border-8 border-white"
-                            >
-                                <GoAlert />
-                            </button>
-                            <div className="block xl:text-xl text-[#888888] xl:mt-2">Not verified</div>
+                            {
+                                !userVerified ?
+                                    <>
+                                        <button className="justify-start text-xl text-pinkLight xl:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
+                                        >
+                                            <BiError />
+                                        </button>
+                                        <div className="block xl:text-xl text-[#888888] xl:mt-2">Not verified</div>
+                                    </>
+                                    :
+                                    <>
+                                        <button className="justify-start text-xl text-white bg-green-500 lg:text-5xl p-2 rounded-full border-2 xl:border-4"
+                                        >
+                                            <GiCheckMark />
+                                        </button>
+                                        <div className="block xl:text-xl text-[#888888] xl:mt-2">verified</div>
+                                    </>
+                            }
                         </div>
                     </div>
                     <div className="text-pinkLight text-lg xl:text-xl py-2 mt-5">Subsribe now</div>
@@ -214,6 +211,10 @@ export default function ProfilePage() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <ImageCropper
+                                imageToCrop={images[0]["url"]}
+                                onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
+                            />
                             <ImageSaveModal onSaveImage={updateAvatar} onCloseImage={() => removeImage()} />
                         </div>
                     </div >

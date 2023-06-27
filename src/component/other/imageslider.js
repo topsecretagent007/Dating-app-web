@@ -93,7 +93,7 @@ export default function UserCarousel({ userImage }) {
             renderArrowNext={nextArrow}
           >
             {images.map((image, index) => (
-              <div key={index} style={{ height: "720px", width: '100%' }}>
+              <div key={index} style={{ height: "600px", width: '600px' }}>
                 <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
               </div>
             ))}

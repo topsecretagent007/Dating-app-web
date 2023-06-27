@@ -7,7 +7,7 @@ import Image2 from "../../assets/image-2.png"
 export default function Age() {
 
     return (
-        <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen justify-center py-20">
+        <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen justify-center py-12">
             <div className="flex">
                 <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
                     <Link to='/login/enter' className="">

@@ -105,10 +105,10 @@ export default function ProfileDescription() {
                         <img src={Logo} alt="Logo" className="mx-auto" />
                     </div>
                     <div className="text-2xl font-bold">Description</div>
-                    <div className="text-sm xl:text-2xl font-bold py-4 xl:leading-loose">
-                        Please write something about yourself and let other members know why <br />
-                        you’re here. You can skip this section for now and complete this later in your <br />
-                        settings under Edit info.
+                    <div className="text-sm xl:text-xl font-semibold py-4 xl:leading-loose">
+                        Please write something about yourself and let other members know<br />
+                        why you’re here. You can skip this section for now and complete this later<br /> 
+                        in your settings under Edit Info.
                     </div>
                     <div className="mt-10 text-sm lg:text-xl mb-20 leading-relaxed">
                         <textarea

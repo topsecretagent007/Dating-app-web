@@ -3,15 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { AiOutlineDelete } from 'react-icons/ai'
 import ImageUploading from 'react-images-uploading';
-import { FcCamera, FcPicture } from "react-icons/fc";
+import { FiImage, FiCamera } from "react-icons/fi"
 import Logo from "../../assets/Logo1.svg";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../../firebase";  // Import the firebase storage object
 import AlertModal from "../../component/modal/alertmodal";
+
+import ImageCropper from '../../component/imageCropper';
+import { uploadImage } from "../../config/helpers";
+import ImageSaveModal from "../../component/modal/imagesave";
 
 const maxNumber = 6;
 const numbers = [1, 2, 3, 4, 5, 6];
@@ -27,39 +29,17 @@ export default function PhotoAddMore() {
     const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
+    const [imageSave, setImageSave] = useState(false);
+    const [currentCroppedImage, setCurrentCroppedImage] = useState(null);
+
+
+    const removeImage = async () => {
+        setImageSave(false);
+        setImages((previousArr) => (previousArr.slice(0, -1)));
+    }
 
     const modalClose = () => {
         setAlertModal(false);
-    }
-    
-    const uploadImage = async (image) => {
-        if (!image) {
-            return null;
-        }
-        if (image.url.includes("https://")) return image.url;
-
-        const filename = `${Date.now()}-${image.file.name}`;
-        const storageRef = ref(storage, `users/${user.uid}/${filename}`);
-
-        return new Promise((resolve, reject) => {
-            const uploadTask = uploadBytesResumable(storageRef, image.file);
-            uploadTask.on(
-                "state_changed",
-                (snapshot) => {
-                    const percent = Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    );
-                },
-                (err) => console.log(err),
-                async () => {
-                    // download url
-                    getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                        return resolve(url);
-                    }).catch((e) => reject(e));
-                }
-            );
-        });
-
     }
 
     useEffect(() => {
@@ -80,13 +60,13 @@ export default function PhotoAddMore() {
         }
     }, [user])
 
-    const addUpdataImageList = async () => {
+    const addUpdateImageList = async () => {
         setLoading(true);
         let pictures = [];
         for (var i = 0; i < images.length; i++) {
             pictures.push({
                 show: true,
-                url: await uploadImage(images[i])
+                url: await uploadImage(images[i], "users", user.uid)
             });
         }
         if (pictures[0]?.url != null && pictures[0]?.url != "") {
@@ -134,7 +114,7 @@ export default function PhotoAddMore() {
                 </Link>
             </div>
             <div className="w-4/5">
-                <div className="w-40 md:w-60 mx-auto pt-12 pb-10 justify-center items-center">
+                <div className="w-40 md:w-60 mx-auto pt-6 pb-10 justify-center items-center">
                     <img src={Logo} alt="Logo" className="mx-auto" />
                 </div>
                 <div className="justify-center">
@@ -143,7 +123,7 @@ export default function PhotoAddMore() {
                             <ImageUploading
                                 multiple
                                 value={images}
-                                onChange={(imageList) => setImages(imageList)}
+                                onChange={(imageList) => (setImages(imageList), setImageSave(true))}
                                 maxNumber={maxNumber}
                                 dataURLKey="url"
                             >
@@ -162,7 +142,8 @@ export default function PhotoAddMore() {
                                             </div>
                                             {imageList.map((image, index) => (
                                                 <div key={index} className="image-item">
-                                                    <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  ' onClick={() => onImageRemove(index)}>
+                                                    <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  ' onClick={() => 
+                                                        {onImageRemove(index); setImageSave(false)}}>
                                                         <AiOutlineDelete />
                                                     </button>
 
@@ -173,16 +154,16 @@ export default function PhotoAddMore() {
                                         </div>
                                         <div className="justify-center -ml-3 lg:-ml-11 mt-[-32px] lg:mt-[-52px] ">
                                             <div className="absolute z-20 justify-center flex  gap-44 lg:gap-96">
-                                                <button className=" justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                 >
-                                                    <FcCamera />
+                                                    <FiCamera />
                                                 </button>
-                                                <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                     style={isDragging ? { color: 'red' } : undefined}
                                                     onClick={onImageUpload}
                                                     {...dragProps}
                                                 >
-                                                    <FcPicture />
+                                                    <FiImage />
                                                 </button>
                                             </div>
                                         </div>
@@ -197,7 +178,7 @@ export default function PhotoAddMore() {
                         The more images you show other members the greater your chances are of <br />
                         matching with them.
                     </div>
-                    <button onClick={() => addUpdataImageList()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
+                    <button onClick={() => addUpdateImageList()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
 
                 </div>
             </div>
@@ -212,7 +193,27 @@ export default function PhotoAddMore() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
-                            <AlertModal text="Please add your photo at lease one." onCloseModal={() => modalClose()}/>
+                            <AlertModal text="Please add your photo at lease one." onCloseModal={() => modalClose()} />
+                        </div>
+                    </div >
+                </div>
+            }
+            {
+                imageSave &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <ImageCropper
+                                imageToCrop={images[images.length-1]["url"]}
+                                onImageCropped={(image) => setCurrentCroppedImage(image)}
+                            />
+                            <ImageSaveModal 
+                                onSaveImage={()=> {
+                                    setImages((prevImages)=> ([...prevImages.slice(0, -1), currentCroppedImage]));
+                                    setImageSave(false)
+                                }} 
+                                onCloseImage={() => removeImage()} 
+                            />
                         </div>
                     </div >
                 </div>

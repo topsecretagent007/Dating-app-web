@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageUploading from 'react-images-uploading';
-import { FcCamera, FcPicture } from "react-icons/fc";
+import { FiImage, FiCamera } from "react-icons/fi"
 import Logo from "../../assets/Logo1.svg";
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getStorage } from "firebase/storage";
-import { storage } from "../../firebase";  // Import the firebase storage object
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 import AlertModal from "../../component/modal/alertmodal";
+
+import ImageSaveModal from "../../component/modal/imagesave";
+import ImageCropper from '../../component/imageCropper'
+import { uploadImage } from "../../config/helpers";
 
 export default function PhotoUpload() {
     const navigate = useNavigate();
@@ -22,91 +24,60 @@ export default function PhotoUpload() {
     const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
-    const [isCameraConnected, setIsCameraConnected] = useState(false);
-    const [cameraConnected, setCameraConnected] = useState(false);
-    const [imagePath, setImagePath] = useState('');
+    const [croppedImage, setCroppedImage] = useState(null);
+    const [imageSave, setImageSave] = useState(false);
+
+
+    // const [isCameraConnected, setIsCameraConnected] = useState(false);
+    // const [cameraConnected, setCameraConnected] = useState(false);
+    // const [imagePath, setImagePath] = useState('');
+
+    const removeImage = async () => {
+        setImageSave(false);
+        setLoading(true);
+        const docSnap = await getDoc(doc(db, "Users", user.uid));
+        if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setOriginalImages(userData.Pictures);
+            setImages([userData.Pictures[0]])
+        } else {
+            // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+        }
+        setLoading(false);
+    }
 
     const modalClose = () => {
         setAlertModal(false);
     }
-    
-    const handleTakePhoto = async () => {
-        try {
-            const mediaDevices = navigator.mediaDevices;
-            if (!mediaDevices || !mediaDevices.getUserMedia) {
-                return alert('Camera not available on this device');
-            }
 
-            const stream = await mediaDevices.getUserMedia({ video: true });
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.play();
-
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            const dataUrl = canvas.toDataURL('image/png');
-            setImagePath(dataUrl);
-
-            // Here you can save the image using the imagePath
-            // For example:
-            // fetch('/api/save-image', {
-            //   method: 'POST',
-            //   body: JSON.stringify({
-            //     imagePath,
-            //   }),
-            // });
-            console.log(dataUrl, "image url >>>>>>>>>>>>>>>>>")
-
-            stream.getTracks().forEach((track) => track.stop());
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    // const handleConnectCamera = async () => {
+    // const handleTakePhoto = async () => {
     //     try {
-    //         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    //         setIsCameraConnected(true);
-    //         // Do something with the stream, like display it in a video element
+    //         const mediaDevices = navigator.mediaDevices;
+    //         if (!mediaDevices || !mediaDevices.getUserMedia) {
+    //             return alert('Camera not available on this device');
+    //         }
+
+    //         const stream = await mediaDevices.getUserMedia({ video: true });
+    //         const video = document.createElement('video');
+    //         video.srcObject = stream;
+    //         video.play();
+
+    //         const canvas = document.createElement('canvas');
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    //         const dataUrl = canvas.toDataURL('image/png');
+    //         setImagePath(dataUrl);
+    //         console.log(dataUrl, "image url >>>>>>>>>>>>>>>>>")
+
+    //         stream.getTracks().forEach((track) => track.stop());
     //     } catch (error) {
     //         console.error(error);
-    //         setCameraConnected(true);
-    //         // alert('Please connect the camera');
     //     }
     // };
 
-    const uploadImage = async (image) => {
-        if (!image) {
-            return null;
-        }
-        if (image.url.includes("https://")) return image.url;
-        if (image.file == null) return null;
-        console.log("here")
-        const filename = `${Date.now()}-${image.file.name}`;
-        const storageRef = ref(storage, `users/${user.uid}/${filename}`);
-
-        return new Promise((resolve, reject) => {
-            const uploadTask = uploadBytesResumable(storageRef, image.file);
-            uploadTask.on(
-                "state_changed",
-                (snapshot) => {
-                    const percent = Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    );
-                },
-                (err) => console.log(err),
-                async () => {
-                    // download url
-                    getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                        return resolve(url);
-                    }).catch((e) => reject(e));
-                }
-            );
-        });
-    }
 
     useEffect(() => {
         setLoading(true);
@@ -128,8 +99,12 @@ export default function PhotoUpload() {
     }, [user]);
 
     const updateAvatar = async () => {
+        if (croppedImage == null) {
+            setAlertModal(true);
+            return;
+        };
         setLoading(true);
-        const firstNewImage = await uploadImage(images[0]);
+        const firstNewImage = await uploadImage(croppedImage, "users", user.uid);
         if (firstNewImage != null) {
             const [first, ...rest] = originalImages;
             const pictures = [{ url: firstNewImage, show: true }, ...rest];
@@ -137,10 +112,19 @@ export default function PhotoUpload() {
                 Pictures: pictures
             });
             setLoading(false);
-            navigate("/profile/photoaddmore");
+            setImageSave(false)
+            setImages([{url: firstNewImage}]);
         } else {
             setAlertModal(true);
             setLoading(false);
+        }
+    }
+
+    const nextPage = () => {
+        if (croppedImage != null) {
+            navigate("/profile/photoaddmore");
+        } else {
+            setAlertModal(true);
         }
     }
 
@@ -158,8 +142,8 @@ export default function PhotoUpload() {
         function handleClickOutside(event) {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setAlertModal(false);
-                setIsCameraConnected(false);
-                setCameraConnected(false);
+                // setIsCameraConnected(false);
+                // setCameraConnected(false);
             }
         }
 
@@ -171,9 +155,9 @@ export default function PhotoUpload() {
     }, [menuDropdown]);
 
     return (
-        <div className="bg-[#FFFBFE] min-h-screen justify-center rounded-xl w-full h-full flex pt-10 pb-32">
+        <div className="bg-[#FFFBFE] min-h-screen justify-center rounded-xl w-full h-full flex pb-32">
             <div className="w-4/5">
-                <div className="w-full p-8 items-center">
+                <div className="w-full p-6 items-center">
                     <img src={Logo} alt="Logo" className="mx-auto" />
                 </div>
                 <div className="justify-center">
@@ -181,7 +165,7 @@ export default function PhotoUpload() {
                         <div className="PhotoUpload">
                             <ImageUploading
                                 value={images}
-                                onChange={(imageList) => setImages(imageList)}
+                                onChange={(imageList) => (setImages(imageList), setImageSave(true))}
                                 maxNumber={maxNumber}
                                 dataURLKey="url"
                             >
@@ -198,18 +182,20 @@ export default function PhotoUpload() {
                                             </div>
 
                                         </div>
-                                        <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
+                                        <div className="justify-center mt-[-30px] lg:mt-[-54px] ">
                                             <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-                                                <button onClick={handleTakePhoto} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                <button
+                                                    // onClick={handleTakePhoto}
+                                                    className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                 >
-                                                    <FcCamera />
+                                                    <FiCamera />
                                                 </button>
-                                                <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                     style={isDragging ? { color: 'red' } : undefined}
                                                     onClick={onImageUpload}
                                                     {...dragProps}
                                                 >
-                                                    <FcPicture />
+                                                    <FiImage />
                                                 </button>
                                             </div>
                                         </div>
@@ -228,7 +214,7 @@ export default function PhotoUpload() {
                         Your profile image must not contain any nudity and be only of yourself.
                     </div>
 
-                    <button onClick={() => updateAvatar()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
+                    <button onClick={() => nextPage()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
 
                 </div>
             </div>
@@ -241,17 +227,31 @@ export default function PhotoUpload() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
-                            <AlertModal text="Please select your avatar." onCloseModal={() => modalClose()}/>
+                            <AlertModal text="Please select your avatar." onCloseModal={() => modalClose()} />
                         </div>
                     </div >
                 </div>
             }
             {
+                imageSave &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <ImageCropper
+                                imageToCrop={images[0]["url"]}
+                                onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
+                            />
+                            <ImageSaveModal onSaveImage={updateAvatar} onCloseImage={() => removeImage()} />
+                        </div>
+                    </div >
+                </div>
+            }
+            {/* {
                 isCameraConnected &&
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
-                            <AlertModal text="Camera connected successfully!" onCloseModal={() => modalClose()}/>
+                            <AlertModal text="Camera connected successfully!" onCloseModal={() => modalClose()} />
                         </div>
                     </div >
                 </div>
@@ -266,7 +266,7 @@ export default function PhotoUpload() {
                     </div >
                 </div>
             }
-            {imagePath && <img src={imagePath} />}
+            {imagePath && <img src={imagePath} />} */}
         </div>
     )
 }

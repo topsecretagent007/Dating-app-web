@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { AiOutlineDelete, AiOutlinePlus, AiFillEye } from 'react-icons/ai';
 import { useNavigate, useLocation } from "react-router-dom";
-
-import { FcCamera, FcPicture } from "react-icons/fc";
+import { FiImage, FiCamera } from "react-icons/fi"
 import ModelLogo from "../assets/Modal-Logo.png"
 import ImageUploading from 'react-images-uploading';
 import Dropdown from "../component/combox/dropdown";
@@ -13,10 +12,14 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { sexData, oriData, statusData, lookingForData, showData } from "../config/constant";
 import LoadingModal from "../component/loadingPage";
 import AddInterested from "../component/other/addinterested";
-import { storage } from "../firebase";  // Import the firebase storage object
+import { storage } from "../firebase";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import AlertModal from "../component/modal/alertmodal";
+
+import ImageCropper from '../component/imageCropper';
+import { uploadImage } from "../config/helpers";
+import ImageSaveModal from "../component/modal/imagesave";
 
 export default function EditProfilePage() {
     const navigate = useNavigate();
@@ -37,11 +40,18 @@ export default function EditProfilePage() {
     const [interests, setInterests] = useState([]);
     const [alertModal, setAlertModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
+    const [imageSave, setImageSave] = useState(false);
+    const [currentCroppedImage, setCurrentCroppedImage] = useState(null);
 
     const maxNumber = 6;
     const numbers = [1, 2, 3, 4, 5, 6];
     const listItems = numbers.map((numbers) =>
         <div key={numbers} className="w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
+
+    const removeImage = async () => {
+        setImageSave(false);
+        setImages((previousArr) => (previousArr.slice(0, -1)));
+    }
 
     const modalClose = () => {
         setAlertModal(false);
@@ -71,7 +81,7 @@ export default function EditProfilePage() {
             for (var i = 0; i < images.length; i++) {
                 pictures.push({
                     show: true,
-                    url: await uploadImage(images[i])
+                    url: await uploadImage(images[i], "users", user.uid)
                 });
             }
             await updateDoc(doc(db, "Users", user.uid), {
@@ -198,7 +208,7 @@ export default function EditProfilePage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-20">
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-12">
                 <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
                     <div className="w-full xl:px-10 2xl:px-40 pb-20">
                         <div className="w-full lg:flex lg:justify-between items-center">
@@ -221,7 +231,7 @@ export default function EditProfilePage() {
                                 <ImageUploading
                                     multiple
                                     value={images}
-                                    onChange={onChange}
+                                    onChange={(imageList) => (setImages(imageList), setImageSave(true), setUploadModal(false))}
                                     maxNumber={maxNumber}
                                     dataURLKey="url"
                                 >
@@ -240,7 +250,7 @@ export default function EditProfilePage() {
                                                 </div>
                                                 {imageList.map((image, index) => (
                                                     <div key={index} className="image-item">
-                                                        <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  ' onClick={() => onImageRemove(index)}>
+                                                        <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  ' onClick={() => { onImageRemove(index); setImageSave(false) }}>
                                                             <AiOutlineDelete />
                                                         </button>
 
@@ -263,16 +273,16 @@ export default function EditProfilePage() {
                                                             </span>
                                                             <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
                                                                 <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-                                                                    <button className="justify-start text-xl p-2 lg:text-3xl lg:p-4 rounded-full bg-pinkLight border-8 border-white"
+                                                                    <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                                     >
-                                                                        <FcCamera />
+                                                                        <FiCamera />
                                                                     </button>
-                                                                    <button className="justify-start text-xl p-2 lg:text-3xl lg:p-4 rounded-full bg-pinkLight border-8 border-white"
+                                                                    <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                                         style={isDragging ? { color: 'red' } : undefined}
                                                                         onClick={onImageUpload}
                                                                         {...dragProps}
                                                                     >
-                                                                        <FcPicture />
+                                                                        <FiImage />
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -352,6 +362,26 @@ export default function EditProfilePage() {
             {
                 loading &&
                 <LoadingModal />
+            }
+            {
+                imageSave &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                            <ImageCropper
+                                imageToCrop={images[images.length - 1]["url"]}
+                                onImageCropped={(image) => setCurrentCroppedImage(image)}
+                            />
+                            <ImageSaveModal
+                                onSaveImage={() => {
+                                    setImages((prevImages) => ([...prevImages.slice(0, -1), currentCroppedImage]));
+                                    setImageSave(false)
+                                }}
+                                onCloseImage={() => removeImage()}
+                            />
+                        </div>
+                    </div >
+                </div>
             }
         </div >
     )

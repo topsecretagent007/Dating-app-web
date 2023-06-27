@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import ImageUploading from 'react-images-uploading';
-import { FcCamera, FcPicture } from "react-icons/fc";
-import { Navigate, useNavigate } from "react-router-dom";
+import { FiImage, FiCamera } from "react-icons/fi"
+import { useNavigate } from "react-router-dom";
 import SimpleImg from "../assets/image4.png"
-import ModelLogo from "../assets/Modal-Logo.png"
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import GenerateRandomNumber from "../component/other/randomnumber"
@@ -11,11 +10,13 @@ import LoadingModal from '../component/loadingPage';
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../firebase";  // Import the firebase storage object
 import AlertModal from "../component/modal/alertmodal";
+import { uploadImage } from "../config/helpers";
+
+
 
 export default function Verify() {
+
     const { user } = UserAuth();
     const navigate = useNavigate();
     const [verifycationCode, setVeryficationCode] = useState(false);
@@ -53,7 +54,8 @@ export default function Verify() {
 
     const uploadPhote = async () => {
         setLoading(true);
-        const codeImageUrl = await uploadImage(images[0]);
+        if(images[0].file==null || images[0].file==undefined) return;
+        const codeImageUrl = await uploadImage(images[0].file);
         if (codeImageUrl == "" || codeImageUrl == null) {
             setLoading(false);
             setAlertModal(true);
@@ -65,41 +67,13 @@ export default function Verify() {
                 imageUrl: codeImageUrl,
                 name: name,
                 reason_verified: "",
-                verified: 2
+                verified: 2,
+                phoneNumber : ""
             });
             setLoading(false);
             setAlretUploadPhoto(true);
         }
 
-    }
-
-    const uploadImage = async (image) => {
-        if (!image) {
-            return null;
-        }
-        if (image.url.includes("https://")) return image.url;
-
-        const filename = `${Date.now()}-${image.file.name}`;
-        const storageRef = ref(storage, `verify/${user.uid}/${filename}`);
-
-        return new Promise((resolve, reject) => {
-            const uploadTask = uploadBytesResumable(storageRef, image.file);
-            uploadTask.on(
-                "state_changed",
-                (snapshot) => {
-                    const percent = Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    );
-                },
-                (err) => console.log(err),
-                async () => {
-                    // download url
-                    getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                        return resolve(url);
-                    }).catch((e) => reject(e));
-                }
-            );
-        });
     }
 
     useEffect(() => {
@@ -156,7 +130,7 @@ export default function Verify() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover justify-center px-[10%] pt-28 xl:pt-36 bg-[#FFFBFE] pb-48 xl:pb-20" >
+            <div className="w-full h-full min-h-screen bg-cover justify-center px-[10%] py-14 bg-[#FFFBFE]" >
                 <div className="w-full xl:flex">
                     <div className="w-full xl:w-2/5">
                         <img src={SimpleImg} alt="FindImage" className="w-60 sm:w-[500px] lg:w-[700px] xl:w-full mx-auto" />
@@ -196,17 +170,17 @@ export default function Verify() {
                                                         <div className="justify-center flex mx-auto gap-48 lg:gap-80">
 
 
-                                                            <button onClick={() => handleConnectCamera()} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                            <button onClick={() => handleConnectCamera()} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                             >
-                                                                <FcCamera />
+                                                                <FiCamera />
                                                             </button>
 
-                                                            <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-pinkLight border-8 border-white"
+                                                            <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                                 style={isDragging ? { color: 'red' } : undefined}
                                                                 onClick={onImageUpload}
                                                                 {...dragProps}
                                                             >
-                                                                <FcPicture />
+                                                                <FiImage />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -244,7 +218,7 @@ export default function Verify() {
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                                     <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-6">
-                                    <AlertModal text="Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile." onCloseModal={() => modalClose()} />
+                                        <AlertModal text="Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile." onCloseModal={() => modalClose()} />
                                     </div>
                                 </div >
                             </div>
