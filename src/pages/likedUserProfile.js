@@ -5,7 +5,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { MdOutlineLocationOn } from "react-icons/md";
 import ImageSlider from "../component/other/imageslider";
 import LoadingModal from "../component/loadingPage";
@@ -28,9 +28,8 @@ export default function PreviewProfile() {
     }
 
     useEffect(() => {
-        setLoading(true);
-
         const getUserInfo = async () => {
+            setLoading(true);
             const docSnap = await getDoc(doc(db, "Users", id));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
@@ -44,6 +43,7 @@ export default function PreviewProfile() {
         };
 
         const getCurrentUserId = async () => {
+            setLoading(true);
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
@@ -51,8 +51,8 @@ export default function PreviewProfile() {
             } else {
                 console.log("No such document!");
             }
+            setLoading(false);
         };
-
         if (id) {
             getUserInfo();
         }
@@ -63,7 +63,7 @@ export default function PreviewProfile() {
     }, [id, user]);
 
     const likeBtn = async (myid, id, value) => {
-        console.log(myid, id, value);
+        setLoading(true);
         const otherUser = await getDoc(doc(db, "Users", id));
         const docSnap = await getDoc(doc(db, "Users", user.uid));
         const otherUserData = otherUser.data();
@@ -77,21 +77,22 @@ export default function PreviewProfile() {
                 userName: otherUserData.UserName,
                 isRead: false,
             });
-
-            const chatsState = await setDoc(doc(db, "chats", user.uid), {
-                docId: id - user.uid,
+            const chatsState = await setDoc(doc(db, "chats", (id + "-" + user.uid)), {
+                docId: id + "-" + user.uid,
                 isclear1: false,
                 isclear2: false,
                 active: false,
             });
+            goToPage("/notification")
+            setLoading(false);
+
         } else {
-            const docChecked = await setDoc(doc(db, "Users", user.uid, "CheckedUser", id), {
-                DislikedUser: id,
-                pictureUrl: otherUserData.Pictures[0]?.url,
-                timestamp: new Date(),
-                userName: otherUserData.UserName,
-            });
+            const docDelete = await deleteDoc(doc(db, "Users", user.uid, "LikedBy", id));
+            goToPage("/notification")
+            setLoading(false);
+
         }
+
     };
 
 
@@ -125,7 +126,6 @@ export default function PreviewProfile() {
                 setUserLooking(userData.desires)
                 setInterests(userData.interest)
                 setLoading(false);
-
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
@@ -178,11 +178,17 @@ export default function PreviewProfile() {
                         </div>
                         <div className="text-start py-5">
                             <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Interest</div>
-                            <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed list-none">{interests.map((item, index) => (
-                                <div key={index} className="px-1">
-                                    <div >{item}</div>
-                                </div>
-                            ))}</div>
+                            <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed list-none">
+                                {interests != [] &&
+                                    <>
+                                        {interests.map((item, index) => (
+                                            <div key={index} className="px-1">
+                                                <div >{item}</div>
+                                            </div>
+                                        ))}
+                                    </>
+                                }
+                            </div>
                         </div>
                         <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
                             <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => likeBtn(myId, id, true)} >

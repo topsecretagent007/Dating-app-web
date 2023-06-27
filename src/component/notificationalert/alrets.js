@@ -40,7 +40,7 @@ export default function Matches() {
                 <div className="bg-[#FAD7F0] p-6 text-black rounded-xl">
                     <div className="w-full md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl flex justify-between items-center">
                         <div className="font-bold text-start">Welcome Message</div>
-                        <MdDelete onClick={() => setDeleteMessage(!deleteMessage)} className="text-end" />
+                        <MdDelete onClick={() => setDeleteMessage(!deleteMessage)} className="text-end cursor-pointer" />
                     </div>
                     <div className="py-2 text-sm md:text-base text-start">
                         Welcome to Unjabbed! As a new member, you'ra now part of a unique community of like-minded individuals. As a growing startup, we're constantly working to enhance your experience and expand our member base. If you improvement, don't hesitate to reach out to us at info@unjabbed.app. Help us grow by spreading the word to other unvaccinated individuals about our platform. Together, we can build a vibrant, supportive community. Enjoy connecting!

@@ -51,18 +51,20 @@ export default function Matches() {
         }
     }, [user]);
 
-
-    const listItems = numbers ? numbers.map((number, index) =>
+    const listItems = numbers && numbers.length > 0 ? numbers.map((numbers, index) =>
         <div key={index} className="w-full flex">
-            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 px-1 gap-5 flex w-full">
-                <img src={likedUserAvatar[index]} className="w-12 h-12 my-1 xl:my-auto object-cover rounded-full" />
-                <div className="w-full text-[#888888] text-start pl-1 py-1 text-sm sm:text-lg sm:py-7 justify-between pr-3 sm:flex border-b-[0.1px] border-b-black/10">
+            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full pt-2 cursor-pointer">
+                <img src={likedUserAvatar[index]} className="w-12 h-12 ml-1 mr-2 my-auto object-cover rounded-full" />
+                <div className="w-full text-[#888888] text-start pl-1 py-3 text-base justify-between pr-3 sm:flex border-b-[0.1px] border-b-black/10">
                     <div className="w-32 md:w-48  truncate">{likedUserName[index]} like you.</div>
                     <div className="">{likedTime[index].toDate().toLocaleString()}</div>
                 </div>
             </div>
         </div>
-    ) : null;
+    ) :
+        <div className="text-[#5a5a5a] text-lg pt-4 font-mono justify-center">
+            <p>No users are connected.</p>
+        </div>;
 
     return (
         <div>

@@ -69,7 +69,7 @@ export default function FindPage() {
                 console.log(otherUserId)
                 if (searchedUserId.length < 2) setUsersData(false);
                 else setUsersData(true);
-                if (searchedUserId == [] && searchedUserId == undefined) setSearchUsers(false);
+                if (searchedUserId == [] || searchedUserId == undefined || searchedUserId.length == 0) setSearchUsers(false);
                 else setSearchUsers(true);
             } else {
                 // docSnap.data() will be undefined in this case

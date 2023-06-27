@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, where } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
 export default function LikedBy() {
@@ -13,14 +13,9 @@ export default function LikedBy() {
     const [likedTime, setLikedTime] = useState();
     const [likedUserName, setLikedUserName] = useState();
     const [loading, setLoading] = useState(false);
-    const [likedUserProfile, setLikedUserProfile] = useState(false);
-    const [lookingUserProfile, setLookingUserProfile] = useState();
 
     const Lookingprofile = async (userId) => {
         navigate(`/likedUsers/${userId}`)
-        // await setLookingUserProfile(userId);
-        // await setLikedUserProfile(true);
-
     }
 
     useEffect(() => {
@@ -31,10 +26,20 @@ export default function LikedBy() {
             const likedUserImage = [];
             const likedUserTime = [];
             const likedUserName = [];
+            const matchesUsers = [];
+
+            const matchesSnapshot = await getDocs(collection(db, "Users", user.uid, "Matches"));
+            matchesSnapshot.forEach((doc) => {
+                matchesUsers.push(doc.id)
+            })
 
             const querySnapshot = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
-            querySnapshot.forEach((doc) => {
+            const filteredSnapshot = await querySnapshot.docs.filter(doc => doc.data().userId !== matchesUsers);
+
+            filteredSnapshot.forEach((doc) => {
                 likedUserid.push(doc.id)
+                console.log(likedUserid, "like user");
+
                 if (doc.data().pictureUrl) {
                     likedUserImage.push(doc.data().pictureUrl)
                 } else {
@@ -62,18 +67,21 @@ export default function LikedBy() {
         }
     }, [user]);
 
-
-    const listItems = numbers ? numbers.map((numbers, index) =>
+    const listItems = numbers && numbers.length > 0 ? numbers.map((numbers, index) =>
         <div key={index} className="w-full flex cursor-pointer" onClick={() => Lookingprofile(numbers)}>
-            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 px-1 gap-5 flex w-full">
-                <img src={likedUserAvatar[index]} className="w-12 h-12 ml-2 mr-1 xl:my-auto object-cover rounded-full" />
-                <div className="w-full text-[#888888] text-start pl-1 py-1 text-sm sm:text-lg sm:py-7 justify-between pr-3 sm:flex border-b-[0.1px] border-b-black/10">
+            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full pt-2">
+                <img src={likedUserAvatar[index]} className="w-12 h-12 ml-2 mr-1 my-auto object-cover rounded-full " />
+                <div className="w-full text-[#888888] text-start pl-1 py-3 text-base justify-between pr-3 sm:flex border-b-[0.1px] border-b-black/10">
                     <div className="w-32 md:w-48  truncate">{likedUserName[index]} like you.</div>
                     <div className=" text-sm">{likedTime[index].toDate().toLocaleString()}</div>
                 </div>
             </div>
+
         </div>
-    ) : null;
+    ) :
+        <div className="text-[#5a5a5a] text-lg pt-4 font-mono justify-center">
+            <p>No users are connected.</p>
+        </div>;
 
     return (
         <div>

@@ -95,14 +95,14 @@ export default function Location() {
     }, [latitude, longitude]);
 
     return (
-        <div className="bg-[#FFFBFE] w-full min-h-screen h-full flex pt-10 pb-32">
+        <div className="bg-[#FFFBFE] w-full min-h-screen h-full flex pt-10 pb-20">
             <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
                 <Link to='/profile/profiledata' className="">
                     <FiArrowLeft className="text-pinkLight text-xl lg:text-2xl xl:text-4xl my-3" />
                 </Link>
             </div>
             <div className="w-full">
-                <div className="w-40 md:w-60 mx-auto pt-12 pb-10 justify-center items-center">
+                <div className="w-40 md:w-60 mx-auto pt-4 pb-10 justify-center items-center">
                     <img src={Logo} alt="Logo" className="mx-auto" />
                 </div>
                 <div className="w-full">

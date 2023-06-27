@@ -1,40 +1,59 @@
-import React, {useState} from "react";
-import ReactCrop from 'react-image-crop';
+import React, { useRef, useState } from "react";
+import ReactCrop, {
+    centerCrop,
+    makeAspectCrop
+} from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 import demoImage from "../assets/findImage.png";
 
+
+
+function centerAspectCrop(
+    mediaWidth,
+    mediaHeight,
+    aspect
+) {
+    return centerCrop(
+        makeAspectCrop(
+            {
+                unit: '%',
+                width: 90,
+            },
+            aspect,
+            mediaWidth,
+            mediaHeight,
+        ),
+        mediaWidth,
+        mediaHeight,
+    )
+}
+
 function ImageCropper(props) {
-    const {imageToCrop, onImageCropped} = props;
+    const { imageToCrop, onImageCropped, onImageCroppedUrl } = props;
+    const [crop, setCrop] = useState("")
+    const imageRef = useRef("");
 
-    const [cropConfig, setCropConfig] = useState(
-        // default crop config
-        {
-            unit: '%',
-            width: 30,
-            height: 30,
-            aspect: 9 / 9,
-        }
-    );
-
-    const [imageRef, setImageRef] = useState("");
+    const onImageLoad = (e) => {
+        const { width, height } = e.target;
+        setCrop(centerAspectCrop(width, height, 1))
+    }
 
     async function cropImage(crop) {
         if (imageRef && crop.width && crop.height) {
             const croppedImage = await getCroppedImage(
-                imageRef,
+                imageRef.current,
                 crop,
                 'croppedImage.jpeg' // destination filename
             );
 
             // calling the props function to expose
             // croppedImage to the parent component
-            onImageCropped(croppedImage);
+            ///onImageCropped(croppedImage);
         }
     }
 
     function getCroppedImage(sourceImage, cropConfig, fileName) {
-        console.log("FFFFFFFFFFF")
         // creating the cropped image from the source image
         const canvas = document.createElement('canvas');
         const scaleX = sourceImage.naturalWidth / sourceImage.width;
@@ -56,6 +75,7 @@ function ImageCropper(props) {
         );
 
         return new Promise((resolve, reject) => {
+            //const reader = new FileReader();
             canvas.toBlob(
                 (blob) => {
                     // returning an error
@@ -63,11 +83,11 @@ function ImageCropper(props) {
                         reject(new Error('Canvas is empty'));
                         return;
                     }
-
+                    const file = new File([blob], "cropped-image.jpg", { type: "image/jpeg" });
                     blob.name = fileName;
                     // creating a Object URL representing the Blob object given
                     const croppedImageUrl = window.URL.createObjectURL(blob);
-
+                    onImageCropped({ file: file, url: croppedImageUrl });
                     resolve(croppedImageUrl);
                 }, 'image/jpeg'
             );
@@ -75,24 +95,21 @@ function ImageCropper(props) {
     }
 
     return (
-        <>
-             <ReactCrop
-                crop={cropConfig}
-                onImageLoaded={(imageRef) => console.log(imageRef)}
-                onComplete={(cropConfig) => cropImage(cropConfig)}
-                onChange={(cropConfig) => setCropConfig(cropConfig)}
-                crossorigin="anonymous"
-                square={true}
-            >
-                <img src={imageToCrop || demoImage} />
-            </ReactCrop>
-        </>
-       
+        <ReactCrop
+            crop={crop}
+            // onImageLoaded={(imageRef) => setImageRef(imageRef)}
+            onComplete={(crop) => cropImage(crop)}
+            onChange={(crop) => setCrop(crop)}
+            crossorigin="anonymous"
+            aspect={1}
+        >
+                <img ref={imageRef} src={imageToCrop || demoImage} onLoad={onImageLoad} />
+        </ReactCrop>
     );
 }
 
 ImageCropper.defaultProps = {
-    onImageCropped: () => {console.log("AAAAAAAAAAAAAAAAA")}
+    onImageCropped: () => { console.log("AAAAAAAAAAAAAAAAA") }
 }
 
 export default ImageCropper;

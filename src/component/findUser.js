@@ -139,7 +139,7 @@ export default function FindUser({ usersId }) {
 
     return (
         < div className="w-full xl:flex gap-14" >
-            <div className="w-full max-w-2xl">
+            <div className="w-full max-w-xl">
                 <ImageSlider userImage={usersId} />
             </div>
             <div className="w-full pt-5 xl:pt-0 xl:w-2/5">

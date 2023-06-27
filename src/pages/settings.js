@@ -47,6 +47,13 @@ export default function SettingsPage() {
     const [countryID, setCountryID] = useState('');
     const [countryName, setCountryName] = useState('');
     const [userShow, setUserShow] = useState([]);
+    const [userVerified, setUserVerified] = useState(false)
+
+    const modalClose = () => {
+        setLogoutModal(false);
+        setDeleteModal(false);
+        setContactModal(false);
+    }
 
     const SettingSave = async () => {
         setLoading(true);
@@ -112,11 +119,20 @@ export default function SettingsPage() {
                 setCountryID(userData.location?.countryID);
                 setCountryName(userData.location?.countryName);
                 setUserShow(userData.showGender);
-                setLoading(false);
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
+            const docVerifySnap = await getDoc(doc(db, "Verify", user.uid));
+            if (docVerifySnap.exists()) {
+                const userData = docVerifySnap.data();
+                if (userData.verified == 3) setUserVerified(true);
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+            setLoading(false);
+
         }
         if (user && user.uid) {
             console.log(user)
@@ -142,7 +158,12 @@ export default function SettingsPage() {
                                 <a href="/verifyprofile" className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
                                     <div className="w-full justify-between flex pl-5">
                                         <div className="justify-start w-full">Verification Status</div>
-                                        <div className="justify-end text-red-600">Unverified</div>
+                                        {
+                                            !userVerified ?
+                                                <div className="justify-end text-red-600">Unverified</div>
+                                                :
+                                                <div className="justify-end text-green-600">Verified</div>
+                                        }
                                     </div>
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />
@@ -309,7 +330,7 @@ export default function SettingsPage() {
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                         <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                             <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
-                                <LogoutModal />
+                                <LogoutModal closeModal={() => modalClose()} />
                             </div>
                         </div >
                     </div>
@@ -319,7 +340,7 @@ export default function SettingsPage() {
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                         <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                             <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
-                                <DeleteModal />
+                                <DeleteModal closeModal={() => modalClose()} />
                             </div>
                         </div >
                     </div>

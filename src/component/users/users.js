@@ -1,23 +1,81 @@
-import React from "react";
-import Avatar from "../../assets/istockphoto-1167582073-612x6121.png"
+import React, { useEffect, useState } from "react";
+import { UserAuth } from "../../context/AuthContext";
+import { db } from "../../firebase";
+import { getDocs, collection } from "firebase/firestore";
+import LoadingModal from "../../component/loadingPage";
 
-export default function MessageUsers() {
-    const numbers = [1, 2, 3];
-    const listItems = numbers.map((numbers) =>
-        <div key={numbers} className="w-full flex">
-            <div className="hover:border-l-pinkLight hover:bg-[#ffe9f8] border-l-white border-l-2 flex items-center justify-center w-full">
-                <img src={Avatar} className="w-10 h-10 my-1 mx-2 object-cover rounded-full" />
-                <div className="w-full flex px-1 py-3 justify-between text-sm xl:text-lg border-b-[0.1px] border-b-black/10 ">
-                    <div className="truncate">John Eard likes you.</div>
-                    <div className="justify-end text-[#888888] ">Time</div>
+export default function Matches({ usersId, onClickUser }) {
+    const { user } = UserAuth();
+    const [matches, setMatches] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setLoading(true);
+
+        const getMatches = async () => {
+
+            try {
+                const querySnapshot = await getDocs(
+                    collection(db, "Users", user.uid, "Matches")
+                );
+
+                const matches = querySnapshot.docs.map((doc) => {
+                    const { pictureUrl, timestamp, userName } = doc.data();
+
+                    return {
+                        id: doc.id,
+                        pictureUrl,
+                        timestamp,
+                        userName,
+                    };
+                });
+
+                setMatches(matches);
+            } catch (error) {
+                console.error("Error fetching matches: ", error);
+            }
+
+            setLoading(false);
+        };
+
+        if (usersId) {
+            getMatches();
+        }
+    }, [usersId]);
+
+    const renderMatch = ({ id, pictureUrl, timestamp, userName }) => (
+        <div
+            key={id}
+            className="w-full flex"
+            onClick={() => onClickUser(id)}
+        >
+            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-1 flex w-full pt-1 cursor-pointer">
+                <img
+                    src={pictureUrl}
+                    className="w-10 h-10 ml-1 mr-2 my-auto object-cover rounded-full"
+                />
+                <div className="w-full text-[#888888] text-start pl-1 py-3 text-sm justify-between pr-3 sm:flex border-b-[0.1px] border-b-black/10">
+                    <div className="w-32 truncate">{userName}</div>
+                    <div className="lg:text-end lg:w-20">
+                        {timestamp?.toDate().toLocaleString()}
+                    </div>
                 </div>
             </div>
         </div>
     );
 
+    const renderEmptyState = () => (
+        <div className="text-[#5a5a5a] text-lg pt-4 font-mono justify-center">
+            <p>No users are connected.</p>
+        </div>
+    );
+
     return (
         <div>
-            {listItems}
+            {matches.length > 0
+                ? matches.map(renderMatch)
+                : renderEmptyState()}
+            {loading && <LoadingModal />}
         </div>
-    )
+    );
 }
