@@ -74,7 +74,6 @@ export default function EditProfilePage() {
         navigate(url);
     }
     const dataSave = async () => {
-        //console.log(interests); return;
         setLoading(true);
         if (images.length != 0 && description != "") {
             let pictures = [];
@@ -105,7 +104,6 @@ export default function EditProfilePage() {
                 },
                 interest: interests
             });
-            console.log("update finished...")
             setLoading(false);
         } else {
             setAlertModal(true);

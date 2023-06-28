@@ -122,8 +122,7 @@ export default function ProfileData() {
     }
 
     useEffect(() => {
-        if (name !== "" && brithday !== "" && userSex !== "" && userOri !== "" && userStatus !== "" && userLooking !== [] && userShow !== []) {
-            console.log(userLooking)
+        if (name != "" && brithday != "" && userSex != "" && userOri != "" && userStatus != "" && userLooking.length != 0 && userShow.length != 0) {
             setNextPage(true);
         } else {
             setNextPage(false);

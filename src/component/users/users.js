@@ -34,7 +34,6 @@ export default function Matches({ usersId, onClickUser }) {
             } catch (error) {
                 console.error("Error fetching matches: ", error);
             }
-
             setLoading(false);
         };
 

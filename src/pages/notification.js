@@ -10,7 +10,7 @@ export default function NotificationPage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover px-5 py-14 sm:px-[10%] md:px-[18%] lg:px-[24%] xl:px-[30%] bg-[#FFFBFE]" >
+            <div className="w-full h-full min-h-screen bg-cover px-5 py-12 sm:px-[10%] md:px-[18%] lg:px-[24%] xl:px-[30%] bg-[#FFFBFE]" >
                 <div className="bg-white border-2 border-[#888888] rounded-xl">
                     <div className="border-b-[#888888] border-b-[1px] px-3 xl:px-8 py-5">
                         <div className="text-lg xl:text-2xl pb-4 text-start font-bold text-[#5a5a5a]">Notification</div>
@@ -20,7 +20,7 @@ export default function NotificationPage() {
                             <button onClick={() => setPage("alerts")} className={`${page === "alerts" ? "bg-pinkLight text-white" : ""} xl:px-3 xl:py-2 md:text-lg xl:text-xl text-[#888888] border-[#888888] hover:border-0 focus:border-0 rounded-xl hover:bg-pinkLight hover:text-white border-[0.5px] `}>Alerts</button>
                         </div>
                     </div>
-                    <div className="h-[600px]">
+                    <div className="h-full min-h-[500px]">
                         {page == "matches" &&
                             < MatchesPage />
                         }

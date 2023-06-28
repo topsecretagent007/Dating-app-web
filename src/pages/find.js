@@ -56,10 +56,8 @@ export default function FindPage() {
                     searchedUserId.push(doc.data().userId);
                 });
                 setOtherUserId(searchedUserId);
-                console.log(otherUserId)
                 if (searchedUserId.length < 2) setUsersData(false);
                 else setUsersData(true);
-                console.log(searchedUserId, "searchedUserId")
                 if (searchedUserId == [""] || searchedUserId == undefined || searchedUserId.length == 0) setSearchUsers(false);
                 else setSearchUsers(true);
             } else {
@@ -67,7 +65,6 @@ export default function FindPage() {
                 console.log("No such document!");
             }
             setLoading(false);
-            console.log(otherUserId)
         }
         if (user && user.uid) {
             getUserInfo();
