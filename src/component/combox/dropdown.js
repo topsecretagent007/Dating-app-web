@@ -34,8 +34,8 @@ export default function DropDown({ text, value, items, onHandleChange, multiple 
 
     return (
         <div>
-            <div className="text-lg xl:text-xl w-full text-start mx-auto">
-                <div className="pt-4 pb-6 font-bold w-full text-[#5A5A5A]">{text}</div>
+            <div className="text-lg w-full text-start mx-auto">
+                <div className="pt-4 pb-6 font-bold w-full text-[#5A5A5A] text-xl xl:text-2xl">{text}</div>
                 <FormControl className='w-full max-w-xs' sx={{ m: 1, }}>
                     <InputLabel id="demo-multiple-checkbox-label">Please Select</InputLabel>
                     <Select

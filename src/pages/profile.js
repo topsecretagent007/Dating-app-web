@@ -128,7 +128,7 @@ export default function ProfilePage() {
             <Header />
             <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-14" >
                 <div className="w-full px-5 xl:px-[24%]">
-                    <div className="text-2xl font-bold justify-start xl:absolute z-10">My Profile</div>
+                    <div className="text-xl xl:text-2xl font-bold justify-start xl:absolute z-10 text-[#5a5a5a]">My Profile</div>
                     <ImageUploading
                         value={images}
                         onChange={(imageList) => (setImages(imageList), setImageSave(true))}
@@ -153,17 +153,17 @@ export default function ProfilePage() {
                             </div>
                         )}
                     </ImageUploading>
-                    <div className="text-xl xl:text-2xl font-bold pt-6 xl:pt-10">{name}</div>
+                    <div className="text-xl xl:text-2xl font-bold pt-6 xl:pt-10 text-[#5a5a5a]">{name}</div>
                     <div className="justify-center flex mx-auto gap-44 xl:gap-52 -mt-10">
                         <div onClick={() => goToPage("/settings")} >
-                            <button className="justify-start cursor-pointer text-pinkLight text-xl lg:text-5xl p-2 rounded-full  border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight "
+                            <button className="justify-start cursor-pointer text-pinkLight text-xl lg:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
                             >
                                 <MdSettingsSuggest />
                             </button>
                             <div className="block xl:text-xl text-[#888888]">Setting</div>
                         </div>
                         <div onClick={() => goToPage("/editprofile")}>
-                            <button className="justify-start text-pinkLight text-xl lg:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
+                            <button className="justify-start cursor-pointer text-pinkLight text-xl lg:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
                             >
                                 <TiEdit />
                             </button>
@@ -175,7 +175,7 @@ export default function ProfilePage() {
                             {
                                 !userVerified ?
                                     <>
-                                        <button className="justify-start text-xl text-pinkLight xl:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
+                                        <button className="justify-start cursor-pointer text-pinkLight text-xl lg:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
                                         >
                                             <BiError />
                                         </button>
@@ -209,12 +209,12 @@ export default function ProfilePage() {
             {
                 imageSave &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                    <div className="w-full h-screen bg-cover flex px-8 py-12 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                            <ImageCropper
-                                imageToCrop={images[0]["url"]}
-                                onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
-                            />
+                                <ImageCropper
+                                    imageToCrop={images[0]["url"]}
+                                    onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
+                                />
                             <ImageSaveModal onSaveImage={updateAvatar} onCloseImage={() => removeImage()} />
                         </div>
                     </div >

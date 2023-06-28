@@ -5,7 +5,7 @@ export const uploadImage = async (image, folder, uid) => {
     if (!image) {
         return null;
     }
-    if (image.url.includes("https://")) return image.url;
+    if (image.url.includes("https://") && !image.url.includes("blob:")) return image.url;
     const filename = `${Date.now()}-${image.file.name}`;
     const storageRef = ref(storage, `${folder}/${uid}/${filename}`);
 

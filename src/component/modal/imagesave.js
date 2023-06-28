@@ -10,7 +10,7 @@ export default function SaveAvatar({ onSaveImage, onCloseImage }) {
             </h2>
             <p className="text-lg lg:text-xl xl:text-3xl font-bold my-3 text-pinkLight">Notification</p>
             <span className="text-sm xl:text-lg 2xl:text-xl my-3 lg:leading-relaxed">
-                Are you going to change your avatar?
+                Crop your image to your liking and click OK.
             </span>
 
             <div className="w-full lg:flex gap-2">

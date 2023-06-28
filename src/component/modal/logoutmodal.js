@@ -20,7 +20,6 @@ export default function LogoutModal({closeModal}) {
             <span className="text-sm xl:text-lg 2xl:text-xl my-3 lg:leading-relaxed">
                 Would you like to logout of your account?
             </span>
-
             <div className="w-full lg:flex gap-2">
                 <button onClick={()=> {logOut();}} className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white">
                     <div className="text-sm xl:text-lg font-bold">Log out</div>

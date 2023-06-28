@@ -15,7 +15,6 @@ import EditProfile from './pages/editProfile';
 import Verify from './pages/verify';
 import ProfilePreview from './pages/profilepreview';
 import LikedUserProfile from './pages/likedUserProfile';
-
 import CameraPic from './component/other/camera';
 
 import WelcomePage from "./pages/login/welcomePage";

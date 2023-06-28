@@ -5,7 +5,7 @@ import Logo from "../../assets/Logo1.svg";
 import { db } from '../../firebase';
 import LoadingModal from "../../component/loadingPage";
 import { UserAuth } from "../../context/AuthContext";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, addDoc, collection } from "firebase/firestore";
 import AlertModal from "../../component/modal/alertmodal";
 
 export default function ProfileDescription() {
@@ -23,7 +23,7 @@ export default function ProfileDescription() {
     const modalClose = () => {
         setAlertModal(false);
     }
-    
+
     const updataProfileData = async () => {
         setLoading(true);
         const { about: _, ...temp } = originalEditInfo;
@@ -39,6 +39,21 @@ export default function ProfileDescription() {
                 maximum_distance: 200,
                 miles: false,
 
+            });
+            await addDoc(collection(db, "Users", user.uid, "notification"), {
+                body: "Dear valued member,We have an exciting video message from the founder of Unjabbed, and we highly recommend watching it at your earliest convenience. To access this video, please navigate to the settings section of the app and scroll down to the Tutorials section. You'll find the video right at the top. We deeply appreciate your continued support.Best regards,Unjabbed Team",
+                time: new Date(),
+                title: "A message from the founder of Unjabbed"
+            });
+            await addDoc(collection(db, "Users", user.uid, "notification"), {
+                body: "Dear valued member,We have an exciting video message from the founder of Unjabbed, and we highly recommend watching it at your earliest convenience. To access this video, please navigate to the settings section of the app and scroll down to the Tutorials section. You'll find the video right at the top. We deeply appreciate your continued support.Best regards,Unjabbed Team",
+                time: new Date(),
+                title: "A message from the founder of Unjabbed"
+            });
+            await addDoc(collection(db, "Users", user.uid, "notification"), {
+                body: "Dear valued member,We have an exciting video message from the founder of Unjabbed, and we highly recommend watching it at your earliest convenience. To access this video, please navigate to the settings section of the app and scroll down to the Tutorials section. You'll find the video right at the top. We deeply appreciate your continued support.Best regards,Unjabbed Team",
+                time: new Date(),
+                title: "A message from the founder of Unjabbed"
             });
             setLoading(false);
             navigate("/");
@@ -107,7 +122,7 @@ export default function ProfileDescription() {
                     <div className="text-2xl font-bold">Description</div>
                     <div className="text-sm xl:text-xl font-semibold py-4 xl:leading-loose">
                         Please write something about yourself and let other members know<br />
-                        why you’re here. You can skip this section for now and complete this later<br /> 
+                        why you’re here. You can skip this section for now and complete this later<br />
                         in your settings under Edit Info.
                     </div>
                     <div className="mt-10 text-sm lg:text-xl mb-20 leading-relaxed">
@@ -136,8 +151,8 @@ export default function ProfileDescription() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
-                            <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()}/>
+                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                            <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()} />
                         </div>
                     </div >
                 </div>

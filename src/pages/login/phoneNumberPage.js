@@ -35,14 +35,11 @@ export default function PhoneNumberPage() {
     }
 
     const verifyEnterCode = async () => {
-        console.log(code)
         if (code == "" || code == null) return;
         try {
             const res = await confirmObj.confirm(code);
-            console.log(res)
             //navigate("/");
         } catch (error) {
-            console.log(error)
             setErrMessage(error.message);
         }
     }

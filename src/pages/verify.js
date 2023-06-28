@@ -54,8 +54,12 @@ export default function Verify() {
 
     const uploadPhote = async () => {
         setLoading(true);
-        if(images[0].file==null || images[0].file==undefined) return;
-        const codeImageUrl = await uploadImage(images[0].file);
+        if (images[0] == null || images[0] == undefined) {
+            setAlertModal(true);
+            setLoading(false);
+            return
+        };
+        const codeImageUrl = await uploadImage(images[0], "verify", user.uid);
         if (codeImageUrl == "" || codeImageUrl == null) {
             setLoading(false);
             setAlertModal(true);
@@ -68,7 +72,7 @@ export default function Verify() {
                 name: name,
                 reason_verified: "",
                 verified: 2,
-                phoneNumber : ""
+                phoneNumber: ""
             });
             setLoading(false);
             setAlretUploadPhoto(true);
@@ -217,7 +221,7 @@ export default function Verify() {
                         {alretUploadPhoto &&
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                                    <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-6">
+                                    <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
                                         <AlertModal text="Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile." onCloseModal={() => modalClose()} />
                                     </div>
                                 </div >
@@ -227,16 +231,16 @@ export default function Verify() {
                             alertModal &&
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                                    <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-6">
+                                    <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
                                         <AlertModal text="Please agree to our terms of use and privacy policy by checking the box below." onCloseModal={() => modalClose()} />
                                     </div>
                                 </div >
                             </div>
                         }
-                        {
+                        {/* {
                             isCameraConnected && <p>Camera connected successfully!</p>
-                        }
-                        {cameraConnected &&
+                        } */}
+                        {/* {cameraConnected &&
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                                     <div ref={menuDropdown} className="w-80 bg-white rounded-xl px-3 relative  py-6">
@@ -244,7 +248,7 @@ export default function Verify() {
                                     </div>
                                 </div >
                             </div>
-                        }
+                        } */}
                     </div>
                 </div>
             </div>

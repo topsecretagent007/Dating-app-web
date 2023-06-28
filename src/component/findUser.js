@@ -10,7 +10,7 @@ import LoadingModal from "../component/loadingPage";
 
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, getDoc, setDoc, setdoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function FindUser({ usersId }) {
     const { user } = UserAuth();
@@ -110,12 +110,6 @@ export default function FindUser({ usersId }) {
                 userName: otherUsersData.UserName
             });
         }
-
-        // if(docChecked.exists()){
-        //     console.log("true")
-        // } else {
-        //     console.log("err")
-        // }
     }
 
 
@@ -145,14 +139,14 @@ export default function FindUser({ usersId }) {
             <div className="w-full pt-5 xl:pt-0 xl:w-2/5">
                 <div className="justify-between flex">
                     <div className="text-start">
-                        <div className="text-lg md:text-xl xl:text-2xl font-bold">{userName}</div>
-                        <div className="text-sm md:text-md lg:text-lg xl:text-xl text-[#888888]">Address </div>
+                        <div className="text-lg md:text-xl xl:text-2xl font-bold text-[#5a5a5a]">{userName}</div>
+                        <div className="text-sm lg:text-lg py-1 text-[#888888]">Address </div>
                     </div>
                     <button onClick={() => setReportUser(!reportUser)} className="text-sm md:text-lg lg:text-xl xl:text-2xl my-auto text-red-600 justify-end p-2 xl:p-4 border-2 border-[#888888] bg-white rounded-full">
                         <AiTwotoneFlag />
                     </button>
                 </div>
-                <div className="flex text-md xl:text-2xl items-center gap-2">
+                <div className="flex text-sm lg:text-lg items-center gap-2 text-[#888888]">
                     <div className="text-pinkLight text-2xl" >
                         <MdOutlineLocationOn />
                     </div>
@@ -161,14 +155,14 @@ export default function FindUser({ usersId }) {
                     </div>
                 </div>
                 <div className="text-start py-5">
-                    <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">About me</div>
-                    <div className="text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
+                    <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">About me</div>
+                    <div className="text-sm lg:text-lg text-[#888888] leading-relaxed">
                         {description}
                     </div>
                 </div>
                 <div className="text-start py-5">
-                    <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Desires</div>
-                    <div className="grid grid-cols-2 xl:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
+                    <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">Desires</div>
+                    <div className="grid grid-cols-2 xl:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed">
                         {userLooking.map((item, index) => (
                             <div key={index} className="px-1">
                                 <div >{item}</div>
@@ -177,7 +171,7 @@ export default function FindUser({ usersId }) {
                     </div>
                 </div>
                 <div className="text-start py-5">
-                    <div className=" text-md md:text-lg lg:text-xl xl:text-2xl font-bold">Interest</div>
+                    <div className=" text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">Interest</div>
                     {interests != [] &&
                         <div className="grid grid-cols-2 xl:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
                             {interests.map((item, index) => (

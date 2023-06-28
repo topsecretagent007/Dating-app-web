@@ -14,10 +14,6 @@ import { doc, getDoc, collection, getDocs, where, query } from "firebase/firesto
 export default function FindPage() {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
-    const [userLooking, setUserLooking] = useState([]);
-    const [userShow, setUserShow] = useState([]);
-    const [firstAge, setFirstAge] = useState("");
-    const [lastAge, setlastAge] = useState("");
     const [otherUserId, setOtherUserId] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [usersData, setUsersData] = useState(false);
@@ -45,14 +41,8 @@ export default function FindPage() {
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             const userData = await docSnap.data();
-            const otherUser = [];
             const searchedUserId = [];
             if (docSnap.exists()) {
-                setUserLooking(userData.desires);
-                setUserShow(userData.showGender);
-                setFirstAge(userData.age_range?.min)
-                setlastAge(userData.age_range?.max)
-                console.log(userData.showGender);
                 const querySnapshot = await getDocs(
                     query(
                         collection(db, "Users"),
@@ -66,10 +56,9 @@ export default function FindPage() {
                     searchedUserId.push(doc.data().userId);
                 });
                 setOtherUserId(searchedUserId);
-                console.log(otherUserId)
                 if (searchedUserId.length < 2) setUsersData(false);
                 else setUsersData(true);
-                if (searchedUserId == [] || searchedUserId == undefined || searchedUserId.length == 0) setSearchUsers(false);
+                if (searchedUserId == [""] || searchedUserId == undefined || searchedUserId.length == 0) setSearchUsers(false);
                 else setSearchUsers(true);
             } else {
                 // docSnap.data() will be undefined in this case
@@ -97,7 +86,7 @@ export default function FindPage() {
                     {SearchUsers ?
                         <FindUser usersId={otherUserId[currentPage]} />
                         :
-                        <p className="text-lg font-bold items-center pt-10 text-[#5A5A5A]">No search results were found.</p>
+                        <p className="text-lg xl:text-xl font-bold items-center pt-10 text-[#5A5A5A]">No search results were found.</p>
                     }
                 </div>
                 {usersData &&
