@@ -113,7 +113,7 @@ export default function PhotoUpload() {
             });
             setLoading(false);
             setImageSave(false)
-            setImages([{url: firstNewImage}]);
+            setImages([{ url: firstNewImage }]);
         } else {
             setAlertModal(true);
             setLoading(false);
@@ -226,7 +226,7 @@ export default function PhotoUpload() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
+                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative py-12">
                             <AlertModal text="Please select your avatar." onCloseModal={() => modalClose()} />
                         </div>
                     </div >
@@ -235,12 +235,12 @@ export default function PhotoUpload() {
             {
                 imageSave &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                    <div className="w-full h-screen bg-cover flex px-8 py-12 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                            <ImageCropper
-                                imageToCrop={images[0]["url"]}
-                                onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
-                            />
+                                <ImageCropper
+                                    imageToCrop={images[0]["url"]}
+                                    onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
+                                />
                             <ImageSaveModal onSaveImage={updateAvatar} onCloseImage={() => removeImage()} />
                         </div>
                     </div >

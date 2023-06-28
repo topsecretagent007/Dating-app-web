@@ -142,8 +142,7 @@ export default function PhotoAddMore() {
                                             </div>
                                             {imageList.map((image, index) => (
                                                 <div key={index} className="image-item">
-                                                    <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  ' onClick={() => 
-                                                        {onImageRemove(index); setImageSave(false)}}>
+                                                    <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  ' onClick={() => { onImageRemove(index); setImageSave(false) }}>
                                                         <AiOutlineDelete />
                                                     </button>
 
@@ -192,7 +191,7 @@ export default function PhotoAddMore() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
+                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
                             <AlertModal text="Please add your photo at lease one." onCloseModal={() => modalClose()} />
                         </div>
                     </div >
@@ -201,18 +200,18 @@ export default function PhotoAddMore() {
             {
                 imageSave &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                    <div className="w-full h-screen bg-cover flex px-8 py-12 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
                             <ImageCropper
-                                imageToCrop={images[images.length-1]["url"]}
+                                imageToCrop={images[images.length - 1]["url"]}
                                 onImageCropped={(image) => setCurrentCroppedImage(image)}
                             />
-                            <ImageSaveModal 
-                                onSaveImage={()=> {
-                                    setImages((prevImages)=> ([...prevImages.slice(0, -1), currentCroppedImage]));
+                            <ImageSaveModal
+                                onSaveImage={() => {
+                                    setImages((prevImages) => ([...prevImages.slice(0, -1), currentCroppedImage]));
                                     setImageSave(false)
-                                }} 
-                                onCloseImage={() => removeImage()} 
+                                }}
+                                onCloseImage={() => removeImage()}
                             />
                         </div>
                     </div >

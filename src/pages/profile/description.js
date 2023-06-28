@@ -136,7 +136,7 @@ export default function ProfileDescription() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
+                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
                             <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()}/>
                         </div>
                     </div >

@@ -95,16 +95,18 @@ function ImageCropper(props) {
     }
 
     return (
-        <ReactCrop
-            crop={crop}
-            // onImageLoaded={(imageRef) => setImageRef(imageRef)}
-            onComplete={(crop) => cropImage(crop)}
-            onChange={(crop) => setCrop(crop)}
-            crossorigin="anonymous"
-            aspect={1}
-        >
+        <div className="max-h-[500px] overflow-y-auto">
+            <ReactCrop
+                crop={crop}
+                // onImageLoaded={(imageRef) => setImageRef(imageRef)}
+                onComplete={(crop) => cropImage(crop)}
+                onChange={(crop) => setCrop(crop)}
+                crossorigin="anonymous"
+                aspect={1}
+            >
                 <img ref={imageRef} src={imageToCrop || demoImage} onLoad={onImageLoad} />
-        </ReactCrop>
+            </ReactCrop>
+        </div>
     );
 }
 

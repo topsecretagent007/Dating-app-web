@@ -88,7 +88,7 @@ export default function MyCarousel() {
                         renderArrowNext={nextArrow}
                     >
                         {images.map((image, index) => (
-                            <div key={index} style={{ height: "720px", width: '100%' }}>
+                            <div key={index} style={{ width: '100%' }}>
                                 <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
                             </div>
                         ))}

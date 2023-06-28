@@ -209,10 +209,10 @@ export default function EditProfilePage() {
         <div>
             <Header />
             <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-12">
-                <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 pt-[103px] mx-auto xl:pt-32 xl:flex gap-12">
+                <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 mx-auto  xl:flex gap-12">
                     <div className="w-full xl:px-10 2xl:px-40 pb-20">
                         <div className="w-full lg:flex lg:justify-between items-center">
-                            <div className="text-xl font-bold text-center lg:text-start text-[#5A5A5A]">Edit Profile</div>
+                            <div className="text-xl xl:text-2xl font-bold text-center lg:text-start text-[#5A5A5A]">Edit Profile</div>
                             <div className="px-8 md:px-44 lg:px-0">
                                 <button onClick={() => myPreview()} className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                                     <div className="w-40 lg:px-3 xl:w-60 items-center flex">
@@ -301,7 +301,7 @@ export default function EditProfilePage() {
                                     )}
                                 </ImageUploading>
                                 <div className="w-full items-center">
-                                    <div className="text-lg font-bold text-center xl:text-xl lg:py-8 text-[#5A5A5A]">Interest</div>
+                                    <div className="text-lg xl:text-2xl font-bold text-center lg:py-8 text-[#5A5A5A]">Interest</div>
                                     <AddInterested data={interests} onAddInterest={
                                         value => addInterest(value)
                                     }
@@ -313,7 +313,7 @@ export default function EditProfilePage() {
                             </div>
                             <div className="w-full xl:w-1/2">
                                 <div className="mb-5">
-                                    <div className="text-xl lg:text-start">
+                                    <div className="text-xl xl:text-2xl lg:text-start">
                                         <div className="mb-5 font-bold text-[#5A5A5A]">About</div>
                                         <div className="text-sm w-full lg:w-3/4 mx-auto md:text-base lg:text-lg 2xl:text-xl mb-8 leading-relaxed">
                                             <textarea
@@ -366,12 +366,12 @@ export default function EditProfilePage() {
             {
                 imageSave &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                    <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                    <div className="w-full h-screen bg-cover flex px-8 py-12 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                            <ImageCropper
-                                imageToCrop={images[images.length - 1]["url"]}
-                                onImageCropped={(image) => setCurrentCroppedImage(image)}
-                            />
+                                <ImageCropper
+                                    imageToCrop={images[images.length - 1]["url"]}
+                                    onImageCropped={(image) => setCurrentCroppedImage(image)}
+                                />
                             <ImageSaveModal
                                 onSaveImage={() => {
                                     setImages((prevImages) => ([...prevImages.slice(0, -1), currentCroppedImage]));

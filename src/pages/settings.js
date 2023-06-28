@@ -153,7 +153,7 @@ export default function SettingsPage() {
                         <div className="w-full  xl:flex gap-5">
                             <div className="w-full xl:w-1/2 rounded-xl bg-white border-2 border-black/5 mb-5">
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
-                                    <div className="px-5">Account Settings</div>
+                                    <div className="px-5 text-[#5a5a5a]">Account Settings</div>
                                 </div>
                                 <a href="/verifyprofile" className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
                                     <div className="w-full justify-between flex pl-5">
@@ -190,7 +190,7 @@ export default function SettingsPage() {
                             </div>
                             <div className="w-full xl:w-1/2 rounded-xl bg-white border-2 border-black/5 mb-5">
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
-                                    <div className="px-5">Partner</div>
+                                    <div className="px-5 text-[#5a5a5a]">Partner</div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center hover:bg-[#bebebe] hover:border-l-pinkLight border-b-2 border-l-white border-l-2 border-b-black/5 cursor-pointer">
                                     <PatnerUser />
@@ -206,7 +206,7 @@ export default function SettingsPage() {
                         <div className="w-full xl:flex gap-5 pb-10">
                             <div className="w-full xl:w-1/2 rounded-xl bg-white border-2 border-black/5">
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
-                                    <div className="px-5">Account Settings</div>
+                                    <div className="px-5 text-[#5a5a5a]">Account Settings</div>
                                 </div>
                                 <div className="text-sm gap-6 py-2 lg:texl-lg justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
                                     <div className="w-full justify-between md:flex pl-5">
@@ -223,18 +223,18 @@ export default function SettingsPage() {
                             </div>
                             <div className="w-full xl:w-1/2 rounded-xl bg-white border-2 border-black/5">
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
-                                    <div className="px-5">Search settings</div>
+                                    <div className="px-5 text-[#5a5a5a]">Search settings</div>
                                 </div>
                                 <SettingShow text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
                                 <div className="gap-6 py-1 justify-between text-start items-center border-b-2 border-b-black/5">
                                     <div className="w-full pl-5 text-sm xl:text-lg py-2">
-                                        <div className="justify-start w-full font-bold">Maximum distance</div>
+                                        <div className="justify-start w-full font-bold text-[#5a5a5a]">Maximum distance</div>
                                         <Distance distance={distance} miles={miles} onMiles={e => setMiles(e)} onDistance={e => setDistance(e)} />
                                     </div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 xl:texl-xl justify-between text-start items-center">
                                     <div className="w-full pl-5 py-">
-                                        <div className="justify-start w-full font-bold">Age range</div>
+                                        <div className="justify-start w-full font-bold text-[#5a5a5a]">Age range</div>
                                         <AgeRange first={firstAge} last={lastAge} onFirstAge={e => setFirstAge(e)} onLastAge={e => setLastAge(e)} />
                                     </div>
                                 </div>

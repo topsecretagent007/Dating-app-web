@@ -65,8 +65,8 @@ export default function Matches({ usersId, onClickUser }) {
     );
 
     const renderEmptyState = () => (
-        <div className="text-[#5a5a5a] text-lg pt-4 font-mono justify-center">
-            <p>No users are connected.</p>
+        <div className="text-[#5a5a5a] w-full mx-auto text-lg pt-4 font-mono justify-center">
+            <p className="text-center">No users are connected.</p>
         </div>
     );
 
