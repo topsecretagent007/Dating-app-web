@@ -155,7 +155,7 @@ export default function WelcomePage() {
                     </div>
                 </div>
                 <div className={`${checkboxColor ? "text-black" : "text-red-600"} w-full mx-auto items-center my-5 text-lg`}>
-                    <input id="default-checkbox" type="checkbox" value={agreeCheck} className="accent-pinkLight bg-gray-100 rounded-xl mr-1" onChange={() => setAgreeCheck(!agreeCheck)} />
+                    <input id="default-checkbox" type="checkbox" value={agreeCheck} className="accent-pinkLight bg-gray-100 rounded-xl mr-1 cursor-pointer" onChange={() => setAgreeCheck(!agreeCheck)} />
                     I agree to terms and conditions
                 </div>
                 <div className="text-pinkLight text-sm justify-center my-6 ">Terms of use & Privacy Policy</div>

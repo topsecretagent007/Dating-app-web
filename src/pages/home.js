@@ -5,11 +5,11 @@ import Footer from "../component/footer/index";
 export default function Landing() {
 
     return (
-        <div>
+        <div className="bg-black min-h-screen">
             <Header />
-            <div className="w-full h-full relative min-h-screen top-0 bg-cover flex bg-[url('./assets/5232845.png')] justify-between items-center z-10" >
+            <div className="w-full relative min-h-[calc(100vh-186px)] top-0 bg-cover flex bg-[url('./assets/5232845.png')] justify-between items-center z-30" >
             </div >
-            <Footer  />
+            <Footer />
         </div >
     )
 }

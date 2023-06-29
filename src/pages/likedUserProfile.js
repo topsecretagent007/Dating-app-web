@@ -70,19 +70,27 @@ export default function PreviewProfile() {
         const userData = docSnap.data();
 
         if (value == true) {
-            const docLikedBy = await setDoc(doc(db, "Users", user.uid, "Matches", id), {
+            await setDoc(doc(db, "Users", user.uid, "Matches", id), {
                 Matches: id,
                 pictureUrl: otherUserData.Pictures[0]?.url,
                 timestamp: new Date(),
                 userName: otherUserData.UserName,
                 isRead: false,
             });
-            const chatsState = await setDoc(doc(db, "chats", (id + "-" + user.uid)), {
-                docId: id + "-" + user.uid,
+            await setDoc(doc(db, "Users", id, "Matches", user.uid), {
+                Matches: user.uid,
+                pictureUrl: userData.Pictures[0]?.url,
+                timestamp: new Date(),
+                userName: userData.UserName,
+                isRead: false,
+            });
+            await setDoc(doc(db, "chats", (user.uid + "-" + id)), {
+                docId: user.uid + "-" + id,
                 isclear1: false,
                 isclear2: false,
                 active: false,
             });
+
             goToPage("/notification")
             setLoading(false);
 

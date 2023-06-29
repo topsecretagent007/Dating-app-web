@@ -11,17 +11,13 @@ export default function Matches({ usersId, onClickUser }) {
 
     useEffect(() => {
         setLoading(true);
-
         const getMatches = async () => {
-
             try {
                 const querySnapshot = await getDocs(
                     collection(db, "Users", user.uid, "Matches")
                 );
-
                 const matches = querySnapshot.docs.map((doc) => {
                     const { pictureUrl, timestamp, userName } = doc.data();
-
                     return {
                         id: doc.id,
                         pictureUrl,
@@ -29,13 +25,12 @@ export default function Matches({ usersId, onClickUser }) {
                         userName,
                     };
                 });
-
                 setMatches(matches);
             } catch (error) {
                 console.error("Error fetching matches: ", error);
             }
-            setLoading(false);
         };
+        setLoading(false);
 
         if (usersId) {
             getMatches();

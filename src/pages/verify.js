@@ -12,13 +12,12 @@ import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import AlertModal from "../component/modal/alertmodal";
 import { uploadImage } from "../config/helpers";
+import WebcamImage from "../component/camera";
 
 
 
 export default function Verify() {
-
     const { user } = UserAuth();
-    const navigate = useNavigate();
     const [verifycationCode, setVeryficationCode] = useState(false);
     const [alretUploadPhoto, setAlretUploadPhoto] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState();
@@ -30,24 +29,11 @@ export default function Verify() {
     const [alertModal, setAlertModal] = useState(false);
     const menuDropdown = useRef(null);
     const [isCameraConnected, setIsCameraConnected] = useState(false);
-    const [cameraConnected, setCameraConnected] = useState(false);
+    const [cameraModal, setCameraModal] = useState(false);
     const maxNumber = 100;
 
-    const handleConnectCamera = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ viedo: true });
-            setIsCameraConnected(true);
-            navigate("/camera");
-            // Do something with the stream, like display it in a video element
-        } catch (error) {
-            console.error(error);
-            setCameraConnected(true);
-            // alert('Please connect the camera');
-        }
-    };
-
     const modalClose = () => {
-        setCameraConnected(false);
+        setCameraModal(false);
         setAlertModal(false);
         setAlretUploadPhoto(false);
     }
@@ -102,7 +88,7 @@ export default function Verify() {
                 setAlretUploadPhoto(false);
                 setAlertModal(false)
                 setIsCameraConnected(false)
-                setCameraConnected(false)
+                setCameraModal(false)
             }
         }
 
@@ -172,9 +158,7 @@ export default function Verify() {
                                                     </div>
                                                     <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
                                                         <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-
-
-                                                            <button onClick={() => handleConnectCamera()} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
+                                                            <button onClick={() => setCameraModal(true)} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                             >
                                                                 <FiCamera />
                                                             </button>
@@ -237,18 +221,6 @@ export default function Verify() {
                                 </div >
                             </div>
                         }
-                        {/* {
-                            isCameraConnected && <p>Camera connected successfully!</p>
-                        } */}
-                        {/* {cameraConnected &&
-                            <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
-                                <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                                    <div ref={menuDropdown} className="w-80 bg-white rounded-xl px-3 relative  py-6">
-                                        <AlertModal text="Please connect the camera." onCloseModal={() => modalClose()} />
-                                    </div>
-                                </div >
-                            </div>
-                        } */}
                     </div>
                 </div>
             </div>
@@ -256,6 +228,16 @@ export default function Verify() {
             {
                 loading &&
                 <LoadingModal />
+            }
+            {
+                cameraModal &&
+                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                            <WebcamImage />
+                        </div>
+                    </div >
+                </div>
             }
 
         </div >

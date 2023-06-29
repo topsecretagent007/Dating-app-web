@@ -8,22 +8,21 @@ import Dropdown from "../component/combox/dropdown";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { sexData, oriData, statusData, lookingForData, showData } from "../config/constant";
 import LoadingModal from "../component/loadingPage";
 import AddInterested from "../component/other/addinterested";
-import { storage } from "../firebase";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import AlertModal from "../component/modal/alertmodal";
-
 import ImageCropper from '../component/imageCropper';
 import { uploadImage } from "../config/helpers";
 import ImageSaveModal from "../component/modal/imagesave";
+import { useCallbackPrompt, usePrompt } from '../hooks/useCallbackPrompt'
 
 export default function EditProfilePage() {
+    const [showDialog, setShowDialog] = useState(false);
+    const showprop = usePrompt(showDialog)
     const navigate = useNavigate();
-    const location = useLocation();
     const { user } = UserAuth();
     const [uploadModal, setUploadModal] = useState(false);
     const [images, setImages] = useState([]);
@@ -59,20 +58,14 @@ export default function EditProfilePage() {
 
     const addInterest = (value) => {
         setInterests([...interests, value]);
+        setShowDialog(true);
     }
 
     const removeInterest = (value) => {
         setInterests(interests.filter((item) => { return item !== value }))
+        setShowDialog(true)
     }
 
-    const myPreview = async () => {
-        await dataSave();
-        goToPage("/profilepreview");
-    }
-
-    const goToPage = (url) => {
-        navigate(url);
-    }
     const dataSave = async () => {
         setLoading(true);
         if (images.length != 0 && description != "") {
@@ -141,43 +134,6 @@ export default function EditProfilePage() {
         };
     }, [menuDropdown]);
 
-    const onChange = (imageList) => {
-        // data for submit
-        setImages(imageList);
-        setUploadModal(false);
-        setAlertModal(false);
-    };
-
-    const uploadImage = async (image) => {
-        if (!image) {
-            return null;
-        }
-        if (image.url.includes("https://")) return image.url;
-
-        const filename = `${Date.now()}-${image.file.name}`;
-        const storageRef = ref(storage, `users/${user.uid}/${filename}`);
-
-        return new Promise((resolve, reject) => {
-            const uploadTask = uploadBytesResumable(storageRef, image.file);
-            uploadTask.on(
-                "state_changed",
-                (snapshot) => {
-                    const percent = Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    );
-                },
-                (err) => console.log(err),
-                async () => {
-                    // download url
-                    getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                        return resolve(url);
-                    }).catch((e) => reject(e));
-                }
-            );
-        });
-
-    }
-
     useEffect(() => {
         setLoading(true);
         const getUserInfo = async () => {
@@ -203,21 +159,29 @@ export default function EditProfilePage() {
         }
     }, [user])
 
+    useEffect(() => {
+        console.log(showDialog, "SAAAA");
+        console.log(showprop)
+
+    }, [showDialog])
+
+
     return (
         <div>
             <Header />
+
             <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-12">
                 <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 mx-auto  xl:flex gap-12">
                     <div className="w-full xl:px-10 2xl:px-40 pb-20">
                         <div className="w-full lg:flex lg:justify-between items-center">
-                            <div className="text-xl xl:text-2xl font-bold text-center lg:text-start text-[#5A5A5A]">Edit Profile</div>
+                            <div className="text-xl xl:text-2xl font-bold text-center lg:text-start text-[#5A5A5A] ">Edit Profile</div>
                             <div className="px-8 md:px-44 lg:px-0">
-                                <button onClick={() => myPreview()} className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                                <button onClick={() => navigate("/profilepreview")} className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                                     <div className="w-40 lg:px-3 xl:w-60 items-center flex">
                                         <div className="w-1/6">
                                             <AiFillEye />
                                         </div>
-                                        <div onClick={() => myPreview()} className="w-5/6">
+                                        <div className="w-5/6">
                                             Preview Profile
                                         </div>
                                     </div>
@@ -229,7 +193,7 @@ export default function EditProfilePage() {
                                 <ImageUploading
                                     multiple
                                     value={images}
-                                    onChange={(imageList) => (setImages(imageList), setImageSave(true), setUploadModal(false))}
+                                    onChange={(imageList) => (setShowDialog(true), setImages(imageList), setImageSave(true), setUploadModal(false))}
                                     maxNumber={maxNumber}
                                     dataURLKey="url"
                                 >
@@ -315,32 +279,33 @@ export default function EditProfilePage() {
                                         <div className="mb-5 font-bold text-[#5A5A5A]">About</div>
                                         <div className="text-sm w-full lg:w-3/4 mx-auto md:text-base lg:text-lg 2xl:text-xl mb-8 leading-relaxed">
                                             <textarea
-                                                className="border-[#dddddd] border-[0.5px] mx-auto bg-white rounded-xl w-full p-4 md:w-2/3 lg:w-full h-[200px] xl:h-[400px] placeholder:italic placeholder:text-slate-400 block  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500/80 focus:ring-1 resize-none  shadow-cyan-500/50"
+                                                className="border-[#dddddd] border-[0.5px] mx-auto bg-white rounded-xl w-full p-4 md:w-2/3 lg:w-full h-[150px] xl:h-[280px] placeholder:italic placeholder:text-slate-400 block  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500/80 focus:ring-1 resize-none  shadow-cyan-500/50"
                                                 type="text"
                                                 name="discription"
                                                 placeholder="Write something about yourself."
                                                 rows={4}
                                                 cols={40}
                                                 value={description}
-                                                onChange={(e) => setDescription(e.target.value)}
+                                                onChange={(e) => (setDescription(e.target.value), setShowDialog(true))}
                                             >
                                             </textarea>
                                         </div>
                                     </div>
                                     <div className="grid md:grid-cols-2 md:justify-between gap-5 pb-16">
-                                        <Dropdown text="I am a " value={userSex} items={sexData} onHandleChange={e => setUserSex(e[0])} />
-                                        <Dropdown text="My sexual orientation " value={userOri} items={oriData} onHandleChange={e => setUserOri(e[0])} />
-                                        <Dropdown text="My Status is " value={userStatus} items={statusData} onHandleChange={e => setUserStatus(e[0])} />
-                                        <Dropdown text="I am looking for " value={userLooking} items={lookingForData} onHandleChange={e => setUserLooking(e)} multiple={true} />
-                                        <Dropdown text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
+                                        <Dropdown text="I am a " value={userSex} items={sexData} onHandleChange={e => (setUserSex(e[0]), setShowDialog(true))} />
+                                        <Dropdown text="My sexual orientation " value={userOri} items={oriData} onHandleChange={e => (setUserOri(e[0]), setShowDialog(true))} />
+                                        <Dropdown text="My Status is " value={userStatus} items={statusData} onHandleChange={e => (setUserStatus(e[0]), setShowDialog(true))} />
+                                        <Dropdown text="I am looking for " value={userLooking} items={lookingForData} onHandleChange={e => (setUserLooking(e), setShowDialog(true))} multiple={true} />
+                                        <Dropdown text="Show me " value={userShow} items={showData} onHandleChange={e => (setUserShow(e), setShowDialog(true))} multiple={true} />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <button onClick={() => dataSave()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</button>
+                        <button onClick={() => (dataSave(), setShowDialog(false))} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</button>
                     </div>
                 </div>
             </div>
+            {/* {showPrompt && <AlertModal text="Hey" onCloseModal={() => modalClose()} />} */}
             {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
@@ -366,10 +331,10 @@ export default function EditProfilePage() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-12 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                                <ImageCropper
-                                    imageToCrop={images[images.length - 1]["url"]}
-                                    onImageCropped={(image) => setCurrentCroppedImage(image)}
-                                />
+                            <ImageCropper
+                                imageToCrop={images[images.length - 1]["url"]}
+                                onImageCropped={(image) => setCurrentCroppedImage(image)}
+                            />
                             <ImageSaveModal
                                 onSaveImage={() => {
                                     setImages((prevImages) => ([...prevImages.slice(0, -1), currentCroppedImage]));

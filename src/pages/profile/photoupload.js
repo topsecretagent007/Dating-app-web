@@ -34,17 +34,7 @@ export default function PhotoUpload() {
 
     const removeImage = async () => {
         setImageSave(false);
-        setLoading(true);
-        const docSnap = await getDoc(doc(db, "Users", user.uid));
-        if (docSnap.exists()) {
-            const userData = docSnap.data();
-            setOriginalImages(userData.Pictures);
-            setImages([userData.Pictures[0]])
-        } else {
-            // docSnap.data() will be undefined in this case
-            console.log("No such document!");
-        }
-        setLoading(false);
+        setImages((previousArr) => (previousArr.slice(0, -1)));
     }
 
     const modalClose = () => {

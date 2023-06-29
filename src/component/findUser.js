@@ -83,7 +83,6 @@ export default function FindUser({ usersId }) {
 
 
     const lickBtn = async (myid, usersId, value) => {
-        console.log(myid, usersId, value);
         const otherUsers = await getDoc(doc(db, "Users", usersId));
         const docSnap = await getDoc(doc(db, "Users", user.uid));
         const otherUsersData = otherUsers.data();
@@ -111,7 +110,6 @@ export default function FindUser({ usersId }) {
             });
         }
     }
-
 
     useEffect(() => {
         setLoading(true);
@@ -222,7 +220,7 @@ export default function FindUser({ usersId }) {
             }
             {
                 loading &&
-                < LoadingModal />
+                <LoadingModal />
             }
         </div >
     )
