@@ -24,8 +24,11 @@ import LoadingModal from "../component/loadingPage";
 import { useNavigate } from "react-router-dom";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { showData } from "../config/constant";
+import { useCallbackPrompt, usePrompt } from '../hooks/useCallbackPrompt'
 
 export default function SettingsPage() {
+    const [showDialog, setShowDialog] = useState(false);
+    const showprop = usePrompt(showDialog);
     const navigate = useNavigate();
     const { user } = UserAuth();
     const [inviteModal, setInviteModal] = useState(false);
@@ -135,7 +138,6 @@ export default function SettingsPage() {
 
         }
         if (user && user.uid) {
-            console.log(user)
             getUserInfo();
         }
     }, [user])
@@ -143,6 +145,10 @@ export default function SettingsPage() {
     const goToPage = (url) => {
         navigate(url);
     }
+    
+    useEffect(() => {
+        console.log(showDialog, "SAAAA")
+    }, [showDialog])
 
     return (
         <div>
@@ -225,17 +231,17 @@ export default function SettingsPage() {
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
                                     <div className="px-5 text-[#5a5a5a]">Search settings</div>
                                 </div>
-                                <SettingShow text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
+                                <SettingShow text="Show me " value={userShow} items={showData} onHandleChange={e => (setUserShow(e), setShowDialog(true))} multiple={true} />
                                 <div className="gap-6 py-1 justify-between text-start items-center border-b-2 border-b-black/5">
                                     <div className="w-full pl-5 text-sm xl:text-lg py-2">
                                         <div className="justify-start w-full font-bold text-[#5a5a5a]">Maximum distance</div>
-                                        <Distance distance={distance} miles={miles} onMiles={e => setMiles(e)} onDistance={e => setDistance(e)} />
+                                        <Distance distance={distance} miles={miles} onMiles={e => (setMiles(e), setShowDialog(true))} onDistance={e => (setDistance(e), setShowDialog(true))} />
                                     </div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 xl:texl-xl justify-between text-start items-center">
                                     <div className="w-full pl-5 py-">
                                         <div className="justify-start w-full font-bold text-[#5a5a5a]">Age range</div>
-                                        <AgeRange first={firstAge} last={lastAge} onFirstAge={e => setFirstAge(e)} onLastAge={e => setLastAge(e)} />
+                                        <AgeRange first={firstAge} last={lastAge} onFirstAge={e => setFirstAge(e)} onLastAge={e => (setLastAge(e), setShowDialog(true))} />
                                     </div>
                                 </div>
                             </div>
@@ -252,7 +258,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </button>
-                        <button onClick={() => setInviteModal(!inviteModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <button onClick={() => (setInviteModal(!inviteModal))} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <HiUsers />
@@ -262,7 +268,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </button>
-                        <button onClick={() => setLogoutModal(!logoutModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <button onClick={() => (setLogoutModal(!logoutModal))} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <FaSignOutAlt />
@@ -272,7 +278,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </button>
-                        <button onClick={() => setDeleteModal(!deleteModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <button onClick={() => (setDeleteModal(!deleteModal))} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <MdDelete />
@@ -282,7 +288,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </button>
-                        <button onClick={() => setContactModal(!contactModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <button onClick={() => (setContactModal(!contactModal))} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <AiOutlineMail />
@@ -302,7 +308,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </button>
-                        <button onClick={() => SettingSave()} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <button onClick={() => (SettingSave(), setShowDialog(false))} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <FiSave />

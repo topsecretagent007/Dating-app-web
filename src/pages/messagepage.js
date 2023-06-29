@@ -6,7 +6,7 @@ import Footer from "../component/footer/index";
 import LoadingModal from "../component/loadingPage";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, updateDoc, getDoc, getDocs, collection } from "firebase/firestore";
+import { doc, updateDoc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
 
 
 export default function MessagePage() {
@@ -19,9 +19,11 @@ export default function MessagePage() {
 
     useEffect(() => {
         setLoading(true);
-
         const getUserInfo = async () => {
-            const chatUserSnapshot = await getDocs(collection(db, "chats"));
+            const chatUserSnapshot = await getDocs(collection(db, "chats"))
+
+
+
             if (chatUserSnapshot && chatUserSnapshot.docs) {
                 const chatIds = chatUserSnapshot.docs.map(doc => doc.id);
                 setChatId(chatIds);
@@ -35,7 +37,6 @@ export default function MessagePage() {
 
     useEffect(() => {
         const goToInfo = async () => {
-            setLoading(true);
             const querySnapshot = await getDoc(doc(db, "Users", currentChatUser));
             if (querySnapshot.exists()) {
                 const userData = querySnapshot.data();
@@ -45,12 +46,12 @@ export default function MessagePage() {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
-            setLoading(false)
+
         }
         if (currentChatUser) {
             goToInfo();
         }
-    }, [currentChatUser, user])
+    }, [currentChatUser])
 
 
     return (
@@ -69,7 +70,7 @@ export default function MessagePage() {
                         <div className='w-full lg:w-1/3 overflow-y-auto h-[643px] border-r-[0.1px] border-black/10'>
                             <MessageUsers usersId={chatId} onClickUser={(e) => setCurrentChatUser(e)} />
                         </div>
-                        <Messages />
+                        <Messages currentUser={currentChatUser} />
                     </div>
                 </div>
             </div>

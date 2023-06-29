@@ -31,6 +31,7 @@ export default function LikedBy() {
             const matchesSnapshot = await getDocs(collection(db, "Users", user.uid, "Matches"));
             matchesSnapshot.forEach((doc) => {
                 matchesUsers.push(doc.id)
+                console.log(matchesUsers)
             })
 
             const querySnapshot = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
@@ -38,8 +39,6 @@ export default function LikedBy() {
 
             filteredSnapshot.forEach((doc) => {
                 likedUserid.push(doc.id)
-                console.log(likedUserid, "like user");
-
                 if (doc.data().pictureUrl) {
                     likedUserImage.push(doc.data().pictureUrl)
                 } else {
