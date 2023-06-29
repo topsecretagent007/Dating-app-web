@@ -9,17 +9,10 @@ export default function DeleteModal({ closeModal }) {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
     const { logOut } = UserAuth();
-
-
     const [userId, setUserId] = useState();
-
     const deleteAccount = async () => {
         await deleteDoc(doc(db, "Users", userId));
         logOut();
-        // let user = Auth.auth().userId
-
-        // user?.delete 
-
     }
 
     useEffect(() => {

@@ -25,7 +25,6 @@ export default function FindPage() {
         } else {
             setCurrentPage(currentPage - 1);
         }
-
     }
 
     const nextPage = () => {
@@ -61,7 +60,6 @@ export default function FindPage() {
                 if (searchedUserId == [""] || searchedUserId == undefined || searchedUserId.length == 0) setSearchUsers(false);
                 else setSearchUsers(true);
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
             setLoading(false);
@@ -70,7 +68,6 @@ export default function FindPage() {
             getUserInfo();
         }
     }, [user])
-
 
     return (
         <div>

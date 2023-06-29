@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FaHome, FaBell, FaRocketchat, FaIdCard, FaSignOutAlt } from "react-icons/fa";
 import { RiPhoneFindFill } from "react-icons/ri";
 import { DiAptana } from "react-icons/di";
@@ -11,16 +11,13 @@ import Avatar from "../../assets/avatar.png";
 
 export default function Header() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [prevScrollPos, setPrevScrollPos] = useState(0);
-    const [visible, setVisible] = useState(true);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const { user, logOut } = UserAuth();
     const [pictures, setPictures] = useState([]);
-    const [page, setPage] = useState("");
-
 
     const goToPage = (url) => {
-        setPage(url);
         navigate(url);
     }
 
@@ -29,7 +26,6 @@ export default function Header() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
 
@@ -43,9 +39,7 @@ export default function Header() {
                 setShowMobileMenu(false)
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -71,22 +65,22 @@ export default function Header() {
             <div className={`w-full z-[9999] flex bg-[#000000]/80 justify-between items-center transition-all px-5 md:px-10 lg:px-16 `} >
                 <img onClick={() => goToPage("/")} src={Logo} alt="LogoImg" className="cursor-pointer w-40 justify-start py-5" />
                 <div className="hidden xl:flex w-full text-start text-white text-xl 2xl:text-2xl 2xl:gap-2 mx-16 ">
-                    <div onClick={() => goToPage("/")} className={`${page === "/" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} cursor-pointer border-t-4  hover:border-t-pinkLight font-serif px-3 py-6 xl:py-10 hover:text-pinkLight  `} >
+                    <div onClick={() => goToPage("/")} className={`${location.pathname === "/" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} cursor-pointer border-t-4  hover:border-t-pinkLight  px-3 py-6 xl:py-10 hover:text-pinkLight  `} >
                         Home
                     </div>
-                    <div onClick={() => goToPage("/find")} className={`${page === "/find" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} cursor-pointer font-serif border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `}>
+                    <div onClick={() => goToPage("/find")} className={`${location.pathname === "/find" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} cursor-pointer  border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `}>
                         Browse Profiles
                     </div>
-                    <div onClick={() => goToPage("/message")} className={`${page === "/message" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} font-serif cursor-pointer border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `}>
+                    <div onClick={() => goToPage("/message")} className={`${location.pathname === "/message" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"}  cursor-pointer border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `}>
                         Messages
                     </div>
-                    <div onClick={() => goToPage("/notification")} className={`${page === "/notification" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} font-serif cursor-pointer border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `}>
+                    <div onClick={() => goToPage("/notification")} className={`${location.pathname === "/notification" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"}  cursor-pointer border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `}>
                         Notification
                     </div>
-                    <div onClick={() => goToPage("/profile")} className={`${page === "/profile" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} font-serif cursor-pointer border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `}>
+                    <div onClick={() => goToPage("/profile")} className={`${location.pathname === "/profile" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"}  cursor-pointer border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight  `}>
                         Profile
                     </div>
-                    <div onClick={() => goToPage("/settings")} className={`${page === "/settings" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"} font-serif cursor-pointer border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight `}>
+                    <div onClick={() => goToPage("/settings")} className={`${location.pathname === "/settings" ? "border-t-pinkLight text-pinkLight" : "border-t-[#000000]/10"}  cursor-pointer border-t-4 hover:border-t-pinkLight px-3 py-6 xl:py-10 hover:text-pinkLight `}>
                         Settings
                     </div>
                 </div>
@@ -104,31 +98,31 @@ export default function Header() {
             </div >
             {showMobileMenu &&
                 <div ref={menuDropdown} className={`absolute transition-all duration-300 top-20 right-1 md:right-9 lg:right-14 xl:top-[110px] bg-white rounded-lg flex flex-col z-[9999] text-start`}>
-                    <div onClick={() => goToPage("/")} className="font-serif cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
+                    <div onClick={() => goToPage("/")} className=" cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
                         <FaHome />
                         Home
                     </div>
-                    <div onClick={() => goToPage("/find")} className="font-serif cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
+                    <div onClick={() => goToPage("/find")} className=" cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
                         <RiPhoneFindFill />
                         Browse Profiles
                     </div>
-                    <div onClick={() => goToPage("/message")} className="font-serif cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
+                    <div onClick={() => goToPage("/message")} className=" cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
                         <FaRocketchat />
                         Message
                     </div>
-                    <div onClick={() => goToPage("/notification")} className="font-serif cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
+                    <div onClick={() => goToPage("/notification")} className=" cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
                         <FaBell />
                         Notification
                     </div>
-                    <div onClick={() => goToPage("/profile")} className="font-serif cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center border-t-[0.1px] border-dotted border-t-[#888888] flex gap-2">
+                    <div onClick={() => goToPage("/profile")} className=" cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center border-t-[0.1px] border-dotted border-t-[#888888] flex gap-2">
                         <FaIdCard />
                         My profile
                     </div>
-                    <div onClick={() => goToPage("/settings")} className="font-serif cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
+                    <div onClick={() => goToPage("/settings")} className=" cursor-pointer py-1 px-5 hover:text-white hover:bg-pinkLight items-center flex gap-2">
                         <DiAptana />
                         Settings
                     </div>
-                    <div className="font-serif py-1 px-5 hover:text-white hover:bg-pinkLight items-center border-t-[0.1px] border-dotted border-t-[#888888] flex gap-2 cursor-pointer" onClick={() => {
+                    <div className=" py-1 px-5 hover:text-white hover:bg-pinkLight items-center border-t-[0.1px] border-dotted border-t-[#888888] flex gap-2 cursor-pointer" onClick={() => {
                         logOut();
                     }}>
                         <FaSignOutAlt />

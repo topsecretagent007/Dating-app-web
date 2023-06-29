@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-
 import { AiTwotoneFlag, AiOutlineClose } from "react-icons/ai";
 import { MdOutlineLocationOn } from "react-icons/md";
 import { BsHeartFill } from "react-icons/bs";
@@ -7,7 +6,6 @@ import ImageSlider from "./other/imageslider";
 import ReporteModal from "./modal/reportemodal";
 import ReportUserModal from "./modal/reportusermodal";
 import LoadingModal from "../component/loadingPage";
-
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -17,17 +15,13 @@ export default function FindUser({ usersId }) {
     const [reporteModal, setReportoModal] = useState(false);
     const [reportUser, setReportUser] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [userName, setUserName] = useState();
     const [description, setDescription] = useState();
-    const [images, setImages] = useState([]);
     const [userLooking, setUserLooking] = useState([]);
     const [interests, setInterests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [myId, setMyId] = useState("");
-
-
 
     const openUserModal = () => {
         setReportUser(false);
@@ -37,7 +31,6 @@ export default function FindUser({ usersId }) {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -63,7 +56,6 @@ export default function FindUser({ usersId }) {
             const docSnap = await getDoc(doc(db, "Users", usersId));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
-                setImages(userData.Pictures)
                 setDescription(userData.editInfo?.about)
                 setUserName(userData.UserName)
                 setUserLooking(userData.desires)
@@ -72,7 +64,6 @@ export default function FindUser({ usersId }) {
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
-
             }
             setLoading(false);
         }
@@ -193,7 +184,6 @@ export default function FindUser({ usersId }) {
                 </div>
 
             </div>
-
             {
                 reporteModal &&
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>

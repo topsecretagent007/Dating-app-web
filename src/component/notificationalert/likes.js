@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { getDocs, collection, where } from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
 export default function LikedBy() {
@@ -27,7 +27,6 @@ export default function LikedBy() {
             const likedUserTime = [];
             const likedUserName = [];
             const matchesUsers = [];
-
             const matchesSnapshot = await getDocs(collection(db, "Users", user.uid, "Matches"));
             matchesSnapshot.forEach((doc) => {
                 matchesUsers.push(doc.id)

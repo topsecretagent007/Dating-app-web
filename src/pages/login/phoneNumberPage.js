@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
@@ -38,7 +38,6 @@ export default function PhoneNumberPage() {
         if (code == "" || code == null) return;
         try {
             const res = await confirmObj.confirm(code);
-            //navigate("/");
         } catch (error) {
             setErrMessage(error.message);
         }

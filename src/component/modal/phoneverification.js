@@ -12,7 +12,6 @@ import LoadingModal from "../../component/loadingPage";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase";
 
-
 export default function PhoneVerification() {
     const [number, setNumber] = useState('');
     const [errMessage, setErrMessage] = useState("");
@@ -34,18 +33,6 @@ export default function PhoneVerification() {
         }
     }
 
-    // const verifyEnterCode = async () => {
-    //     console.log(code)
-    //     if (code == "" || code == null) return;
-    //     try {
-    //         const res = await confirmObj.confirm(code);
-    //         console.log(res)
-    //     } catch (error) {
-    //         console.log(error)
-    //         setErrMessage(error.message);
-    //     }
-    // }
-
     useEffect(() => {
         const getUserInfo = async () => {
             setLoading(true);
@@ -56,7 +43,6 @@ export default function PhoneVerification() {
                 setNumber(userData.phoneNumber);
                 setLoading(false);
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         }
@@ -126,7 +112,6 @@ export default function PhoneVerification() {
 
                     </div>
                     <div className="mb-10" 
-                    // onClick={verifyEnterCode}
                     >
                         <button className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">VERIFY</button>
                     </div>

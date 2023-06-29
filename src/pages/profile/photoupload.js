@@ -8,7 +8,6 @@ import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 import AlertModal from "../../component/modal/alertmodal";
-
 import ImageSaveModal from "../../component/modal/imagesave";
 import ImageCropper from '../../component/imageCropper'
 import { uploadImage } from "../../config/helpers";
@@ -216,7 +215,7 @@ export default function PhotoUpload() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative py-12">
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative py-12">
                             <AlertModal text="Please select your avatar." onCloseModal={() => modalClose()} />
                         </div>
                     </div >

@@ -16,7 +16,6 @@ export default function ProfileDescription() {
     const [originalEditInfo, setOriginalEditInfo] = useState(null);
     const [inputText, setInputText] = useState(false)
     const [alertModal, setAlertModal] = useState(false);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
@@ -45,16 +44,6 @@ export default function ProfileDescription() {
                 time: new Date(),
                 title: "A message from the founder of Unjabbed"
             });
-            await addDoc(collection(db, "Users", user.uid, "notification"), {
-                body: "Dear valued member,We have an exciting video message from the founder of Unjabbed, and we highly recommend watching it at your earliest convenience. To access this video, please navigate to the settings section of the app and scroll down to the Tutorials section. You'll find the video right at the top. We deeply appreciate your continued support.Best regards,Unjabbed Team",
-                time: new Date(),
-                title: "A message from the founder of Unjabbed"
-            });
-            await addDoc(collection(db, "Users", user.uid, "notification"), {
-                body: "Dear valued member,We have an exciting video message from the founder of Unjabbed, and we highly recommend watching it at your earliest convenience. To access this video, please navigate to the settings section of the app and scroll down to the Tutorials section. You'll find the video right at the top. We deeply appreciate your continued support.Best regards,Unjabbed Team",
-                time: new Date(),
-                title: "A message from the founder of Unjabbed"
-            });
             setLoading(false);
             navigate("/");
         } catch (err) {
@@ -67,7 +56,6 @@ export default function ProfileDescription() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -98,7 +86,6 @@ export default function ProfileDescription() {
                 setDescription(userData.editInfo?.about);
                 setLoading(false);
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         }
@@ -151,7 +138,7 @@ export default function ProfileDescription() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
                             <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()} />
                         </div>
                     </div >

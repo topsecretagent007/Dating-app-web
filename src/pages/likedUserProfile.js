@@ -98,11 +98,8 @@ export default function PreviewProfile() {
             const docDelete = await deleteDoc(doc(db, "Users", user.uid, "LikedBy", id));
             goToPage("/notification")
             setLoading(false);
-
         }
-
     };
-
 
     useEffect(() => {
         setLoading(true);
@@ -124,7 +121,6 @@ export default function PreviewProfile() {
 
     useEffect(() => {
         setLoading(true);
-
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", id));
             if (docSnap.exists()) {

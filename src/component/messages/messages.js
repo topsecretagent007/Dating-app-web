@@ -13,10 +13,11 @@ export default function Messages({ currentUser }) {
     const [myAvatar, setMyAvatar] = useState("");
     const [userAvatar, setUserAvatar] = useState("");
     const [messageText, setMessageText] = useState("");
-    const messageCollection = collection(db, "chats", (currentUser + "-" + user.uid), "messages");
+    const [chats, setChats] = useState();
+    // const messageCollection = collection(db, "chats", (currentUser + "-" + user.uid), "messages");
 
     const sendMessage = async () => {
-        await addDoc(messageCollection, {
+        await addDoc(chats, {
             receiver_id: currentUser,
             sender_id: user.uid,
             image_url: "",
@@ -32,7 +33,7 @@ export default function Messages({ currentUser }) {
     const goToUserInfo = async () => {
         setLoading(true);
         try {
-            const docSnapShot = await getDocs(messageCollection);
+            const docSnapShot = await getDocs(chats);
             const messages = docSnapShot.docs.map((doc) => {
                 const { sender_id, isRead, text, time } = doc.data();
                 return {
@@ -72,19 +73,16 @@ export default function Messages({ currentUser }) {
 
             let messageCollection; // Declare the variable here
 
-            const userCollection = await getDocs(
-                query(collection(db, "Users", user.uid, "LikedBy"), where("LikedBy", "==", currentUser))
-            );
-
-            userCollection.forEach((doc) => {
-                console.log(doc.data().LikedBy);
-                if (doc.data().LikedBy) {
-                    messageCollection = collection(db, "chats", (user.uid + "-" + doc.data().LikedBy), "messages");
-                } else {
-                    messageCollection = collection(db, "chats", (doc.data().LikedBy + "-" + user.uid), "messages");
-                }
-                // searchedUserId.push(doc.data().userId);
-            });
+            const chatCollection = await query(collection(db, "cities"),
+                where("docId", "==", (user.uid + "-" + currentUser))
+            )
+            console.log(chatCollection.length)
+            if (chatCollection.length == 0) {
+                messageCollection = collection(db, "chats", (user.uid + "-" + currentUser), "messages")
+            } else {
+                messageCollection = collection(db, "chats", (currentUser + "-" + user.uid), "messages")
+            }
+            setChats(messageCollection);
         };
         if (currentUser && user.uid) {
             goToGetAvatar();

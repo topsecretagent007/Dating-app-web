@@ -6,8 +6,7 @@ import Footer from "../component/footer/index";
 import LoadingModal from "../component/loadingPage";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, updateDoc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
-
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
 
 export default function MessagePage() {
     const [loading, setLoading] = useState(false);
@@ -21,9 +20,6 @@ export default function MessagePage() {
         setLoading(true);
         const getUserInfo = async () => {
             const chatUserSnapshot = await getDocs(collection(db, "chats"))
-
-
-
             if (chatUserSnapshot && chatUserSnapshot.docs) {
                 const chatIds = chatUserSnapshot.docs.map(doc => doc.id);
                 setChatId(chatIds);
@@ -43,16 +39,13 @@ export default function MessagePage() {
                 serCurrentUserName(userData.UserName);
                 // serCurrentUserData([userData.location])
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
-
         }
         if (currentChatUser) {
             goToInfo();
         }
     }, [currentChatUser])
-
 
     return (
         <div>

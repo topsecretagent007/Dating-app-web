@@ -21,8 +21,6 @@ export default function DistanceSlider({ first, last, onFirstAge, onLastAge }) {
     const [firstAge, setFirstAge] = useState(first);
     const [lastAge, setLastAge] = useState(last);
 
-
-
     const firstAgeSelect = listAge.map((listAge, index) => (
         <MenuItem key={listAge} value={listAge} className="text-pinkLight ageSelect">
             <em className="ml-auto text-pinkLight font-bold">{listAge}</em>
@@ -51,7 +49,6 @@ export default function DistanceSlider({ first, last, onFirstAge, onLastAge }) {
         }
 
     }
-
 
     useEffect(() => {
         const allAge = [];

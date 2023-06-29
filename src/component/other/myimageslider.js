@@ -73,28 +73,26 @@ export default function MyCarousel() {
 
     return (
         <>
-            <>
-                {
-                    images.length > 0 &&
-                    <Carousel
-                        ref={carouselElement}
+            {
+                images.length > 0 &&
+                <Carousel
+                    ref={carouselElement}
 
-                        showArrows={true}
-                        showThumbs={false}
-                        axis='vertical'
-                        infiniteLoop={true}
-                        dynamicHeight
-                        renderArrowPrev={prevArrow}
-                        renderArrowNext={nextArrow}
-                    >
-                        {images.map((image, index) => (
-                            <div key={index} style={{ width: '100%' }}>
-                                <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
-                            </div>
-                        ))}
-                    </Carousel>
-                }
-            </>
+                    showArrows={true}
+                    showThumbs={false}
+                    axis='vertical'
+                    infiniteLoop={true}
+                    dynamicHeight
+                    renderArrowPrev={prevArrow}
+                    renderArrowNext={nextArrow}
+                >
+                    {images.map((image, index) => (
+                        <div key={index} style={{ width: '100%' }}>
+                            <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
+                        </div>
+                    ))}
+                </Carousel>
+            }
             {
                 loading &&
                 <LoadingModal />

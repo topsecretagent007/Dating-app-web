@@ -3,12 +3,11 @@ import { MdDelete } from "react-icons/md";
 import LoadingModal from "../../component/loadingPage";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
-import { getDocs, collection, deleteDoc, doc, onSnapshot, query } from "firebase/firestore";
+import { getDocs, collection, deleteDoc, doc } from "firebase/firestore";
 import ModelLogo from "../../assets/Modal-Logo.png"
 
 export default function Matches() {
     const [deleteMessage, setDeleteMessage] = useState(false);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -18,7 +17,6 @@ export default function Matches() {
     const [textBody, setTextBody] = useState([]);
     const [time, setTime] = useState([]);
     const [deleteNotification, setDeleteNotification] = useState();
-
 
     const openDeleteModal = (id) => {
         setDeleteNotification(id);
@@ -36,7 +34,6 @@ export default function Matches() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -141,7 +138,8 @@ export default function Matches() {
                                 <button onClick={() => setDeleteMessage(false)} className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white gap-1">
                                     <div className="text-sm xl:text-lg font-bold">Cancel</div>
                                 </button>
-                            </div>                        </div>
+                            </div>
+                        </div>
                     </div >
                 </div>
             }

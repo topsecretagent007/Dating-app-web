@@ -66,8 +66,8 @@ export default function UserCarousel({ userImage }) {
     }
     if (userImage) {
       getUserInfo();
-    } 
-    
+    }
+
 
   }, [userImage])
 
@@ -79,28 +79,25 @@ export default function UserCarousel({ userImage }) {
 
   return (
     <>
-      <>
-        {
-          images.length > 0 &&
+      {
+        images.length > 0 &&
 
-          <Carousel
-            ref={carouselElement}
-            showArrows={true}
-            showThumbs={false}
-            axis='vertical'
-            infiniteLoop={true}
-            renderArrowPrev={prevArrow}
-            renderArrowNext={nextArrow}
-          >
-            {images.map((image, index) => (
-              <div key={index} style={{ height: "600px", width: '600px' }}>
-                <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
-              </div>
-            ))}
-          </Carousel>
-        }
-      </>
-
+        <Carousel
+          ref={carouselElement}
+          showArrows={true}
+          showThumbs={false}
+          axis='vertical'
+          infiniteLoop={true}
+          renderArrowPrev={prevArrow}
+          renderArrowNext={nextArrow}
+        >
+          {images.map((image, index) => (
+            <div key={index} style={{ height: "600px", width: '600px' }}>
+              <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
+            </div>
+          ))}
+        </Carousel>
+      }
       {
         loading &&
         <LoadingModal />

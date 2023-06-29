@@ -10,7 +10,6 @@ import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 import AlertModal from "../../component/modal/alertmodal";
-
 import ImageCropper from '../../component/imageCropper';
 import { uploadImage } from "../../config/helpers";
 import ImageSaveModal from "../../component/modal/imagesave";
@@ -26,12 +25,10 @@ export default function PhotoAddMore() {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [alertModal, setAlertModal] = useState(false);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [imageSave, setImageSave] = useState(false);
     const [currentCroppedImage, setCurrentCroppedImage] = useState(null);
-
 
     const removeImage = async () => {
         setImageSave(false);
@@ -51,7 +48,6 @@ export default function PhotoAddMore() {
                 setImages(userData.Pictures)
                 setLoading(false);
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         }
@@ -85,7 +81,6 @@ export default function PhotoAddMore() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -191,7 +186,7 @@ export default function PhotoAddMore() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
                             <AlertModal text="Please add your photo at lease one." onCloseModal={() => modalClose()} />
                         </div>
                     </div >

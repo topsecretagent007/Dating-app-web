@@ -18,7 +18,6 @@ export default function WelcomePage() {
     const { googleSignIn, user } = UserAuth();
     const [loading, setLoading] = useState(false);
     const [alertModal, setAlertModal] = useState(false);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
@@ -48,11 +47,9 @@ export default function WelcomePage() {
         }
     }
 
-
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -72,8 +69,6 @@ export default function WelcomePage() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [menuDropdown]);
-
-
 
     useEffect(() => {
         const setUserInfo = async () => {
