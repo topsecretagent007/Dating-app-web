@@ -134,7 +134,7 @@ export default function SettingsPage() {
     }, [user])
 
     const goToPage = (url) => {
-        if (url == "/verifyprofile" && userVerified == true) navigate(url);
+        navigate(url);
 
     }
 

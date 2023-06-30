@@ -231,7 +231,7 @@ export default function Verify() {
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
-                            <WebcamImage onSaveImage={(img) => console.log(img)} onCloseModal={()=> modalClose()}/>
+                            <WebcamImage onSaveImage={(img) => setImages(img)} onCloseModal={()=> modalClose()}/>
                         </div>
                     </div >
                 </div>
