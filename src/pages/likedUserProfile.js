@@ -5,7 +5,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, getDocs, collection } from "firebase/firestore";
 import { MdOutlineLocationOn } from "react-icons/md";
 import ImageSlider from "../component/other/imageslider";
 import LoadingModal from "../component/loadingPage";
@@ -20,82 +20,64 @@ export default function PreviewProfile() {
     const [userLooking, setUserLooking] = useState([]);
     const [interests, setInterests] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [myId, setMyId] = useState("");
+    const [goToMessage, setGoToMessage] = useState(true);
     const [description, setDescription] = useState("");
 
     const goToPage = (url) => {
         navigate(url);
     }
 
-    useEffect(() => {
-        const getUserInfo = async () => {
-            setLoading(true);
-            const docSnap = await getDoc(doc(db, "Users", id));
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                setUserName(userData.UserName);
-                setUserLooking(userData.desires);
-                setInterests(userData.interest);
-            } else {
-                console.log("No such document!");
-            }
-            setLoading(false);
-        };
-
-        const getCurrentUserId = async () => {
-            setLoading(true);
-            const docSnap = await getDoc(doc(db, "Users", user.uid));
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                setMyId(userData.userId);
-            } else {
-                console.log("No such document!");
-            }
-            setLoading(false);
-        };
-        if (id) {
-            getUserInfo();
-        }
-
-        if (user && user.uid) {
-            getCurrentUserId();
-        }
-    }, [id, user]);
-
-    const likeBtn = async (myid, id, value) => {
+    const likeBtn = async (id, value) => {
         setLoading(true);
+        const userLikedBy = [];
         const otherUser = await getDoc(doc(db, "Users", id));
         const docSnap = await getDoc(doc(db, "Users", user.uid));
         const otherUserData = otherUser.data();
         const userData = docSnap.data();
+        const docUserLikedBy = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
+        const docUserLikedId = await docUserLikedBy.docs.filter(doc => doc.data().LikedBy != null);
+        docUserLikedId.forEach((doc) => {
+            userLikedBy.push(doc.id)
+        })
 
         if (value == true) {
-            await setDoc(doc(db, "Users", user.uid, "Matches", id), {
-                Matches: id,
+            if (userLikedBy.includes(id)) {
+                await setDoc(doc(db, "Users", user.uid, "Matches", id), {
+                    Matches: id,
+                    pictureUrl: otherUserData.Pictures[0]?.url,
+                    timestamp: new Date(),
+                    userName: otherUserData.UserName,
+                    isRead: false,
+                });
+                await setDoc(doc(db, "Users", id, "Matches", user.uid), {
+                    Matches: user.uid,
+                    pictureUrl: userData.Pictures[0]?.url,
+                    timestamp: new Date(),
+                    userName: userData.UserName,
+                    isRead: false,
+                });
+                await setDoc(doc(db, "chats", (user.uid + "-" + id)), {
+                    docId: user.uid + "-" + id,
+                    isclear1: false,
+                    isclear2: false,
+                    active: false,
+                });
+                goToPage("/notification")
+                setLoading(false);
+            } else {
+                setLoading(false);
+                goToPage("/notification")
+                return;
+            }
+
+        } else {
+            await deleteDoc(doc(db, "Users", user.uid, "LikedBy", id));
+            await setDoc(doc(db, "Users", user.uid, "CheckedUser", id), {
+                DislikedUser: id,
                 pictureUrl: otherUserData.Pictures[0]?.url,
                 timestamp: new Date(),
                 userName: otherUserData.UserName,
-                isRead: false,
             });
-            await setDoc(doc(db, "Users", id, "Matches", user.uid), {
-                Matches: user.uid,
-                pictureUrl: userData.Pictures[0]?.url,
-                timestamp: new Date(),
-                userName: userData.UserName,
-                isRead: false,
-            });
-            await setDoc(doc(db, "chats", (user.uid + "-" + id)), {
-                docId: user.uid + "-" + id,
-                isclear1: false,
-                isclear2: false,
-                active: false,
-            });
-
-            goToPage("/notification")
-            setLoading(false);
-
-        } else {
-            const docDelete = await deleteDoc(doc(db, "Users", user.uid, "LikedBy", id));
             goToPage("/notification")
             setLoading(false);
         }
@@ -104,24 +86,13 @@ export default function PreviewProfile() {
     useEffect(() => {
         setLoading(true);
         const getUserInfo = async () => {
-            const docSnap = await getDoc(doc(db, "Users", user.uid));
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                setMyId(userData.userId);
-                setLoading(false);
-            } else {
-                // docSnap.data() will be undefined in this case
-                console.log("No such document!");
-            }
-        }
-        if (user && user.uid) {
-            getUserInfo();
-        }
-    }, [user])
-
-    useEffect(() => {
-        setLoading(true);
-        const getUserInfo = async () => {
+            const matchedUserid = [];
+            const docUserMatch = await getDocs(collection(db, "Users", user.uid, "Matches"));
+            const docUserMatchId = await docUserMatch.docs.filter(doc => doc.data().Matches != null);
+            docUserMatchId.forEach((doc) => {
+                matchedUserid.push(doc.id)
+            })
+            if (matchedUserid.includes(id)) setGoToMessage(false)
             const docSnap = await getDoc(doc(db, "Users", id));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
@@ -194,16 +165,25 @@ export default function PreviewProfile() {
                                 }
                             </div>
                         </div>
-                        <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
-                            <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => likeBtn(myId, id, true)} >
-                                <BsHeartFill />
-                                <div>Like</div>
+                        {goToMessage ?
+                            <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
+                                <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => likeBtn(id, true)} >
+                                    <BsHeartFill />
+                                    <div>Like</div>
+                                </div>
+                                <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]" onClick={() => likeBtn(id, false)}>
+                                    <AiOutlineClose />
+                                    <div>Dislike</div>
+                                </div>
+                            </div >
+                            :
+                            <div className="justify-between pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
+                                <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => goToPage("/messages")} >
+                                    <BsHeartFill />
+                                    <div>Send Message</div>
+                                </div>
                             </div>
-                            <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]" onClick={() => likeBtn(myId, id, false)}>
-                                <AiOutlineClose />
-                                <div>Dislike</div>
-                            </div>
-                        </div >
+                        }
                     </div >
                 </div >
                 {

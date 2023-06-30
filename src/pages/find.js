@@ -20,7 +20,7 @@ export default function FindPage() {
     const [SearchUsers, setSearchUsers] = useState(false);
 
     const prevPage = () => {
-        if (currentPage == 0) {
+        if (currentPage === 0) {
             setCurrentPage(otherUserId.length - 1);
         } else {
             setCurrentPage(currentPage - 1);
@@ -28,7 +28,7 @@ export default function FindPage() {
     }
 
     const nextPage = () => {
-        if (currentPage == otherUserId.length - 1) {
+        if (currentPage === otherUserId.length - 1) {
             setCurrentPage(0);
         } else {
             setCurrentPage(currentPage + 1);
@@ -37,29 +37,46 @@ export default function FindPage() {
 
     useEffect(() => {
         setLoading(true);
+
+
         const getUserInfo = async () => {
+            const checkedUserid = [];
+            const matchedUserid = [];
+            const searchedUserId = [];
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             const userData = await docSnap.data();
-            // const docUserLikeBy = await getDoc(doc(db, "Users", user.uid, "LikedBy"));
-            // const LikedByData = await docUserLikeBy.data();
-            const searchedUserId = [];
+            const docUserLikeBy = await getDocs(collection(db, "Users", user.uid, "CheckedUser"));
+            const docUserLikeById = await docUserLikeBy.docs.filter(doc => doc.data().LikedUser != null);
+            docUserLikeById.forEach((doc) => {
+                checkedUserid.push(doc.id)
+            })
+            const docUserMatch = await getDocs(collection(db, "Users", user.uid, "Matches"));
+            const docUserMatchId = await docUserMatch.docs.filter(doc => doc.data().Matches != null);
+            docUserMatchId.forEach((doc) => {
+                matchedUserid.push(doc.id)
+            })
             if (docSnap.exists()) {
                 const querySnapshot = await getDocs(
                     query(
                         collection(db, "Users"),
                         where("age", ">=", userData.age_range?.min),
                         where("age", "<=", userData.age_range?.max),
-                        where("editInfo.userGender", "in", userData.showGender)
+                        where("editInfo.userGender", "in", userData.showGender),
                     )
                 );
-                const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId != user.uid);
+                const filteredSnapshot = await querySnapshot.docs.filter(doc => doc.data().userId != user.uid);
                 filteredSnapshot.forEach((doc) => {
-                    searchedUserId.push(doc.data().userId);
+                    if (checkedUserid.includes(doc.data().userId) || matchedUserid.includes(doc.data().userId)) {
+                        return;
+                    } else {
+                        searchedUserId.push(doc.data().userId);
+                    }
+
                 });
                 setOtherUserId(searchedUserId);
                 if (searchedUserId.length < 2) setUsersData(false);
                 else setUsersData(true);
-                if (searchedUserId == [""] || searchedUserId == undefined || searchedUserId.length == 0) setSearchUsers(false);
+                if (searchedUserId === [""] || searchedUserId === undefined || searchedUserId.length === 0) setSearchUsers(false);
                 else setSearchUsers(true);
             } else {
                 console.log("No such document!");

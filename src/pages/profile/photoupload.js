@@ -202,7 +202,7 @@ export default function PhotoUpload() {
                         <br />
                         Your profile image must not contain any nudity and be only of yourself.
                     </div>
-                    <button onClick={() => nextPage()} className={`${croppedImage != null ? "bg-pinkLight" : "bg-pink-950"} justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20`}>Continue</button>
+                    <button onClick={() => nextPage()} className={`justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20`}>Continue</button>
                 </div>
             </div>
             {
