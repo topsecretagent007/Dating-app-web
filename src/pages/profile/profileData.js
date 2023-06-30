@@ -182,7 +182,7 @@ export default function ProfileData() {
                         <Dropdown text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
                     </div>
                 </div>
-                <button onClick={() => updateProfileData()} className={`${nextPage ? "bg-pinkLight" : "bg-pink-950"}  justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32 mb-10`}>Continue</button>
+                <button onClick={() => updateProfileData()} className={`justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32 mb-10`}>Continue</button>
             </div>
             <div className=" pt-20 pl-[8%]">
             </div>

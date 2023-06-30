@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { getDocs, collection, onSnapshot } from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
 export default function LikedBy() {
@@ -31,54 +31,60 @@ export default function LikedBy() {
             const checkedUserImage = [];
             const checkedUserTime = [];
             const checkedUserName = [];
-            const matchesUsers = [];
-            const matchesSnapshot = await getDocs(collection(db, "Users", user.uid, "Matches"));
-            matchesSnapshot.forEach((doc) => {
-                matchesUsers.push(doc.id)
-                console.log(matchesUsers)
+            const matchedUserid = [];
+            const docUserMatch = await getDocs(collection(db, "Users", user.uid, "Matches"));
+            const docUserMatchId = await docUserMatch.docs.filter(doc => doc.data().Matches != null);
+            docUserMatchId.forEach((doc) => {
+                matchedUserid.push(doc.id)
             })
 
             const querySnapshot = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
-            const filteredSnapshot = await querySnapshot.docs.filter(doc => doc.data().userId !== matchesUsers);
-            console.log(filteredSnapshot, "filteredSnapshot")
+            const filteredSnapshot = await querySnapshot.docs.filter(doc => doc.data().userId != matchedUserid);
             filteredSnapshot.forEach((doc) => {
-                likedUserid.push(doc.id)
-                if (doc.data().pictureUrl) {
-                    likedUserImage.push(doc.data().pictureUrl)
+                if (matchedUserid.includes(doc.id)) {
+                    return;
                 } else {
-                    console.error("Missing pictureUrl for doc:", doc.id);
-                }
-                if (doc.data().timestamp) {
-                    likedUserTime.push(doc.data().timestamp)
-                } else {
-                    console.error("Missing timestamp for doc:", doc.id);
-                }
-                if (doc.data().userName) {
-                    likedUserNames.push(doc.data().userName)
-                } else {
-                    console.error("Missing userName for doc:", doc.id);
+                    likedUserid.push(doc.id)
+                    if (doc.data().pictureUrl) {
+                        likedUserImage.push(doc.data().pictureUrl)
+                    } else {
+                        console.error("Missing pictureUrl for doc:", doc.id);
+                    }
+                    if (doc.data().timestamp) {
+                        likedUserTime.push(doc.data().timestamp)
+                    } else {
+                        console.error("Missing timestamp for doc:", doc.id);
+                    }
+                    if (doc.data().userName) {
+                        likedUserNames.push(doc.data().userName)
+                    } else {
+                        console.error("Missing userName for doc:", doc.id);
+                    }
                 }
             });
 
             const queryUserSnapshot = await getDocs(collection(db, "Users", user.uid, "CheckedUser"));
-            const filteredUserSnapshot = await queryUserSnapshot.docs.filter(doc => doc.data().LikedUser !== null);
-            console.log(filteredUserSnapshot, "filteredUserSnapshot")
+            const filteredUserSnapshot = await queryUserSnapshot.docs.filter(doc => doc.data().LikedUser != null);
             filteredUserSnapshot.forEach((doc) => {
-                checkedUserid.push(doc.id)
-                if (doc.data().pictureUrl) {
-                    checkedUserImage.push(doc.data().pictureUrl)
+                if (matchedUserid.includes(doc.id)) {
+                    return;
                 } else {
-                    console.error("Missing pictureUrl for doc:", doc.id);
-                }
-                if (doc.data().timestamp) {
-                    checkedUserTime.push(doc.data().timestamp)
-                } else {
-                    console.error("Missing timestamp for doc:", doc.id);
-                }
-                if (doc.data().userName) {
-                    checkedUserName.push(doc.data().userName)
-                } else {
-                    console.error("Missing userName for doc:", doc.id);
+                    checkedUserid.push(doc.id)
+                    if (doc.data().pictureUrl) {
+                        checkedUserImage.push(doc.data().pictureUrl)
+                    } else {
+                        console.error("Missing pictureUrl for doc:", doc.id);
+                    }
+                    if (doc.data().timestamp) {
+                        checkedUserTime.push(doc.data().timestamp)
+                    } else {
+                        console.error("Missing timestamp for doc:", doc.id);
+                    }
+                    if (doc.data().userName) {
+                        checkedUserName.push(doc.data().userName)
+                    } else {
+                        console.error("Missing userName for doc:", doc.id);
+                    }
                 }
             });
 
