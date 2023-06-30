@@ -7,7 +7,7 @@ function WebcamImage({ onSaveImage, onCloseModal }) {
 
   const saveImage = () => {
     console.log(img);
-    if(!img) return;
+    if (!img) return;
     onSaveImage(img);
   }
 
@@ -43,7 +43,7 @@ function WebcamImage({ onSaveImage, onCloseModal }) {
         </>
       ) : (
         <>
-          <img src={img} alt="screenshot" className="max-w-[400px] max-h-[400px]" />
+          <img src={img} alt="screenshot" className="w-[400px] h-[400px] bg-pinkLights mx-auto my-5 rounded-xl" />
           <div className="flex justify-center w-full gap-4">
             <button className="w-20 border-[0.5px] border-pinkLight text-pinkLight text-base py-1 rounded-full hover:bg-pinkLight hover:text-white" onClick={() => saveImage()}>Ok</button>
             <button className="w-20 border-[0.5px] border-pinkLight text-pinkLight text-base py-1 rounded-full hover:bg-pinkLight hover:text-white" onClick={() => setImg(null)}>Retake</button>

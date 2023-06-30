@@ -111,11 +111,10 @@ export default function LikedBy() {
             <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full pt-2">
                 <img src={likedUserAvatar[index]} className="w-12 h-12 ml-2 mr-1 my-auto object-cover rounded-full " />
                 <div className="w-full text-[#888888] text-start pl-1 py-3 text-base justify-between pr-3 sm:flex border-b-[0.1px] border-b-black/10">
-                    <div className="w-32 md:w-48  truncate">{likedUserName[index]} like you.</div>
+                    <div className="w-40 sm:w-52 truncate">You are liked by {likedUserName[index]}</div>
                     <div className=" text-sm">{likedTime[index].toDate().toLocaleString()}</div>
                 </div>
             </div>
-
         </div>
     ) :
         <div className="text-[#5a5a5a] text-lg pt-4 font-mono justify-center">
