@@ -1,15 +1,9 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import ModelLogo from "../../assets/Modal-Logo.png"
 import { UserAuth } from "../../context/AuthContext";
 
 export default function LogoutModal({closeModal}) {
-    const navigate = useNavigate();
     const { logOut } = UserAuth();
-
-    const goToPage = (url) => {
-        navigate(url);
-    }
 
     return (
         <>

@@ -2,7 +2,6 @@ import React from "react";
 import ModelLogo from "../../assets/Modal-Logo.png";
 import { IoMdClose } from "react-icons/io";
 
-
 export default function SaveDataModal({ onCloseModal, onSaveModal }) {
 
     return (
@@ -19,7 +18,7 @@ export default function SaveDataModal({ onCloseModal, onSaveModal }) {
                         Would you like to save your changes?
                     </span>
                     <div className="grid md:grid-cols-2 mt-10 gap-4 px-5">
-                        <button onSaveModal={() => onSaveModal()} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white" >
+                        <button onClick={() => (onSaveModal())} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white" >
                             Ok
                         </button>
                         <button onClick={() => onCloseModal()} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">

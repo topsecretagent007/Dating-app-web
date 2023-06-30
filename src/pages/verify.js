@@ -1,27 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
 import ImageUploading from 'react-images-uploading';
 import { FiImage, FiCamera } from "react-icons/fi"
-import { useNavigate } from "react-router-dom";
 import SimpleImg from "../assets/image4.png"
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import GenerateRandomNumber from "../component/other/randomnumber"
 import LoadingModal from '../component/loadingPage';
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import AlertModal from "../component/modal/alertmodal";
 import { uploadImage } from "../config/helpers";
 import WebcamImage from "../component/camera";
 
-
-
 export default function Verify() {
     const { user } = UserAuth();
     const [verifycationCode, setVeryficationCode] = useState(false);
     const [alretUploadPhoto, setAlretUploadPhoto] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState();
-    const [visible, setVisible] = useState(true);
     const [loading, setLoading] = useState(false);
     const [verifyCode, setVerifyCode] = useState(0);
     const [name, setName] = useState("");
@@ -60,10 +56,12 @@ export default function Verify() {
                 verified: 2,
                 phoneNumber: ""
             });
+            await updateDoc(doc(db, "Users", user.uid), {
+                verified: 2,
+            });
             setLoading(false);
             setAlretUploadPhoto(true);
         }
-
     }
 
     useEffect(() => {
@@ -74,7 +72,6 @@ export default function Verify() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
 

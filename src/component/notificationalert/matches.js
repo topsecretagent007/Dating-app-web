@@ -20,7 +20,6 @@ export default function Matches() {
             const likedUserImage = [];
             const likedUserTime = [];
             const likedUserName = [];
-
             const querySnapshot = await getDocs(collection(db, "Users", user.uid, "Matches"));
             querySnapshot.forEach((doc) => {
                 likedUserid.push(doc.id)

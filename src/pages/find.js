@@ -25,7 +25,6 @@ export default function FindPage() {
         } else {
             setCurrentPage(currentPage - 1);
         }
-
     }
 
     const nextPage = () => {
@@ -41,6 +40,8 @@ export default function FindPage() {
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             const userData = await docSnap.data();
+            // const docUserLikeBy = await getDoc(doc(db, "Users", user.uid, "LikedBy"));
+            // const LikedByData = await docUserLikeBy.data();
             const searchedUserId = [];
             if (docSnap.exists()) {
                 const querySnapshot = await getDocs(
@@ -51,7 +52,7 @@ export default function FindPage() {
                         where("editInfo.userGender", "in", userData.showGender)
                     )
                 );
-                const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId !== user.uid);
+                const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId != user.uid);
                 filteredSnapshot.forEach((doc) => {
                     searchedUserId.push(doc.data().userId);
                 });
@@ -61,7 +62,6 @@ export default function FindPage() {
                 if (searchedUserId == [""] || searchedUserId == undefined || searchedUserId.length == 0) setSearchUsers(false);
                 else setSearchUsers(true);
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
             setLoading(false);
@@ -70,7 +70,6 @@ export default function FindPage() {
             getUserInfo();
         }
     }, [user])
-
 
     return (
         <div>

@@ -15,7 +15,6 @@ import { MdSettingsSuggest } from "react-icons/md";
 import ImageCropper from '../component/imageCropper'
 import { uploadImage } from "../config/helpers";
 
-
 export default function ProfilePage() {
     const navigate = useNavigate();
     const { user } = UserAuth();
@@ -24,7 +23,6 @@ export default function ProfilePage() {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [imageSave, setImageSave] = useState(false);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [croppedImage, setCroppedImage] = useState(null);
@@ -50,7 +48,6 @@ export default function ProfilePage() {
         setLoading(false);
     }
 
-
     const updateAvatar = async () => {
         if (croppedImage == null) return;
         setLoading(true);
@@ -68,7 +65,6 @@ export default function ProfilePage() {
             console.log("error")
             setLoading(false);
         }
-
     }
 
     useEffect(() => {
@@ -102,7 +98,6 @@ export default function ProfilePage() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -115,9 +110,7 @@ export default function ProfilePage() {
                 setImageSave(false);
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };

@@ -7,16 +7,13 @@ import { GiAlienEgg } from "react-icons/gi";
 import LoadingModal from "../../component/loadingPage";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
-import { doc, getDoc, collection, addDoc } from "firebase/firestore";
-
+import { collection, addDoc } from "firebase/firestore";
 
 export default function ReportUserModal({ openModal, usersId }) {
     const { user } = UserAuth();
     const [userModal, setUserModal] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
-    const [myId, setMyId] = useState("");
     const [loading, setLoading] = useState(false);
     const [reportedText, setReportedText] = useState("");
 
@@ -35,10 +32,8 @@ export default function ReportUserModal({ openModal, usersId }) {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [prevScrollPos]);
@@ -50,29 +45,10 @@ export default function ReportUserModal({ openModal, usersId }) {
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [menuDropdown]);
-
-    useEffect(() => {
-        setLoading(true);
-        const getUserInfo = async () => {
-            const docSnap = await getDoc(doc(db, "Users", user.uid));
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                setMyId(userData.userId);
-                setLoading(false);
-            } else {
-                // docSnap.data() will be undefined in this case
-                console.log("No such document!");
-            }
-        }
-        if (user && user.uid) {
-            getUserInfo();
-        }
-    }, [user])
 
     return (
         <>

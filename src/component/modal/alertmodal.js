@@ -2,7 +2,6 @@ import React from "react";
 import ModelLogo from "../../assets/Modal-Logo.png";
 import { IoMdClose } from "react-icons/io";
 
-
 export default function ContactModal({ text, onCloseModal }) {
 
     return (

@@ -24,7 +24,6 @@ export default function ProfileData() {
     const [userShow, setUserShow] = useState([]);
     const [loading, setLoading] = useState(false);
     const [alertModal, setAlertModal] = useState(false);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
@@ -35,7 +34,7 @@ export default function ProfileData() {
     const modalClose = () => {
         setAlertModal(false);
     }
-    
+
     const brithdayChange = (event) => {
         setBrithday(event.target.value);
         const today = new Date();
@@ -52,7 +51,6 @@ export default function ProfileData() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -154,7 +152,6 @@ export default function ProfileData() {
 
     }, [user])
 
-
     return (
         <div className="bg-[#FFFBFE] bg-cover rounded-xl w-full h-full min-h-screen flex">
             <div className="pt-20 pl-[8%]">
@@ -185,7 +182,7 @@ export default function ProfileData() {
                         <Dropdown text="Show me " value={userShow} items={showData} onHandleChange={e => setUserShow(e)} multiple={true} />
                     </div>
                 </div>
-                <button onClick={() => updateProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32 mb-10">Continue</button>
+                <button onClick={() => updateProfileData()} className={`${nextPage ? "bg-pinkLight" : "bg-pink-950"}  justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32 mb-10`}>Continue</button>
             </div>
             <div className=" pt-20 pl-[8%]">
             </div>
@@ -197,8 +194,8 @@ export default function ProfileData() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
-                            <AlertModal text="Please fill all the fields." onCloseModal={() => modalClose()}/>
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                            <AlertModal text="Please fill all the fields." onCloseModal={() => modalClose()} />
                         </div>
                     </div >
                 </div>

@@ -20,7 +20,6 @@ export const uploadImage = async (image, folder, uid) => {
             },
             (err) => console.log(err),
             async () => {
-                // download url
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     return resolve(url);
                 }).catch((e) => reject(e));

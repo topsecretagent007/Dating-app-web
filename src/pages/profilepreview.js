@@ -9,17 +9,14 @@ import LoadingModal from "../component/loadingPage";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 
-
 export default function PreviewProfile() {
     const navigate = useNavigate();
     const { user } = UserAuth();
     const [userName, setUserName] = useState();
     const [description, setDescription] = useState();
-    const [images, setImages] = useState([]);
     const [userLooking, setUserLooking] = useState([]);
     const [interests, setInterests] = useState([]);
     const [loading, setLoading] = useState(false);
-
 
     const goToPage = (url) => {
         navigate(url);
@@ -27,7 +24,6 @@ export default function PreviewProfile() {
 
     useEffect(() => {
         setLoading(true);
-
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
@@ -37,9 +33,7 @@ export default function PreviewProfile() {
                 setUserLooking(userData.desires)
                 setInterests(userData.interest)
                 setLoading(false);
-
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         }
@@ -99,7 +93,7 @@ export default function PreviewProfile() {
                                 }
                             </div>
                         </div>
-                        <div onClick={() => goToPage('/editprofile')} className="mt-16 md:mt-6 justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2 text-xl" >
+                        <div onClick={() => goToPage('/editprofile')} className="mt-16 md:mt-6 justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2 text-xl cursor-pointer" >
                             <div>OK</div>
                         </div>
                     </div>

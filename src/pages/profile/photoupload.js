@@ -8,7 +8,6 @@ import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 import AlertModal from "../../component/modal/alertmodal";
-
 import ImageSaveModal from "../../component/modal/imagesave";
 import ImageCropper from '../../component/imageCropper'
 import { uploadImage } from "../../config/helpers";
@@ -203,9 +202,7 @@ export default function PhotoUpload() {
                         <br />
                         Your profile image must not contain any nudity and be only of yourself.
                     </div>
-
-                    <button onClick={() => nextPage()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
-
+                    <button onClick={() => nextPage()} className={`${croppedImage != null ? "bg-pinkLight" : "bg-pink-950"} justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20`}>Continue</button>
                 </div>
             </div>
             {
@@ -216,7 +213,7 @@ export default function PhotoUpload() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative py-12">
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative py-12">
                             <AlertModal text="Please select your avatar." onCloseModal={() => modalClose()} />
                         </div>
                     </div >
@@ -227,10 +224,10 @@ export default function PhotoUpload() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-12 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                                <ImageCropper
-                                    imageToCrop={images[0]["url"]}
-                                    onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
-                                />
+                            <ImageCropper
+                                imageToCrop={images[0]["url"]}
+                                onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
+                            />
                             <ImageSaveModal onSaveImage={updateAvatar} onCloseImage={() => removeImage()} />
                         </div>
                     </div >

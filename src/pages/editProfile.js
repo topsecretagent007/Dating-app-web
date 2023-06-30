@@ -17,18 +17,20 @@ import AlertModal from "../component/modal/alertmodal";
 import ImageCropper from '../component/imageCropper';
 import { uploadImage } from "../config/helpers";
 import ImageSaveModal from "../component/modal/imagesave";
-import { useCallbackPrompt, usePrompt } from '../hooks/useCallbackPrompt'
+import { usePrompt } from '../hooks/useCallbackPrompt'
 
 export default function EditProfilePage() {
     const [showDialog, setShowDialog] = useState(false);
-    const showprop = usePrompt(showDialog)
+    const onConfirmFunc =  async () => {
+        await dataSave();
+    }
+    usePrompt(showDialog, onConfirmFunc);
     const navigate = useNavigate();
     const { user } = UserAuth();
     const [uploadModal, setUploadModal] = useState(false);
     const [images, setImages] = useState([]);
     const menuDropdown = useRef(null)
     const [prevScrollPos, setPrevScrollPos] = useState(0);
-    const [visible, setVisible] = useState(true);
     const [userSex, setUserSex] = useState("");
     const [userOri, setUserOri] = useState("");
     const [userStatus, setUserStatus] = useState("");
@@ -112,7 +114,6 @@ export default function EditProfilePage() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
 
@@ -159,17 +160,9 @@ export default function EditProfilePage() {
         }
     }, [user])
 
-    useEffect(() => {
-        console.log(showDialog, "SAAAA");
-        console.log(showprop)
-
-    }, [showDialog])
-
-
     return (
         <div>
             <Header />
-
             <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-12">
                 <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 mx-auto  xl:flex gap-12">
                     <div className="w-full xl:px-10 2xl:px-40 pb-20">
@@ -204,7 +197,6 @@ export default function EditProfilePage() {
                                         isDragging,
                                         dragProps,
                                     }) => (
-                                        // write your building UI
                                         <div className="upload__image-wrapper">
                                             <div className="w-[256px] h-[175px] lg:w-[512px] lg:h-[344px]  mx-auto p-2 rounded-xl gap-2 grid grid-cols-3">
                                                 <div className="absolute z-1 justify-center gap-2 grid grid-cols-3">
@@ -221,7 +213,6 @@ export default function EditProfilePage() {
                                                     </div>
                                                 ))}
                                             </div>
-
                                             {uploadModal &&
                                                 <div className="z-[99] top-0 fixed left-0 w-full h-full min-h-screen">
                                                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
@@ -252,7 +243,6 @@ export default function EditProfilePage() {
                                                     </div >
                                                 </div>
                                             }
-
                                             <div className="px-8 md:px-44 lg:px-20">
                                                 <button className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mt-10 lg:mt-16 justify-center gap-2 items-center flex hover:bg-pinkLight hover:text-white"
                                                     onClick={() => setUploadModal(!uploadModal)}>
@@ -305,12 +295,11 @@ export default function EditProfilePage() {
                     </div>
                 </div>
             </div>
-            {/* {showPrompt && <AlertModal text="Hey" onCloseModal={() => modalClose()} />} */}
             {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
                             {
                                 editModal ?
                                     <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()} />

@@ -24,11 +24,14 @@ import LoadingModal from "../component/loadingPage";
 import { useNavigate } from "react-router-dom";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { showData } from "../config/constant";
-import { useCallbackPrompt, usePrompt } from '../hooks/useCallbackPrompt'
+import { usePrompt } from '../hooks/useCallbackPrompt'
 
 export default function SettingsPage() {
     const [showDialog, setShowDialog] = useState(false);
-    const showprop = usePrompt(showDialog);
+    const onConfirmFunc =  async () => {
+        await SettingSave  ();
+    }
+    usePrompt(showDialog, onConfirmFunc);
     const navigate = useNavigate();
     const { user } = UserAuth();
     const [inviteModal, setInviteModal] = useState(false);
@@ -38,7 +41,6 @@ export default function SettingsPage() {
     const [addPartnerModal, setAddPartnerModal] = useState(false);
     const [phoneVerification, setPhoneVerification] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [phoneNumber, setPhoneNumber] = useState();
     const [loading, setLoading] = useState(false);
@@ -80,7 +82,6 @@ export default function SettingsPage() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -122,17 +123,7 @@ export default function SettingsPage() {
                 setCountryID(userData.location?.countryID);
                 setCountryName(userData.location?.countryName);
                 setUserShow(userData.showGender);
-            } else {
-                // docSnap.data() will be undefined in this case
-                console.log("No such document!");
-            }
-            const docVerifySnap = await getDoc(doc(db, "Verify", user.uid));
-            if (docVerifySnap.exists()) {
-                const userData = docVerifySnap.data();
-                if (userData.verified == 3) setUserVerified(true);
-            } else {
-                // docSnap.data() will be undefined in this case
-                console.log("No such document!");
+                setUserVerified(userData.verified == 3);
             }
             setLoading(false);
 
@@ -143,12 +134,9 @@ export default function SettingsPage() {
     }, [user])
 
     const goToPage = (url) => {
-        navigate(url);
+        if (url == "/verifyprofile" && userVerified == true) navigate(url);
+
     }
-    
-    useEffect(() => {
-        console.log(showDialog, "SAAAA")
-    }, [showDialog])
 
     return (
         <div>
@@ -161,12 +149,12 @@ export default function SettingsPage() {
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
                                     <div className="px-5 text-[#5a5a5a]">Account Settings</div>
                                 </div>
-                                <a href="/verifyprofile" className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
+                                <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5 ">
                                     <div className="w-full justify-between flex pl-5">
                                         <div className="justify-start w-full">Verification Status</div>
                                         {
                                             !userVerified ?
-                                                <div className="justify-end text-red-600">Unverified</div>
+                                                <div onClick={() => goToPage("/verifyprofile")} className="justify-end text-red-600 cursor-pointer">Unverified</div>
                                                 :
                                                 <div className="justify-end text-green-600">Verified</div>
                                         }
@@ -174,20 +162,20 @@ export default function SettingsPage() {
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />
                                     </div>
-                                </a>
-                                <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
+                                </div>
+                                <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5">
                                     <div className="w-full justify-between flex pl-5">
                                         <div className="justify-start w-full">Verification Profile</div>
-                                        <div className="justify-end text-green-600">Verified</div>
+                                        <div className="justify-end text-green-600 cursor-pointer">Verified</div>
                                     </div>
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />
                                     </div>
                                 </div>
-                                <div onClick={() => setPhoneVerification(!phoneVerification)} className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center cursor-pointer">
+                                <div onClick={() => setPhoneVerification(!phoneVerification)} className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center">
                                     <div className="w-full justify-between md:flex pl-5">
                                         <div className="justify-start w-full">Phone Number</div>
-                                        <div className="justify-end md:text-end w-full">{phoneNumber}</div>
+                                        <div className="justify-end md:text-end w-full cursor-pointer">{phoneNumber}</div>
                                     </div>
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />
@@ -235,13 +223,13 @@ export default function SettingsPage() {
                                 <div className="gap-6 py-1 justify-between text-start items-center border-b-2 border-b-black/5">
                                     <div className="w-full pl-5 text-sm xl:text-lg py-2">
                                         <div className="justify-start w-full font-bold text-[#5a5a5a]">Maximum distance</div>
-                                        <Distance distance={distance} miles={miles} onMiles={e => (setMiles(e), setShowDialog(true))} onDistance={e => (setDistance(e), setShowDialog(true))} />
+                                        <Distance distance={distance} miles={miles} onMiles={e => (setMiles(e))} onDistance={e => (setDistance(e))} />
                                     </div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 xl:texl-xl justify-between text-start items-center">
                                     <div className="w-full pl-5 py-">
                                         <div className="justify-start w-full font-bold text-[#5a5a5a]">Age range</div>
-                                        <AgeRange first={firstAge} last={lastAge} onFirstAge={e => setFirstAge(e)} onLastAge={e => (setLastAge(e), setShowDialog(true))} />
+                                        <AgeRange first={firstAge} last={lastAge} onFirstAge={e => (setFirstAge(e), setShowDialog(true))} onLastAge={e => (setLastAge(e), setShowDialog(true))} />
                                     </div>
                                 </div>
                             </div>
@@ -253,7 +241,7 @@ export default function SettingsPage() {
                                 <div className="w-1/6">
                                     <MdNotifications />
                                 </div>
-                                <div className="w-5/6 text-start font-bold">
+                                <div className="w-5/6 text-start font-semibold">
                                     Notifications
                                 </div>
                             </div>
@@ -263,7 +251,7 @@ export default function SettingsPage() {
                                 <div className="w-1/6">
                                     <HiUsers />
                                 </div>
-                                <div className="w-5/6 text-start font-bold">
+                                <div className="w-5/6 text-start font-semibold">
                                     Invite your friends
                                 </div>
                             </div>
@@ -273,7 +261,7 @@ export default function SettingsPage() {
                                 <div className="w-1/6">
                                     <FaSignOutAlt />
                                 </div>
-                                <div className="w-5/6 text-start font-bold">
+                                <div className="w-5/6 text-start font-semibold">
                                     Log out
                                 </div>
                             </div>
@@ -283,7 +271,7 @@ export default function SettingsPage() {
                                 <div className="w-1/6">
                                     <MdDelete />
                                 </div>
-                                <div className="w-5/6 text-start font-bold">
+                                <div className="w-5/6 text-start font-semibold">
                                     Delete Account
                                 </div>
                             </div>
@@ -293,7 +281,7 @@ export default function SettingsPage() {
                                 <div className="w-1/6">
                                     <AiOutlineMail />
                                 </div>
-                                <div className="w-5/6 text-start font-bold">
+                                <div className="w-5/6 text-start font-semibold">
                                     Contact
                                 </div>
                             </div>
@@ -303,7 +291,7 @@ export default function SettingsPage() {
                                 <div className="w-1/6">
                                     <MdVideoLibrary />
                                 </div>
-                                <div className="w-5/6 text-start font-bold">
+                                <div className="w-5/6 text-start font-semibold">
                                     Tutorial
                                 </div>
                             </div>
@@ -313,14 +301,13 @@ export default function SettingsPage() {
                                 <div className="w-1/6">
                                     <FiSave />
                                 </div>
-                                <div className="w-5/6 text-start font-bold">
+                                <div className="w-5/6 text-start font-semibold">
                                     Save
                                 </div>
                             </div>
                         </button>
                     </div>
                 </div>
-
                 {
                     inviteModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
