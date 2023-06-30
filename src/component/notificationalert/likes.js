@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, onSnapshot } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
 export default function LikedBy() {
@@ -13,6 +13,7 @@ export default function LikedBy() {
     const [likedTime, setLikedTime] = useState();
     const [likedUserName, setLikedUserName] = useState();
     const [loading, setLoading] = useState(false);
+    const [userLikes, setUserLikes] = useState(true);
 
     const Lookingprofile = async (userId) => {
         navigate(`/likedUsers/${userId}`)
@@ -25,7 +26,11 @@ export default function LikedBy() {
             const likedUserid = [];
             const likedUserImage = [];
             const likedUserTime = [];
-            const likedUserName = [];
+            const likedUserNames = [];
+            const checkedUserid = [];
+            const checkedUserImage = [];
+            const checkedUserTime = [];
+            const checkedUserName = [];
             const matchesUsers = [];
             const matchesSnapshot = await getDocs(collection(db, "Users", user.uid, "Matches"));
             matchesSnapshot.forEach((doc) => {
@@ -35,7 +40,7 @@ export default function LikedBy() {
 
             const querySnapshot = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
             const filteredSnapshot = await querySnapshot.docs.filter(doc => doc.data().userId !== matchesUsers);
-
+            console.log(filteredSnapshot, "filteredSnapshot")
             filteredSnapshot.forEach((doc) => {
                 likedUserid.push(doc.id)
                 if (doc.data().pictureUrl) {
@@ -49,21 +54,51 @@ export default function LikedBy() {
                     console.error("Missing timestamp for doc:", doc.id);
                 }
                 if (doc.data().userName) {
-                    likedUserName.push(doc.data().userName)
+                    likedUserNames.push(doc.data().userName)
                 } else {
                     console.error("Missing userName for doc:", doc.id);
                 }
             });
-            setNumbers(likedUserid);
-            setLikedUserAvatar(likedUserImage);
-            setLikedTime(likedUserTime);
-            setLikedUserName(likedUserName);
+
+            const queryUserSnapshot = await getDocs(collection(db, "Users", user.uid, "CheckedUser"));
+            const filteredUserSnapshot = await queryUserSnapshot.docs.filter(doc => doc.data().LikedUser !== null);
+            console.log(filteredUserSnapshot, "filteredUserSnapshot")
+            filteredUserSnapshot.forEach((doc) => {
+                checkedUserid.push(doc.id)
+                if (doc.data().pictureUrl) {
+                    checkedUserImage.push(doc.data().pictureUrl)
+                } else {
+                    console.error("Missing pictureUrl for doc:", doc.id);
+                }
+                if (doc.data().timestamp) {
+                    checkedUserTime.push(doc.data().timestamp)
+                } else {
+                    console.error("Missing timestamp for doc:", doc.id);
+                }
+                if (doc.data().userName) {
+                    checkedUserName.push(doc.data().userName)
+                } else {
+                    console.error("Missing userName for doc:", doc.id);
+                }
+            });
+
+            if (userLikes == true) {
+                setNumbers(likedUserid);
+                setLikedUserAvatar(likedUserImage);
+                setLikedTime(likedUserTime);
+                setLikedUserName(likedUserNames);
+            } else {
+                setNumbers(checkedUserid);
+                setLikedUserAvatar(checkedUserImage);
+                setLikedTime(checkedUserTime);
+                setLikedUserName(checkedUserName);
+            }
             setLoading(false);
         }
         if (user && user.uid) {
             getUserInfo();
         }
-    }, [user]);
+    }, [user, userLikes]);
 
     const listItems = numbers && numbers.length > 0 ? numbers.map((numbers, index) =>
         <div key={index} className="w-full flex cursor-pointer" onClick={() => Lookingprofile(numbers)}>
@@ -83,6 +118,10 @@ export default function LikedBy() {
 
     return (
         <div>
+            <div className="grid grid-cols-2 gap-2 py-3 border-b-[0.5px] border-b-[#888888]">
+                <button onClick={() => setUserLikes(true)} className={`${userLikes ? "bg-pinkLight text-white" : "text-pinkLight bg-white"} md:py-1 xl:py-2 text-base mx-auto  border-[0.5px] border-pinkLight rounded-full w-24 hover:bg-pinkLight hover:text-white`}>Likes</button>
+                <button onClick={() => setUserLikes(false)} className={`${userLikes ? "text-pinkLight bg-white" : "bg-pinkLight text-white"} md:py-1 xl:py-2 text-base mx-auto border-[0.5px] border-pinkLight rounded-full w-24 hover:bg-pinkLight hover:text-white`}>My Likes</button>
+            </div>
             <div>
                 {listItems}
             </div>

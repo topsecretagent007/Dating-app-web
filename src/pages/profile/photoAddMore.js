@@ -35,10 +35,6 @@ export default function PhotoAddMore() {
         setImages((previousArr) => (previousArr.slice(0, -1)));
     }
 
-    const modalClose = () => {
-        setAlertModal(false);
-    }
-
     useEffect(() => {
         setLoading(true);
         const getUserInfo = async () => {
@@ -75,7 +71,6 @@ export default function PhotoAddMore() {
             setAlertModal(true);
             setLoading(false);
         }
-
     }
 
     useEffect(() => {
@@ -93,9 +88,7 @@ export default function PhotoAddMore() {
                 setAlertModal(false);
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -172,8 +165,7 @@ export default function PhotoAddMore() {
                         The more images you show other members the greater your chances are of <br />
                         matching with them.
                     </div>
-                    <button onClick={() => addUpdateImageList()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Continue</button>
-
+                    <button onClick={() => addUpdateImageList()} className={`${images.length != 0 ? "bg-pinkLight" : "bg-pink-950"} justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20`}>Continue</button>
                 </div>
             </div>
             <div className="pt-20 pr-2 md:pr-5 xl:pr-20 2xl:pr-40">
@@ -187,7 +179,7 @@ export default function PhotoAddMore() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
-                            <AlertModal text="Please add your photo at lease one." onCloseModal={() => modalClose()} />
+                            <AlertModal text="Please add your photo at lease one." onCloseModal={() => setAlertModal(false)} />
                         </div>
                     </div >
                 </div>

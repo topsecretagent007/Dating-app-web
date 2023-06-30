@@ -19,10 +19,6 @@ export default function ProfileDescription() {
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
-    const modalClose = () => {
-        setAlertModal(false);
-    }
-
     const updataProfileData = async () => {
         setLoading(true);
         const { about: _, ...temp } = originalEditInfo;
@@ -36,8 +32,7 @@ export default function ProfileDescription() {
                     min: 18
                 },
                 maximum_distance: 200,
-                miles: false,
-
+                miles: false
             });
             await addDoc(collection(db, "Users", user.uid, "notification"), {
                 body: "Dear valued member,We have an exciting video message from the founder of Unjabbed, and we highly recommend watching it at your earliest convenience. To access this video, please navigate to the settings section of the app and scroll down to the Tutorials section. You'll find the video right at the top. We deeply appreciate your continued support.Best regards,Unjabbed Team",
@@ -139,7 +134,7 @@ export default function ProfileDescription() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
-                            <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()} />
+                            <AlertModal text="Please tell me about yourself." onCloseModal={() => setAlertModal(false)} />
                         </div>
                     </div >
                 </div>

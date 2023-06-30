@@ -40,6 +40,8 @@ export default function FindPage() {
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             const userData = await docSnap.data();
+            // const docUserLikeBy = await getDoc(doc(db, "Users", user.uid, "LikedBy"));
+            // const LikedByData = await docUserLikeBy.data();
             const searchedUserId = [];
             if (docSnap.exists()) {
                 const querySnapshot = await getDocs(
@@ -50,7 +52,7 @@ export default function FindPage() {
                         where("editInfo.userGender", "in", userData.showGender)
                     )
                 );
-                const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId !== user.uid);
+                const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId != user.uid);
                 filteredSnapshot.forEach((doc) => {
                     searchedUserId.push(doc.data().userId);
                 });
