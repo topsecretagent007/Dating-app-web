@@ -22,7 +22,6 @@ export default function LikedBy() {
     useEffect(() => {
         const getUserInfo = async () => {
             setLoading(true);
-            console.log("user");
             const likedUserid = [];
             const likedUserImage = [];
             const likedUserTime = [];
@@ -37,7 +36,6 @@ export default function LikedBy() {
             docUserMatchId.forEach((doc) => {
                 matchedUserid.push(doc.id)
             })
-
             const querySnapshot = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
             const filteredSnapshot = await querySnapshot.docs.filter(doc => doc.data().userId != matchedUserid);
             filteredSnapshot.forEach((doc) => {

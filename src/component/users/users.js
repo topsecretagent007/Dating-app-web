@@ -4,15 +4,16 @@ import { db } from "../../firebase";
 import { getDocs, collection } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
-export default function Matches({ usersId, onClickUser }) {
+export default function Matches({ onClickUser }) {
     const { user } = UserAuth();
     const [matches, setMatches] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        setLoading(true);
         const getMatches = async () => {
             try {
+                setLoading(true);
+
                 const querySnapshot = await getDocs(
                     collection(db, "Users", user.uid, "Matches")
                 );
@@ -26,16 +27,17 @@ export default function Matches({ usersId, onClickUser }) {
                     };
                 });
                 setMatches(matches);
+                setLoading(false);
+
             } catch (error) {
                 console.error("Error fetching matches: ", error);
+                setLoading(false);
+
             }
         };
-        setLoading(false);
 
-        if (usersId) {
-            getMatches();
-        }
-    }, [usersId]);
+        if (user && user.uid) getMatches();
+    }, []);
 
     const renderMatch = ({ id, pictureUrl, timestamp, userName }) => (
         <div
@@ -65,11 +67,13 @@ export default function Matches({ usersId, onClickUser }) {
     );
 
     return (
-        <div>
-            {matches.length > 0
-                ? matches.map(renderMatch)
-                : renderEmptyState()}
+        <>
+            <div>
+                {matches.length > 0
+                    ? matches.map(renderMatch)
+                    : renderEmptyState()}
+            </div>
             {loading && <LoadingModal />}
-        </div>
+        </>
     );
 }
