@@ -18,6 +18,7 @@ import ImageCropper from '../component/imageCropper';
 import { uploadImage } from "../config/helpers";
 import ImageSaveModal from "../component/modal/imagesave";
 import { usePrompt } from '../hooks/useCallbackPrompt'
+import WebcamImage from "../component/camera";
 
 export default function EditProfilePage() {
     const [showDialog, setShowDialog] = useState(false);
@@ -43,6 +44,7 @@ export default function EditProfilePage() {
     const [editModal, setEditModal] = useState(false);
     const [imageSave, setImageSave] = useState(false);
     const [currentCroppedImage, setCurrentCroppedImage] = useState(null);
+    const [cameraModal, setCameraModal] = useState(false);
 
     const maxNumber = 6;
     const numbers = [1, 2, 3, 4, 5, 6];
@@ -54,8 +56,12 @@ export default function EditProfilePage() {
         setImages((previousArr) => (previousArr.slice(0, -1)));
     }
 
-    const modalClose = () => {
-        setAlertModal(false);
+    const cameraOk = async (capturedImage) => {
+        const file = new File([capturedImage], "camera-image.jpg", { type: "image/jpeg" });
+        setImages((prevImages) => ([...prevImages, { url: capturedImage, file: file }]));
+        setImageSave(true);
+        setShowDialog(true);
+        setCameraModal(false);
     }
 
     const addInterest = (value) => {
@@ -226,7 +232,7 @@ export default function EditProfilePage() {
                                                             </span>
                                                             <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
                                                                 <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-                                                                    <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
+                                                                    <button onClick={() => (setCameraModal(true), setUploadModal(!uploadModal))} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                                     >
                                                                         <FiCamera />
                                                                     </button>
@@ -291,6 +297,7 @@ export default function EditProfilePage() {
                                 </div>
                             </div>
                         </div>
+                        <button onClick={() => (dataSave(), setShowDialog(false))} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</button>
                     </div>
                 </div>
             </div>
@@ -301,9 +308,9 @@ export default function EditProfilePage() {
                         <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
                             {
                                 editModal ?
-                                    <AlertModal text="Please tell me about yourself." onCloseModal={() => modalClose()} />
+                                    <AlertModal text="Please tell me about yourself." onCloseModal={() => setAlertModal(false)} />
                                     :
-                                    <AlertModal text="Please add your photo at least one." onCloseModal={() => modalClose()} />
+                                    <AlertModal text="Please add your photo at least one." onCloseModal={() => setAlertModal(false)} />
                             }
                         </div>
                     </div >
@@ -330,6 +337,16 @@ export default function EditProfilePage() {
                                 }}
                                 onCloseImage={() => removeImage()}
                             />
+                        </div>
+                    </div >
+                </div>
+            }
+            {
+                cameraModal &&
+                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                            <WebcamImage onSaveImage={(img) => cameraOk(img)} onCloseModal={() => setCameraModal(false)} />
                         </div>
                     </div >
                 </div>

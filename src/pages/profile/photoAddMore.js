@@ -13,6 +13,7 @@ import AlertModal from "../../component/modal/alertmodal";
 import ImageCropper from '../../component/imageCropper';
 import { uploadImage } from "../../config/helpers";
 import ImageSaveModal from "../../component/modal/imagesave";
+import WebcamImage from "../../component/camera";
 
 const maxNumber = 6;
 const numbers = [1, 2, 3, 4, 5, 6];
@@ -29,28 +30,19 @@ export default function PhotoAddMore() {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [imageSave, setImageSave] = useState(false);
     const [currentCroppedImage, setCurrentCroppedImage] = useState(null);
+    const [cameraModal, setCameraModal] = useState(false);
 
     const removeImage = async () => {
         setImageSave(false);
         setImages((previousArr) => (previousArr.slice(0, -1)));
     }
 
-    useEffect(() => {
-        const getUserInfo = async () => {
-            setLoading(true);
-            const docSnap = await getDoc(doc(db, "Users", user.uid));
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                setImages(userData.Pictures)
-            } else {
-                console.log("No such document!");
-            }
-            setLoading(false);
-        }
-        if (user && user.uid) {
-            getUserInfo();
-        }
-    }, [user])
+    const cameraOk = async (capturedImage) => {
+        const file = new File([capturedImage], "camera-image.jpg", { type: "image/jpeg" });
+        setImages((prevImages) => ([...prevImages, { url: capturedImage, file: file }]));
+        setImageSave(true);
+        setCameraModal(false);
+    }
 
     const addUpdateImageList = async () => {
         setLoading(true);
@@ -72,6 +64,23 @@ export default function PhotoAddMore() {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        const getUserInfo = async () => {
+            setLoading(true);
+            const docSnap = await getDoc(doc(db, "Users", user.uid));
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                setImages(userData.Pictures)
+            } else {
+                console.log("No such document!");
+            }
+            setLoading(false);
+        }
+        if (user && user.uid) {
+            getUserInfo();
+        }
+    }, [user])
 
     useEffect(() => {
         function handleScroll() {
@@ -141,7 +150,7 @@ export default function PhotoAddMore() {
                                         </div>
                                         <div className="justify-center -ml-3 lg:-ml-11 mt-[-32px] lg:mt-[-52px] ">
                                             <div className="absolute z-20 justify-center flex  gap-44 lg:gap-96">
-                                                <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
+                                                <button onClick={() => setCameraModal(true)} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                 >
                                                     <FiCamera />
                                                 </button>
@@ -200,6 +209,16 @@ export default function PhotoAddMore() {
                                 }}
                                 onCloseImage={() => removeImage()}
                             />
+                        </div>
+                    </div >
+                </div>
+            }
+            {
+                cameraModal &&
+                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                            <WebcamImage onSaveImage={(img) => cameraOk(img)} onCloseModal={() => setCameraModal(false)} />
                         </div>
                     </div >
                 </div>
