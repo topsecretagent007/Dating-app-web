@@ -10,7 +10,7 @@ import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
-export default function FindUser({ usersId }) {
+export default function FindUser({ usersId, onNextUser }) {
     const { user } = UserAuth();
     const [reporteModal, setReportoModal] = useState(false);
     const [reportUser, setReportUser] = useState(false);
@@ -73,27 +73,27 @@ export default function FindUser({ usersId }) {
     }, [usersId])
 
 
-    const lickBtn = async (myid, usersId, value) => {
+    const lickBtn = async (usersId, value) => {
         const otherUsers = await getDoc(doc(db, "Users", usersId));
         const docSnap = await getDoc(doc(db, "Users", user.uid));
         const otherUsersData = otherUsers.data();
         const userData = docSnap.data();
 
         if (value == true) {
-            const docChecked = await setDoc(doc(db, "Users", user.uid, "CheckedUser", usersId), {
+            await setDoc(doc(db, "Users", user.uid, "CheckedUser", usersId), {
                 LikedUser: usersId,
                 pictureUrl: otherUsersData.Pictures[0]?.url,
                 timestamp: new Date(),
                 userName: otherUsersData.UserName
             });
-            const docLikedBy = await setDoc(doc(db, "Users", usersId, "LikedBy", user.uid), {
+            await setDoc(doc(db, "Users", usersId, "LikedBy", user.uid), {
                 LikedBy: user.uid,
                 pictureUrl: userData.Pictures[0]?.url,
                 timestamp: new Date(),
                 userName: userData.UserName
             })
         } else {
-            const docChecked = await setDoc(doc(db, "Users", user.uid, "CheckedUser", usersId), {
+            await setDoc(doc(db, "Users", user.uid, "CheckedUser", usersId), {
                 DislikedUser: usersId,
                 pictureUrl: otherUsersData.Pictures[0]?.url,
                 timestamp: new Date(),
@@ -173,11 +173,11 @@ export default function FindUser({ usersId }) {
                     }
                 </div>
                 <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
-                    <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => lickBtn(myId, usersId, true)} >
+                    <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => (lickBtn(myId, usersId, true, onNextUser()))} >
                         <BsHeartFill />
                         <div>Like</div>
                     </div>
-                    <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]" onClick={() => lickBtn(myId, usersId, false)}>
+                    <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]" onClick={() => (lickBtn(myId, usersId, false), onNextUser())}>
                         <AiOutlineClose />
                         <div>Dislike</div>
                     </div>

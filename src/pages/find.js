@@ -6,7 +6,6 @@ import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import LoadingModal from "../component/loadingPage";
 import FindUser from "../component/findUser";
-
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { doc, getDoc, collection, getDocs, where, query } from "firebase/firestore";
@@ -37,8 +36,6 @@ export default function FindPage() {
 
     useEffect(() => {
         setLoading(true);
-
-
         const getUserInfo = async () => {
             const checkedUserid = [];
             const matchedUserid = [];
@@ -71,7 +68,6 @@ export default function FindPage() {
                     } else {
                         searchedUserId.push(doc.data().userId);
                     }
-
                 });
                 setOtherUserId(searchedUserId);
                 if (searchedUserId.length < 2) setUsersData(false);
@@ -100,7 +96,7 @@ export default function FindPage() {
                 <div>
                     <Search />
                     {SearchUsers ?
-                        <FindUser usersId={otherUserId[currentPage]} />
+                        <FindUser usersId={otherUserId[currentPage]} onNextUser={() => nextPage()} />
                         :
                         <p className="text-lg xl:text-xl font-bold items-center pt-10 text-[#5A5A5A]">No search results were found.</p>
                     }

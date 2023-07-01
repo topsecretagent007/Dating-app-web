@@ -109,7 +109,7 @@ export default function ProfileDescription() {
                     </div>
                     <div className="mt-10 text-sm lg:text-xl mb-20 leading-relaxed">
                         <textarea
-                            className={`${inputText ? "border-red-600" : "border-[888888]"} border-2 mx-auto bg-white rounded-xl w-full p-4 md:w-1/2 xl:w-1/3 h-[400px] placeholder:italic placeholder:text-slate-400 block  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 resize-none`}
+                            className={`${inputText ? "border-red-600" : "border-[888888]"} border-2 mx-auto bg-white rounded-xl w-full p-4 sm:w-1/2 xl:w-1/3 h-[400px] placeholder:italic placeholder:text-slate-400 block  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 resize-none`}
                             type="text"
                             name="discription"
                             placeholder="Write something about yourself."

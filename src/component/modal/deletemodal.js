@@ -3,26 +3,25 @@ import ModelLogo from "../../assets/Modal-Logo.png"
 import { doc, deleteDoc, getDoc } from "firebase/firestore";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
-import LoadingModal from "../../component/loadingPage";
 
 export default function DeleteModal({ closeModal }) {
     const { user } = UserAuth();
-    const [loading, setLoading] = useState(false);
     const { logOut } = UserAuth();
     const [userId, setUserId] = useState();
     const deleteAccount = async () => {
+        closeModal();
         await deleteDoc(doc(db, "Users", userId));
+        await deleteDoc(doc(db, "Verify", userId));
+        // deleteDoc(doc(db, "chats", userId));
         logOut();
     }
 
     useEffect(() => {
-        setLoading(true);
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
                 setUserId(userData.userId);
-                setLoading(false);
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
@@ -51,10 +50,7 @@ export default function DeleteModal({ closeModal }) {
                     <div className="text-sm xl:text-lg font-bold">Cancel</div>
                 </button>
             </div>
-            {
-                loading &&
-                <LoadingModal />
-            }
+            
         </>
     )
 }

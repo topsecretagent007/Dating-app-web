@@ -68,27 +68,24 @@ export default function ProfilePage() {
     }
 
     useEffect(() => {
-        setLoading(true);
         const getUserInfo = async () => {
-            const docSnap = await getDoc(doc(db, "Users", user.uid));
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                setName(userData.UserName);
-                setOriginalImages(userData.Pictures);
-                setImages([userData.Pictures[0]])
-            } else {
-                // docSnap.data() will be undefined in this case
-                console.log("No such document!");
+            try {
+                setLoading(true);
+                const docSnap = await getDoc(doc(db, "Users", user.uid));
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    setName(userData.UserName);
+                    setOriginalImages(userData.Pictures);
+                    if (userData.verified == 3) setUserVerified(true);
+                    setImages([userData.Pictures[0]])
+                } else {
+                    // docSnap.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+                setLoading(false);
+            } catch (error) {
+                console.error(error);
             }
-            const docVerifySnap = await getDoc(doc(db, "Verify", user.uid));
-            if (docVerifySnap.exists()) {
-                const userData = docVerifySnap.data();
-                if (userData.verified == 3) setUserVerified(true);
-            } else {
-                // docSnap.data() will be undefined in this case
-                console.log("No such document!");
-            }
-            setLoading(false);
         }
         if (user && user.uid) {
             getUserInfo();
@@ -204,10 +201,10 @@ export default function ProfilePage() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-12 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
-                                <ImageCropper
-                                    imageToCrop={images[0]["url"]}
-                                    onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
-                                />
+                            <ImageCropper
+                                imageToCrop={images[0]["url"]}
+                                onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
+                            />
                             <ImageSaveModal onSaveImage={updateAvatar} onCloseImage={() => removeImage()} />
                         </div>
                     </div >

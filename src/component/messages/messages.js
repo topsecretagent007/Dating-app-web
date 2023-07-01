@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BsFillSendFill, BsEmojiSmile } from "react-icons/bs";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
-import { doc, getDoc, setDoc, deleteDoc, getDocs, collection, addDoc, where, query } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, getDocs, collection, addDoc, where, query, onSnapshot } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
 
@@ -14,9 +14,50 @@ export default function Messages({ currentUser }) {
     const [userAvatar, setUserAvatar] = useState("");
     const [messageText, setMessageText] = useState("");
     const [chats, setChats] = useState();
-    // const messageCollection = collection(db, "chats", (currentUser + "-" + user.uid), "messages");
+
+    useEffect(() => {
+        if (chats) {
+            onSnapshot(chats, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        console.log("New city: ", change.doc.data());
+                        const messages = {
+                            id: change.doc.id,
+                            sender_id: change.doc.data().sender_id,
+                            isRead: change.doc.data().isRead,
+                            text: change.doc.data().text,
+                            time: change.doc.data().time
+                        }
+                        setChatMessages([...chatMessags, messages]);
+                        console.log(chatMessags);
+                        // const { sender_id, isRead, text, time } = change.doc.data();
+                        // return {
+                        //     id: doc.id,
+                        //     sender_id,
+                        //     isRead,
+                        //     text,
+                        //     time
+                        // };
+                        // messages.sort((a, b) => a.time - b.time);
+                        // setChatMessages(messages);
+
+
+                    }
+                    if (change.type === "modified") {
+                        console.log("Modified city: ", change.doc.data());
+                    }
+                    if (change.type === "removed") {
+                        console.log("Removed city: ", change.doc.data());
+                    }
+                });
+            });
+        }
+    }, [chats])
+
+
 
     const sendMessage = async () => {
+        if (messageText == "") return;
         await addDoc(chats, {
             receiver_id: currentUser,
             sender_id: user.uid,
@@ -27,11 +68,10 @@ export default function Messages({ currentUser }) {
             type: "Msg"
         });
         setMessageText("");
-        goToUserInfo()
+
     }
 
     const goToUserInfo = async () => {
-        setLoading(true);
         try {
             const docSnapShot = await getDocs(chats);
             const messages = docSnapShot.docs.map((doc) => {
@@ -44,17 +84,16 @@ export default function Messages({ currentUser }) {
                     time
                 };
             });
-            messages.sort((a, b) => a.time - b.time);
             setChatMessages(messages);
         } catch (error) {
             console.error("Error fetching matches: ", error);
         }
-        setLoading(false);
     }
 
 
     useEffect(() => {
         const goToGetAvatar = async () => {
+            setLoading(true);
             const myQuerySnapshot = await getDoc(doc(db, "Users", user.uid));
             if (myQuerySnapshot.exists()) {
                 const userData = myQuerySnapshot.data();
@@ -72,17 +111,37 @@ export default function Messages({ currentUser }) {
             }
 
             let messageCollection; // Declare the variable here
+            const messageId = (user.uid + "-" + currentUser);
+            const chatCollection = await getDocs(collection(db, "chats"));
+            const filteredSnapshot = await chatCollection.docs.filter(doc => doc.data().docId == messageId);
+            console.log(filteredSnapshot, "filteredSnapshot");
 
-            const chatCollection = await query(collection(db, "cities"),
-                where("docId", "==", (user.uid + "-" + currentUser))
-            )
-            console.log(chatCollection.length)
-            if (chatCollection.length == 0) {
+
+            if (filteredSnapshot.length != 0) {
                 messageCollection = collection(db, "chats", (user.uid + "-" + currentUser), "messages")
+                console.log("yse")
             } else {
                 messageCollection = collection(db, "chats", (currentUser + "-" + user.uid), "messages")
+                console.log("no")
+
             }
+            const docSnapShot = await getDocs(messageCollection);
+            const messages = docSnapShot.docs.map((doc) => {
+                const { sender_id, isRead, text, time } = doc.data();
+                return {
+                    id: doc.id,
+                    sender_id,
+                    isRead,
+                    text,
+                    time
+                };
+            });
+            messages.sort((a, b) => a.time - b.time);
+            setChatMessages(messages);
             setChats(messageCollection);
+            setLoading(false);
+
+
         };
         if (currentUser && user.uid) {
             goToGetAvatar();

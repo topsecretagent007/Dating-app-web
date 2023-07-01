@@ -26,47 +26,10 @@ export default function PhotoUpload() {
     const [croppedImage, setCroppedImage] = useState(null);
     const [imageSave, setImageSave] = useState(false);
 
-
-    // const [isCameraConnected, setIsCameraConnected] = useState(false);
-    // const [cameraConnected, setCameraConnected] = useState(false);
-    // const [imagePath, setImagePath] = useState('');
-
     const removeImage = async () => {
         setImageSave(false);
         setImages((previousArr) => (previousArr.slice(0, -1)));
     }
-
-    const modalClose = () => {
-        setAlertModal(false);
-    }
-
-    // const handleTakePhoto = async () => {
-    //     try {
-    //         const mediaDevices = navigator.mediaDevices;
-    //         if (!mediaDevices || !mediaDevices.getUserMedia) {
-    //             return alert('Camera not available on this device');
-    //         }
-
-    //         const stream = await mediaDevices.getUserMedia({ video: true });
-    //         const video = document.createElement('video');
-    //         video.srcObject = stream;
-    //         video.play();
-
-    //         const canvas = document.createElement('canvas');
-    //         canvas.width = video.videoWidth;
-    //         canvas.height = video.videoHeight;
-    //         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    //         const dataUrl = canvas.toDataURL('image/png');
-    //         setImagePath(dataUrl);
-    //         console.log(dataUrl, "image url >>>>>>>>>>>>>>>>>")
-
-    //         stream.getTracks().forEach((track) => track.stop());
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
-
 
     useEffect(() => {
         setLoading(true);
@@ -78,7 +41,6 @@ export default function PhotoUpload() {
                 setImages([userData.Pictures[0]])
                 setLoading(false);
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         }
@@ -131,8 +93,6 @@ export default function PhotoUpload() {
         function handleClickOutside(event) {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setAlertModal(false);
-                // setIsCameraConnected(false);
-                // setCameraConnected(false);
             }
         }
 
@@ -202,7 +162,7 @@ export default function PhotoUpload() {
                         <br />
                         Your profile image must not contain any nudity and be only of yourself.
                     </div>
-                    <button onClick={() => nextPage()} className={`justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20`}>Continue</button>
+                    <button onClick={() => nextPage()} className={`bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20`}>Continue</button>
                 </div>
             </div>
             {
@@ -214,7 +174,7 @@ export default function PhotoUpload() {
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative py-12">
-                            <AlertModal text="Please select your avatar." onCloseModal={() => modalClose()} />
+                            <AlertModal text="Please select your avatar." onCloseModal={() => setAlertModal(false)} />
                         </div>
                     </div >
                 </div>
@@ -233,27 +193,6 @@ export default function PhotoUpload() {
                     </div >
                 </div>
             }
-            {/* {
-                isCameraConnected &&
-                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
-                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
-                            <AlertModal text="Camera connected successfully!" onCloseModal={() => modalClose()} />
-                        </div>
-                    </div >
-                </div>
-            }
-            {
-                cameraConnected &&
-                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
-                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-3 relative  py-6">
-                            <AlertModal text="Please connect the camera." onCloseModal={() => modalClose()} />
-                        </div>
-                    </div >
-                </div>
-            }
-            {imagePath && <img src={imagePath} />} */}
         </div>
     )
 }

@@ -36,16 +36,16 @@ export default function PhotoAddMore() {
     }
 
     useEffect(() => {
-        setLoading(true);
         const getUserInfo = async () => {
+            setLoading(true);
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
                 setImages(userData.Pictures)
-                setLoading(false);
             } else {
                 console.log("No such document!");
             }
+            setLoading(false);
         }
         if (user && user.uid) {
             getUserInfo();
@@ -165,7 +165,7 @@ export default function PhotoAddMore() {
                         The more images you show other members the greater your chances are of <br />
                         matching with them.
                     </div>
-                    <button onClick={() => addUpdateImageList()} className={`justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20`}>Continue</button>
+                    <button onClick={() => addUpdateImageList()} className={`bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20`}>Continue</button>
                 </div>
             </div>
             <div className="pt-20 pr-2 md:pr-5 xl:pr-20 2xl:pr-40">
