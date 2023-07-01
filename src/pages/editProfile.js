@@ -21,7 +21,7 @@ import { usePrompt } from '../hooks/useCallbackPrompt'
 
 export default function EditProfilePage() {
     const [showDialog, setShowDialog] = useState(false);
-    const onConfirmFunc =  async () => {
+    const onConfirmFunc = async () => {
         await dataSave();
     }
     usePrompt(showDialog, onConfirmFunc);
@@ -291,7 +291,6 @@ export default function EditProfilePage() {
                                 </div>
                             </div>
                         </div>
-                        <button onClick={() => (dataSave(), setShowDialog(false))} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</button>
                     </div>
                 </div>
             </div>

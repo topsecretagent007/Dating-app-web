@@ -6,7 +6,6 @@ function WebcamImage({ onSaveImage, onCloseModal }) {
   const webcamRef = useRef(null);
 
   const saveImage = () => {
-    console.log(img);
     if (!img) return;
     onSaveImage(img);
   }
@@ -37,13 +36,16 @@ function WebcamImage({ onSaveImage, onCloseModal }) {
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             videoConstraints={videoConstraints}
-            className="bg-black mx-auto my-5 rounded-xl"
+            className="mx-auto my-5 rounded-xl"
           />
           <button className="border-[0.5px] border-pinkLight text-pinkLight text-base py-2 px-4 rounded-full hover:bg-pinkLight hover:text-white" onClick={capture}>Capture photo</button>
         </>
       ) : (
         <>
-          <img src={img} alt="screenshot" className="w-[400px] h-[400px] bg-pinkLights justify-center my-5 rounded-xl" />
+          <div className="text-lg text-pinkLight">
+            Are you sure you want to keep the image?
+          </div>
+          <img src={img} alt="screenshot" className="w-[400px] bg-pinkLights justify-center mx-auto my-5 rounded-xl" />
           <div className="flex justify-center w-full gap-4">
             <button className="w-20 border-[0.5px] border-pinkLight text-pinkLight text-base py-1 rounded-full hover:bg-pinkLight hover:text-white" onClick={() => saveImage()}>Ok</button>
             <button className="w-20 border-[0.5px] border-pinkLight text-pinkLight text-base py-1 rounded-full hover:bg-pinkLight hover:text-white" onClick={() => setImg(null)}>Retake</button>

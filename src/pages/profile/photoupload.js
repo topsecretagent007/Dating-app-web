@@ -11,6 +11,7 @@ import AlertModal from "../../component/modal/alertmodal";
 import ImageSaveModal from "../../component/modal/imagesave";
 import ImageCropper from '../../component/imageCropper'
 import { uploadImage } from "../../config/helpers";
+import WebcamImage from "../../component/camera";
 
 export default function PhotoUpload() {
     const navigate = useNavigate();
@@ -20,15 +21,22 @@ export default function PhotoUpload() {
     const maxNumber = 100;
     const [loading, setLoading] = useState(false);
     const [alertModal, setAlertModal] = useState(false);
-    const [visible, setVisible] = useState(true);
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [croppedImage, setCroppedImage] = useState(null);
     const [imageSave, setImageSave] = useState(false);
+    const [cameraModal, setCameraModal] = useState(false);
 
     const removeImage = async () => {
         setImageSave(false);
         setImages((previousArr) => (previousArr.slice(0, -1)));
+    }
+
+    const cameraOk = async (capturedImage) => {
+        const file = new File([capturedImage], "camera-image.jpg", { type: "image/jpeg" });
+        setImages([{ url: capturedImage, file: file }]);
+        setImageSave(true);
+        setCameraModal(false);
     }
 
     useEffect(() => {
@@ -82,7 +90,6 @@ export default function PhotoUpload() {
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         }
         window.addEventListener('scroll', handleScroll);
@@ -133,9 +140,7 @@ export default function PhotoUpload() {
                                         </div>
                                         <div className="justify-center mt-[-30px] lg:mt-[-54px] ">
                                             <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-                                                <button
-                                                    // onClick={handleTakePhoto}
-                                                    className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
+                                                <button onClick={() => setCameraModal(true)} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
                                                 >
                                                     <FiCamera />
                                                 </button>
@@ -189,6 +194,16 @@ export default function PhotoUpload() {
                                 onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
                             />
                             <ImageSaveModal onSaveImage={updateAvatar} onCloseImage={() => removeImage()} />
+                        </div>
+                    </div >
+                </div>
+            }
+            {
+                cameraModal &&
+                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                            <WebcamImage onSaveImage={(img) => cameraOk(img)} onCloseModal={() => setCameraModal(false)} />
                         </div>
                     </div >
                 </div>

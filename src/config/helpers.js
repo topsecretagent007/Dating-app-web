@@ -8,7 +8,6 @@ export const uploadImage = async (image, folder, uid) => {
     if (image.url.includes("https://") && !image.url.includes("blob:")) return image.url;
     const filename = `${Date.now()}-${image.file.name}`;
     const storageRef = ref(storage, `${folder}/${uid}/${filename}`);
-
     return new Promise((resolve, reject) => {
         const uploadTask = uploadBytesResumable(storageRef, image.file);
         uploadTask.on(

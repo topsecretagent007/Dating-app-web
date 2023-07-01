@@ -24,14 +24,13 @@ export default function Verify() {
     const [images, setImages] = React.useState([]);
     const [alertModal, setAlertModal] = useState(false);
     const menuDropdown = useRef(null);
-    const [isCameraConnected, setIsCameraConnected] = useState(false);
     const [cameraModal, setCameraModal] = useState(false);
     const maxNumber = 100;
 
-    const modalClose = () => {
+    const cameraOk = async (capturedImage) => {
+        const file = new File([capturedImage], "camera-image.jpg", { type: "image/jpeg" });
+        setImages([{ url: capturedImage, file: file }]);
         setCameraModal(false);
-        setAlertModal(false);
-        setAlretUploadPhoto(false);
     }
 
     const uploadPhote = async () => {
@@ -84,7 +83,6 @@ export default function Verify() {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setAlretUploadPhoto(false);
                 setAlertModal(false)
-                setIsCameraConnected(false)
                 setCameraModal(false)
             }
         }
@@ -203,7 +201,7 @@ export default function Verify() {
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                                     <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
-                                        <AlertModal text="Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile." onCloseModal={() => modalClose()} />
+                                        <AlertModal text="Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile." onCloseModal={() => setAlretUploadPhoto(false)} />
                                     </div>
                                 </div >
                             </div>
@@ -213,7 +211,7 @@ export default function Verify() {
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                                     <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
-                                        <AlertModal text="Please agree to our terms of use and privacy policy by checking the box below." onCloseModal={() => modalClose()} />
+                                        <AlertModal text="Please capture image or select image from your computer." onCloseModal={() => setAlertModal(false)} />
                                     </div>
                                 </div >
                             </div>
@@ -230,13 +228,12 @@ export default function Verify() {
                 cameraModal &&
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
-                            <WebcamImage onSaveImage={(img) => (setImages(img), console.log(img))} onCloseModal={()=> modalClose()}/>
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                            <WebcamImage onSaveImage={(img) => cameraOk(img)} onCloseModal={() => setCameraModal(false)} />
                         </div>
                     </div >
                 </div>
             }
-
         </div >
     )
 }
