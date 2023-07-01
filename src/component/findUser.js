@@ -173,11 +173,11 @@ export default function FindUser({ usersId, onNextUser }) {
                     }
                 </div>
                 <div className="justify-between grid grid-cols-2 gap-4 pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
-                    <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => (lickBtn(myId, usersId, true, onNextUser()))} >
+                    <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => (lickBtn(usersId, true), onNextUser())} >
                         <BsHeartFill />
                         <div>Like</div>
                     </div>
-                    <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]" onClick={() => (lickBtn(myId, usersId, false), onNextUser())}>
+                    <div className="justify-center items-center border-[#888888] border-[0.1px] rounded-xl gap-2 py-1 lg:py-2 xl:py-3 flex cursor-pointer text-[#888888]" onClick={() => (lickBtn(usersId, false), onNextUser())}>
                         <AiOutlineClose />
                         <div>Dislike</div>
                     </div>

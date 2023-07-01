@@ -28,8 +28,8 @@ import { usePrompt } from '../hooks/useCallbackPrompt'
 
 export default function SettingsPage() {
     const [showDialog, setShowDialog] = useState(false);
-    const onConfirmFunc =  async () => {
-        await SettingSave  ();
+    const onConfirmFunc = async () => {
+        await SettingSave();
     }
     usePrompt(showDialog, onConfirmFunc);
     const navigate = useNavigate();
@@ -293,16 +293,6 @@ export default function SettingsPage() {
                                 </div>
                                 <div className="w-5/6 text-start font-semibold">
                                     Tutorial
-                                </div>
-                            </div>
-                        </button>
-                        <button onClick={() => (SettingSave(), setShowDialog(false))} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
-                            <div className="w-48 xl:w-64 items-center flex">
-                                <div className="w-1/6">
-                                    <FiSave />
-                                </div>
-                                <div className="w-5/6 text-start font-semibold">
-                                    Save
                                 </div>
                             </div>
                         </button>

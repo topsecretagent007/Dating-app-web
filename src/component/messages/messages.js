@@ -30,17 +30,6 @@ export default function Messages({ currentUser }) {
                         }
                         setChatMessages([...chatMessags, messages]);
                         console.log(chatMessags);
-                        // const { sender_id, isRead, text, time } = change.doc.data();
-                        // return {
-                        //     id: doc.id,
-                        //     sender_id,
-                        //     isRead,
-                        //     text,
-                        //     time
-                        // };
-                        // messages.sort((a, b) => a.time - b.time);
-                        // setChatMessages(messages);
-
 
                     }
                     if (change.type === "modified") {

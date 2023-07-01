@@ -43,13 +43,11 @@ export default function FindPage() {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             const userData = await docSnap.data();
             const docUserLikeBy = await getDocs(collection(db, "Users", user.uid, "CheckedUser"));
-            const docUserLikeById = await docUserLikeBy.docs.filter(doc => doc.data().LikedUser != null);
-            docUserLikeById.forEach((doc) => {
+            docUserLikeBy.forEach((doc) => {
                 checkedUserid.push(doc.id)
             })
             const docUserMatch = await getDocs(collection(db, "Users", user.uid, "Matches"));
-            const docUserMatchId = await docUserMatch.docs.filter(doc => doc.data().Matches != null);
-            docUserMatchId.forEach((doc) => {
+            docUserMatch.forEach((doc) => {
                 matchedUserid.push(doc.id)
             })
             if (docSnap.exists()) {
@@ -61,7 +59,7 @@ export default function FindPage() {
                         where("editInfo.userGender", "in", userData.showGender),
                     )
                 );
-                const filteredSnapshot = await querySnapshot.docs.filter(doc => doc.data().userId != user.uid);
+                const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId != user.uid);
                 filteredSnapshot.forEach((doc) => {
                     if (checkedUserid.includes(doc.data().userId) || matchedUserid.includes(doc.data().userId)) {
                         return;
