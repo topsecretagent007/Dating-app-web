@@ -53,8 +53,6 @@ export default function FindPage() {
             docUserReport.forEach((doc) => {
                 reportUserId.push(doc.data().victim_id);
             })
-            console.log(reportUserId, "dfgsdf")
-
             if (docSnap.exists()) {
                 const querySnapshot = await getDocs(
                     query(
