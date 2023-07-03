@@ -86,7 +86,7 @@ export default function FindPage() {
                 <div>
                     <Search />
                     {searchedUsers.length > 0 ?
-                        <UserBrowser userData={searchedUsers[currentPage]} onNextUser={() => nextPage()} matched={false} />
+                        <UserBrowser userData={searchedUsers[currentPage]} matched={false} onNextUser={() => nextPage()} />
                         :
                         <p className="text-lg xl:text-xl font-bold items-center pt-10 text-[#5A5A5A]">No search results were found.</p>
                     }
