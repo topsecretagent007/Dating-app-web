@@ -35,13 +35,13 @@ export default function Verify() {
 
     const uploadPhote = async () => {
         setLoading(true);
-        if (images[0] == null || images[0] == undefined) {
+        if (images[0] === null || images[0] === undefined) {
             setAlertModal(true);
             setLoading(false);
             return
         };
         const codeImageUrl = await uploadImage(images[0], "verify", user.uid);
-        if (codeImageUrl == "" || codeImageUrl == null) {
+        if (codeImageUrl === "" || codeImageUrl === null) {
             setLoading(false);
             setAlertModal(true);
         } else {

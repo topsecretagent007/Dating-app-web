@@ -76,7 +76,7 @@ export default function ProfilePage() {
                     const userData = docSnap.data();
                     setName(userData.UserName);
                     setOriginalImages(userData.Pictures);
-                    if (userData.verified == 3) setUserVerified(true);
+                    if (userData.verified === 3) setUserVerified(true);
                     setImages([userData.Pictures[0]])
                 } else {
                     // docSnap.data() will be undefined in this case
@@ -133,7 +133,7 @@ export default function ProfilePage() {
                             <div className="upload__image-wrapper pt-8">
                                 <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar.png')] mx-auto rounded-full bg-cover">
                                     <div className="image-item">
-                                        {images[0] && images[0]['url'] != "" && images[0]['url'] != null &&
+                                        {images[0] && images[0]['url'] !== "" && images[0]['url'] !== null &&
                                             <img style={isDragging ? { color: 'red' } : undefined}
                                                 onClick={onImageUpload}
                                                 {...dragProps} src={images[0]['url']} alt="Avatar" className="mx-auto rounded-full w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover cursor-pointer" />

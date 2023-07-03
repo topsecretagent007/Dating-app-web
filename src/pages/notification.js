@@ -21,13 +21,13 @@ export default function NotificationPage() {
                         </div>
                     </div>
                     <div className="h-full min-h-screen">
-                        {page == "matches" &&
+                        {page === "matches" &&
                             < MatchesPage />
                         }
-                        {page == "alerts" &&
+                        {page === "alerts" &&
                             < AlertsPage />
                         }
-                        {page == "likes" &&
+                        {page === "likes" &&
                             < LikesPage />
                         }
                     </div>

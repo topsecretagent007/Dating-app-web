@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { FiPlus, FiSave } from "react-icons/fi";
+import { FiPlus } from "react-icons/fi";
 import { FaSignOutAlt } from "react-icons/fa";
 import { MdDelete, MdVideoLibrary, MdNotifications } from "react-icons/md";
 import { GoChevronRight } from "react-icons/go";
@@ -123,7 +123,7 @@ export default function SettingsPage() {
                 setCountryID(userData.location?.countryID);
                 setCountryName(userData.location?.countryName);
                 setUserShow(userData.showGender);
-                setUserVerified(userData.verified == 3);
+                setUserVerified(userData.verified === 3);
             }
             setLoading(false);
 

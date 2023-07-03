@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { getDocs, collection } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
+
 export default function LikedBy() {
     const navigate = useNavigate();
     const { user } = UserAuth();
@@ -14,6 +15,7 @@ export default function LikedBy() {
     const [likedUserName, setLikedUserName] = useState();
     const [loading, setLoading] = useState(false);
     const [userLikes, setUserLikes] = useState(true);
+
 
     const Lookingprofile = async (userId) => {
         navigate(`/likedUsers/${userId}`)
@@ -32,13 +34,11 @@ export default function LikedBy() {
             const checkedUserName = [];
             const matchedUserid = [];
             const docUserMatch = await getDocs(collection(db, "Users", user.uid, "Matches"));
-            const docUserMatchId = await docUserMatch.docs.filter(doc => doc.data().Matches != null);
-            docUserMatchId.forEach((doc) => {
+            docUserMatch.forEach((doc) => {
                 matchedUserid.push(doc.id)
             })
             const querySnapshot = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
-            const filteredSnapshot = await querySnapshot.docs.filter(doc => doc.data().userId != matchedUserid);
-            filteredSnapshot.forEach((doc) => {
+            querySnapshot.forEach((doc) => {
                 if (matchedUserid.includes(doc.id)) {
                     return;
                 } else {
@@ -62,9 +62,8 @@ export default function LikedBy() {
             });
 
             const queryUserSnapshot = await getDocs(collection(db, "Users", user.uid, "CheckedUser"));
-            const filteredUserSnapshot = await queryUserSnapshot.docs.filter(doc => doc.data().LikedUser != null);
-            filteredUserSnapshot.forEach((doc) => {
-                if (matchedUserid.includes(doc.id)) {
+            queryUserSnapshot.forEach((doc) => {
+                if (matchedUserid.includes(doc.id) || doc.DislikedUser != null) {
                     return;
                 } else {
                     checkedUserid.push(doc.id)
@@ -86,7 +85,7 @@ export default function LikedBy() {
                 }
             });
 
-            if (userLikes == true) {
+            if (userLikes === true) {
                 setNumbers(likedUserid);
                 setLikedUserAvatar(likedUserImage);
                 setLikedTime(likedUserTime);
@@ -106,9 +105,9 @@ export default function LikedBy() {
 
     const listItems = numbers && numbers.length > 0 ? numbers.map((numbers, index) =>
         <div key={index} className="w-full flex cursor-pointer" onClick={() => Lookingprofile(numbers)}>
-            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full pt-2">
-                <img src={likedUserAvatar[index]} className="w-12 h-12 ml-2 mr-1 my-auto object-cover rounded-full " />
-                <div className="w-full text-[#888888] text-start pl-1 py-3 text-base justify-between pr-3 sm:flex border-b-[0.1px] border-b-black/10">
+            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white items-center border-l-2 gap-5 flex w-full py-3 border-b-[0.1px] border-b-black/10">
+                <img src={likedUserAvatar[index]} alt="avatar" className="w-12 h-12 ml-2 mr-1 my-auto object-cover rounded-full " />
+                <div className="w-full text-[#888888] text-start pl-1 text-base justify-between pr-3 sm:flex ">
                     <div className="w-40 sm:w-52 truncate">You are liked by {likedUserName[index]}</div>
                     <div className=" text-sm">{likedTime[index].toDate().toLocaleString()}</div>
                 </div>

@@ -26,10 +26,10 @@ export default function Location() {
             await updateDoc(doc(db, "Users", user.uid), {
                 currentPoint: {
                     geohash: "",
-                    geopoint: [latitude +","+ longitude]
+                    geopoint: [latitude + "," + longitude]
                 },
                 geoHash: "",
-                geoLocation: [latitude +","+ longitude],
+                geoLocation: [latitude + "," + longitude],
                 location: {
                     address: "",
                     countryID: "",
@@ -39,12 +39,12 @@ export default function Location() {
                 },
                 point: {
                     geohash: "",
-                    geopoint: [latitude +","+ longitude]
+                    geopoint: [latitude + "," + longitude]
                 },
-                Pictures:[{
-                    show : "true",
-                    url : ""
-                }, ]
+                Pictures: [{
+                    show: "true",
+                    url: ""
+                },]
             });
             setLoading(false);
             navigate("/profile/photoupload");

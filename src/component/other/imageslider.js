@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { db } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
-import LoadingModal from "../../component/loadingPage";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -43,44 +40,19 @@ const nextArrow = (onClickHandler, hasNext, label) => {
     </svg>
   </span>
 }
-export default function UserCarousel({ userImage }) {
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
+export default function UserCarousel({ pictures }) {
   const carouselElement = useRef(null);
-
-  useEffect(() => {
-
-    const getUserInfo = async () => {
-      setLoading(true);
-      const docSnap = await getDoc(doc(db, "Users", userImage));
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setImages(userData.Pictures)
-      } else {
-        // docSnap.data() will be undefined in this case
-        console.log("No such document!");
-      }
-
-      setLoading(false);
-
-    }
-    if (userImage) {
-      getUserInfo();
-    }
-
-
-  }, [userImage])
 
   useEffect(() => {
     if (carouselElement && carouselElement.current) {
       carouselElement.current.moveTo(0);
     }
-  }, [userImage, carouselElement])
+  }, [pictures, carouselElement])
 
   return (
     <>
       {
-        images.length > 0 &&
+        pictures.length > 0 &&
 
         <Carousel
           ref={carouselElement}
@@ -91,16 +63,12 @@ export default function UserCarousel({ userImage }) {
           renderArrowPrev={prevArrow}
           renderArrowNext={nextArrow}
         >
-          {images.map((image, index) => (
-            <div key={index} style={{width: '100%' }}>
+          {pictures.map((image, index) => (
+            <div key={index} style={{ width: '100%' }}>
               <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
             </div>
           ))}
         </Carousel>
-      }
-      {
-        loading &&
-        <LoadingModal />
       }
     </>
   );

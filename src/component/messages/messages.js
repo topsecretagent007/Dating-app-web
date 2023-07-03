@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BsFillSendFill, BsEmojiSmile } from "react-icons/bs";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
-import { doc, getDoc, setDoc, deleteDoc, getDocs, collection, addDoc, where, query, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection, addDoc, onSnapshot } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
 
@@ -15,38 +15,55 @@ export default function Messages({ currentUser }) {
     const [messageText, setMessageText] = useState("");
     const [chats, setChats] = useState();
 
-    useEffect(() => {
-        if (chats) {
-            onSnapshot(chats, (snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        console.log("New city: ", change.doc.data());
-                        const messages = {
-                            id: change.doc.id,
-                            sender_id: change.doc.data().sender_id,
-                            isRead: change.doc.data().isRead,
-                            text: change.doc.data().text,
-                            time: change.doc.data().time
-                        }
-                        setChatMessages([...chatMessags, messages]);
-                        console.log(chatMessags);
+    const renderMessage = ({ id, sender_id, text, time }) => (
+        <div
+            key={id}
+            onClick={() => console.log(id)}
+        >
+            {sender_id === user.uid ?
+                <div className="flex justify-end mb-4">
+                    <div
+                        className="mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white"
+                    >
+                        {text}
+                        <br />
+                        {time?.toDate().toLocaleString()}
+                    </div>
+                    <img
+                        src={myAvatar}
+                        className="object-cover h-8 w-8 rounded-full"
+                        alt=""
+                    />
+                </div>
+                :
+                <div className="flex justify-start mb-4">
+                    <img
+                        src={userAvatar}
+                        className="object-cover h-8 w-8 rounded-full"
+                        alt=""
+                    />
+                    <div
+                        className="ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white"
+                    >
+                        {text}
+                        <br />
+                        {time?.toDate().toLocaleString()}
+                    </div>
+                </div>
+            }
+        </div>
+    );
 
-                    }
-                    if (change.type === "modified") {
-                        console.log("Modified city: ", change.doc.data());
-                    }
-                    if (change.type === "removed") {
-                        console.log("Removed city: ", change.doc.data());
-                    }
-                });
-            });
-        }
-    }, [chats])
+    const renderEmptyState = () => (
+        <div className="text-[#5a5a5a] w-full mx-auto text-lg pt-4 font-mono justify-center">
+            <p className="text-center">There is no message</p>
+        </div>
+    );
 
 
 
     const sendMessage = async () => {
-        if (messageText == "") return;
+        if (messageText === "") return;
         await addDoc(chats, {
             receiver_id: currentUser,
             sender_id: user.uid,
@@ -102,11 +119,11 @@ export default function Messages({ currentUser }) {
             let messageCollection; // Declare the variable here
             const messageId = (user.uid + "-" + currentUser);
             const chatCollection = await getDocs(collection(db, "chats"));
-            const filteredSnapshot = await chatCollection.docs.filter(doc => doc.data().docId == messageId);
+            const filteredSnapshot = await chatCollection.docs.filter(doc => doc.data().docId === messageId);
             console.log(filteredSnapshot, "filteredSnapshot");
 
 
-            if (filteredSnapshot.length != 0) {
+            if (filteredSnapshot.length !== 0) {
                 messageCollection = collection(db, "chats", (user.uid + "-" + currentUser), "messages")
                 console.log("yse")
             } else {
@@ -137,50 +154,35 @@ export default function Messages({ currentUser }) {
         }
     }, [user, currentUser])
 
-    const renderMessage = ({ id, sender_id, text, time }) => (
-        <div
-            key={id}
-            onClick={() => console.log(id)}
-        >
-            {sender_id == user.uid ?
-                <div className="flex justify-end mb-4">
-                    <div
-                        className="mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white"
-                    >
-                        {text}
-                        <br />
-                        {time?.toDate().toLocaleString()}
-                    </div>
-                    <img
-                        src={myAvatar}
-                        className="object-cover h-8 w-8 rounded-full"
-                        alt=""
-                    />
-                </div>
-                :
-                <div className="flex justify-start mb-4">
-                    <img
-                        src={userAvatar}
-                        className="object-cover h-8 w-8 rounded-full"
-                        alt=""
-                    />
-                    <div
-                        className="ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white"
-                    >
-                        {text}
-                        <br />
-                        {time?.toDate().toLocaleString()}
-                    </div>
-                </div>
-            }
-        </div>
-    );
+    useEffect(() => {
+        if (chats) {
+            onSnapshot(chats, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        console.log("New city: ", change.doc.data());
+                        const messages = {
+                            id: change.doc.id,
+                            sender_id: change.doc.data().sender_id,
+                            isRead: change.doc.data().isRead,
+                            text: change.doc.data().text,
+                            time: change.doc.data().time
+                        }
+                        setChatMessages([...chatMessags, messages]);
+                        console.log(chatMessags);
 
-    const renderEmptyState = () => (
-        <div className="text-[#5a5a5a] w-full mx-auto text-lg pt-4 font-mono justify-center">
-            <p className="text-center">There is no message</p>
-        </div>
-    );
+                    }
+                    if (change.type === "modified") {
+                        console.log("Modified city: ", change.doc.data());
+                    }
+                    if (change.type === "removed") {
+                        console.log("Removed city: ", change.doc.data());
+                    }
+                });
+            });
+        }
+    }, [chats]);
+
+
 
     return (
         <>

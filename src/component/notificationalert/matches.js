@@ -21,7 +21,6 @@ export default function Matches() {
     useEffect(() => {
         const getUserInfo = async () => {
             setLoading(true);
-            console.log("user");
             const likedUserid = [];
             const likedUserImage = [];
             const likedUserTime = [];
@@ -58,9 +57,9 @@ export default function Matches() {
 
     const listItems = numbers && numbers.length > 0 ? numbers.map((numbers, index) =>
         <div key={index} className="w-full flex" onClick={() => Lookingprofile(numbers)}>
-            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full pt-2 cursor-pointer">
-                <img src={likedUserAvatar[index]} className="w-12 h-12 ml-1 mr-2 my-auto object-cover rounded-full" />
-                <div className="w-full text-[#888888] text-start pl-1 py-3 text-base justify-between pr-3 sm:flex border-b-[0.1px] border-b-black/10">
+            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full py-3 cursor-pointer border-b-[0.1px] border-b-black/10 items-center">
+                <img src={likedUserAvatar[index]} alt="avatar" className="w-12 h-12 ml-1 mr-2 my-auto object-cover rounded-full" />
+                <div className="w-full text-[#888888] text-start pl-1 text-base justify-between pr-3 sm:flex">
                     <div className="w-32 md:w-48  truncate">You are matched with {likedUserName[index]}</div>
                     <div className="">{likedTime[index].toDate().toLocaleString()}</div>
                 </div>
@@ -70,7 +69,7 @@ export default function Matches() {
         <div className="text-[#5a5a5a] text-lg pt-4 font-mono justify-center">
             <p>No users are connected.</p>
         </div>;
-    
+
 
     return (
         <div>

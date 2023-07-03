@@ -80,7 +80,7 @@ export default function DistanceSlider({ distance, miles, onMiles, onDistance })
             setLength(parseInt(length * 2.48 / 4));
             onDistance(parseInt(length * 2.48 / 4));
         }
-    }, [unit]);
+    }, [unit, length]);
 
     useEffect(() => {
         const distanceValue = () => {
@@ -93,12 +93,12 @@ export default function DistanceSlider({ distance, miles, onMiles, onDistance })
         if (distance && miles) {
             distanceValue();
         }
-    }, []);
+    }, [distance, miles]);
 
     useEffect(() => {
         if (miles == true && distance > 248) {
             setLength(248);
-        } else if (miles == false && distance > 400) {
+        } else if (miles === false && distance > 400) {
             setLength(400);
         } else {
             setLength(distance);

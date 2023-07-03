@@ -82,7 +82,7 @@ export default function PreviewProfile() {
                         <div className="text-start py-5">
                             <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">Interest</div>
                             <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed list-none">
-                                {interests != [] &&
+                                {interests !== [] &&
                                     <>
                                         {interests.map((item, index) => (
                                             <div key={index} className="px-1">
