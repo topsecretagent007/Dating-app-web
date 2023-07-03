@@ -24,7 +24,7 @@ export default function WelcomePage() {
     const modalClose = () => {
         setAlertModal(false);
     }
-    
+
     const handleGoogleSignIn = async () => {
         if (agreeCheck === true) {
             try {
@@ -111,7 +111,7 @@ export default function WelcomePage() {
                 navigate("/profile/age");
             }
         }
-        if (user !== null && user.uid !== null) {
+        if (user && user.uid) {
             setUserInfo();
         }
     }, [user])
