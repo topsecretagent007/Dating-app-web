@@ -53,6 +53,7 @@ export default function UserBrowser({ userData, matched = false, onNextUser = ()
                 await deleteDoc(doc(db, "Users", user.uid, "LikedBy", userData.userId));
             }
         } else {
+            onNextUser();
             await setDoc(doc(db, "Users", user.uid, "CheckedUser", userData.userId), {
                 [action]: userData.userId,
                 pictureUrl: userData.Pictures[0]["url"],
