@@ -17,7 +17,7 @@ export default function MessagePage() {
     const [currentUserName, serCurrentUserName] = useState("");
 
 
-    
+
 
     // const getChatUsers = async () => {
 
@@ -34,7 +34,7 @@ export default function MessagePage() {
             setMatches(data);
         }
 
-        if(user) {
+        if (user) {
             getMatches();
         }
     }, [user])
@@ -62,7 +62,7 @@ export default function MessagePage() {
             <div className='w-full h-full min-h-screen bg-cover px-5 py-14 bg-[#FFFBFE]'>
                 <div className='w-full md:w-[500px] lg:w-[900px] mx-auto xl:h-[720px] bg-white rounded-xl border-[0.5px] border-black/20 '>
                     <div className='w-full lg:flex border-black/10'>
-                        <div className='w-full lg:w-1/3 p-5 text-start text-3xl font-bold border-b-[0.1px] lg:border-r-[0.1px] border-black/10'>Messages</div>
+                        <div className='w-full lg:w-1/3 p-5 text-start text-3xl text-[#5a5a5a] font-bold border-b-[0.1px] lg:border-r-[0.1px] border-black/10'>Messages</div>
                         <div className='hidden lg:block lg:w-2/3 p-2 text-start text-3xl font-bold border-b-[0.1px] border-black/10'>
                             <div className='text-lg'>{currentUserName}</div>
                         </div>
