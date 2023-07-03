@@ -87,10 +87,10 @@ export default function Header() {
 
                 <div className="cursor-pointer" onClick={() => setShowMobileMenu(!showMobileMenu)}>
                     {
-                        pictures[0] && pictures[0]["url"] != "" ?
-                            <img src={pictures[0]["url"]} className="w-11 h-10 md:w-12 md:h-11 xl:w-14 xl:h-11 2xl:w-20 2xl:h-16 object-cover rounded-full" />
+                        pictures[0] && pictures[0]["url"] !== "" ?
+                            <img src={pictures[0]["url"]} alt="avatar" className="w-11 h-10 md:w-12 md:h-11 xl:w-14 xl:h-11 2xl:w-20 2xl:h-16 object-cover rounded-full" />
                             :
-                            <img src={Avatar} className="w-11 md:w-12 xl:w-14 2xl:w-20 overflow-hidden rounded-full" />
+                            <img src={Avatar} alt="avatar" className="w-11 md:w-12 xl:w-14 2xl:w-20 overflow-hidden rounded-full" />
                     }
                 </div>
 

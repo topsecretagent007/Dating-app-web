@@ -53,7 +53,7 @@ export default function PhotoAddMore() {
                 url: await uploadImage(images[i], "users", user.uid)
             });
         }
-        if (pictures[0]?.url != null && pictures[0]?.url != "") {
+        if (pictures[0]?.url !== null && pictures[0]?.url !== "") {
             await updateDoc(doc(db, "Users", user.uid), {
                 Pictures: pictures
             });

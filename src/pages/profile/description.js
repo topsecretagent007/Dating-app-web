@@ -5,7 +5,7 @@ import Logo from "../../assets/Logo1.svg";
 import { db } from '../../firebase';
 import LoadingModal from "../../component/loadingPage";
 import { UserAuth } from "../../context/AuthContext";
-import { doc, updateDoc, getDoc, addDoc, collection } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import AlertModal from "../../component/modal/alertmodal";
 
 export default function ProfileDescription() {
@@ -33,11 +33,6 @@ export default function ProfileDescription() {
                 },
                 maximum_distance: 200,
                 miles: false
-            });
-            await addDoc(collection(db, "Users", user.uid, "notification"), {
-                body: "Dear valued member,We have an exciting video message from the founder of Unjabbed, and we highly recommend watching it at your earliest convenience. To access this video, please navigate to the settings section of the app and scroll down to the Tutorials section. You'll find the video right at the top. We deeply appreciate your continued support.Best regards,Unjabbed Team",
-                time: new Date(),
-                title: "A message from the founder of Unjabbed"
             });
             setLoading(false);
             navigate("/");

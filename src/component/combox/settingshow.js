@@ -43,7 +43,7 @@ export default function DropDown({ text, value, items, onHandleChange, multiple 
                         onChange={(event) => handleChange(event)}
                         className='pl-[30%] max-w-2xl text-end'
                         renderValue={(selected) => {
-                            return multiple == true ? selected.join(", ") : items.find((value) => value == selected);
+                            return multiple === true ? selected.join(", ") : items.find((value) => value === selected);
                         }}
                         MenuProps={MenuProps}
                     >
@@ -51,7 +51,7 @@ export default function DropDown({ text, value, items, onHandleChange, multiple 
                         {items.map((item) => (
                             <MenuItem key={item} value={item}>
                                 {multiple && <Checkbox checked={data.includes(item)} />}
-                                {!multiple && <Checkbox checked={data == item} />}
+                                {!multiple && <Checkbox checked={data === item} />}
                                 <ListItemText primary={item} />
                             </MenuItem>
                         ))}

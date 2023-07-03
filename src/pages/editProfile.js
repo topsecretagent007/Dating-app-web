@@ -76,7 +76,7 @@ export default function EditProfilePage() {
 
     const dataSave = async () => {
         setLoading(true);
-        if (images.length != 0 && description != "") {
+        if (images.length !== 0 && description !== "") {
             let pictures = [];
             for (var i = 0; i < images.length; i++) {
                 pictures.push({
@@ -108,9 +108,9 @@ export default function EditProfilePage() {
             setLoading(false);
         } else {
             setAlertModal(true);
-            if (images.length != 0) {
+            if (images.length !== 0) {
                 setEditModal(true);
-            } else if (description != "") {
+            } else if (description !== "") {
                 setEditModal(false);
             }
             setLoading(false);
@@ -297,7 +297,6 @@ export default function EditProfilePage() {
                                 </div>
                             </div>
                         </div>
-                        <button onClick={() => (dataSave(), setShowDialog(false))} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">Save</button>
                     </div>
                 </div>
             </div>

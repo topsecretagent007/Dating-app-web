@@ -1,18 +1,43 @@
 import React, { useState, useEffect } from 'react'
-import MessageUsers from "../component/users/users";
+// import MessageUsers from "../component/users/users";
 import Messages from "../component/messages/messages";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import LoadingModal from "../component/loadingPage";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import UserMessageItem from '../component/messages/userItem';
 
 export default function MessagePage() {
     const [loading, setLoading] = useState(false);
     const { user } = UserAuth();
+    const [matches, setMatches] = useState([]);
     const [currentChatUser, setCurrentChatUser] = useState("");
     const [currentUserName, serCurrentUserName] = useState("");
+
+
+    
+
+    // const getChatUsers = async () => {
+
+    // }
+
+    useEffect(() => {
+        const getMatches = async () => {
+            const querySnapshot = await getDocs(
+                collection(db, "Users", user.uid, "Matches")
+            );
+            const data = querySnapshot.docs.map((doc) => {
+                return doc.data();
+            });
+            setMatches(data);
+        }
+
+        if(user) {
+            getMatches();
+        }
+    }, [user])
 
     useEffect(() => {
         const goToInfo = async () => {
@@ -44,7 +69,10 @@ export default function MessagePage() {
                     </div>
                     <div className='w-full lg:flex text-start'>
                         <div className='w-full lg:w-1/3 overflow-y-auto h-[643px] border-r-[0.1px] border-black/10'>
-                            <MessageUsers onClickUser={(e) => setCurrentChatUser(e)} />
+                            {matches.map((item, index) => (
+                                <UserMessageItem key={index} user={item} />
+                            ))}
+                            {/* <MessageUsers onClickUser={(e) => setCurrentChatUser(e)} /> */}
                         </div>
                         <Messages currentUser={currentChatUser} />
                     </div>

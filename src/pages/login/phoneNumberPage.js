@@ -35,7 +35,7 @@ export default function PhoneNumberPage() {
     }
 
     const verifyEnterCode = async () => {
-        if (code == "" || code == null) return;
+        if (code === "" || code === null) return;
         try {
             const res = await confirmObj.confirm(code);
         } catch (error) {
@@ -53,10 +53,10 @@ export default function PhoneNumberPage() {
                 navigate("/");
             } else {
                 const loginData = { apple: "", fb: "", google: "", phone: "" };
-                if (user.providerData[0].providerId == 'google.com') loginData.google = user.uid;
-                if (user.providerData[0].providerId == 'phone') loginData.phone = user.uid
-                if (user.providerData[0].providerId == 'apple.com') loginData.apple = user.uid;
-                if (user.providerData[0].providerId == 'facebook.com') loginData.fb = user.uid;
+                if (user.providerData[0].providerId === 'google.com') loginData.google = user.uid;
+                if (user.providerData[0].providerId === 'phone') loginData.phone = user.uid
+                if (user.providerData[0].providerId === 'apple.com') loginData.apple = user.uid;
+                if (user.providerData[0].providerId === 'facebook.com') loginData.fb = user.uid;
                 const data = {
                     LoginID: loginData,
                     timestamp: new Date(),
@@ -84,7 +84,7 @@ export default function PhoneNumberPage() {
                 navigate("/profile/age");
             }
         }
-        if (user != null && user.uid != null) {
+        if (user !== null && user.uid !== null) {
             setUserInfo();
         }
     }, [user])

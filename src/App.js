@@ -31,67 +31,67 @@ import Protected from './component/Protected';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Protected><Home /></Protected> 
+    element: <Protected><Home /></Protected>
   },
   {
     path: "/login",
-    element: <WelcomePage /> 
+    element: <WelcomePage />
   },
   {
     path: "/login/phoneinput",
-    element: <PhoneNumberPage /> 
+    element: <PhoneNumberPage />
   },
   {
     path: "/profile/age",
-    element: <Protected><Age /></Protected> 
+    element: <Protected><Age /></Protected>
   },
   {
     path: "/profile/friendship",
-    element: <Protected><FriendShip /></Protected> 
+    element: <Protected><FriendShip /></Protected>
   },
   {
     path: "/profile/profiledata",
-    element: <Protected><ProfileData /></Protected> 
+    element: <Protected><ProfileData /></Protected>
   },
   {
     path: "/profile/location",
-    element: <Protected><Location /></Protected> 
+    element: <Protected><Location /></Protected>
   },
   {
     path: "/profile/photoupload",
-    element: <Protected><PhotoUpload /></Protected> 
+    element: <Protected><PhotoUpload /></Protected>
   },
   {
     path: "/profile/photoaddmore",
-    element: <Protected><PhotoAddMore /></Protected> 
+    element: <Protected><PhotoAddMore /></Protected>
   },
   {
     path: "/profile/description",
-    element: <Protected><Description /></Protected> 
+    element: <Protected><Description /></Protected>
   },
   {
     path: "/find",
-    element: <Protected><FindPage /></Protected> 
+    element: <Protected><FindPage /></Protected>
   },
   {
     path: "/notification",
-    element: <Protected><Notification /></Protected> 
+    element: <Protected><Notification /></Protected>
   },
   {
     path: "/message",
-    element: <Protected><Message /></Protected> 
+    element: <Protected><Message /></Protected>
   },
   {
     path: "/profile",
-    element: <Protected><ProfileSetting /></Protected> 
+    element: <Protected><ProfileSetting /></Protected>
   },
   {
     path: "/settings",
-    element: <Protected><Setting /></Protected> 
+    element: <Protected><Setting /></Protected>
   },
   {
     path: "/tutorial",
-    element: <Protected><Tutorial /></Protected> 
+    element: <Protected><Tutorial /></Protected>
   },
   {
     path: "/editprofile",
@@ -112,13 +112,18 @@ const router = createBrowserRouter([
 ])
 
 function App() {
-  const [phoneNumber, setPhoneNumber] = useState();
-  const [userAvatar, setUserAvatar] = useState();
-  
-  
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [userAvatar, setUserAvatar] = useState([]);
+  const [userName, setUserName] = useState("");
+  const [userfirstAge, setUserFirstAge] = useState(18);
+  const [userLastAge, setUserLastAge] = useState(99);
+  const [userShowGender, setUserShowGender] = useState([]);
+
+
+
   return (
     <AuthContextProvider>
-      <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userAvatar, setUserAvatar }}>
+      <UserContext.Provider value={{ phoneNumber, setPhoneNumber, userAvatar, setUserAvatar, userName, setUserName, userfirstAge, setUserFirstAge, userLastAge, setUserLastAge, userShowGender, setUserShowGender }}>
         <div className="App">
           <RouterProvider router={router} />
         </div>

@@ -5,29 +5,28 @@ import NextUser from "../component/other/nextuser";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import LoadingModal from "../component/loadingPage";
-import FindUser from "../component/findUser";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { doc, getDoc, collection, getDocs, where, query } from "firebase/firestore";
 
+import UserBrowser from "../component/UserBrowser";
+
 export default function FindPage() {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
-    const [otherUserId, setOtherUserId] = useState([]);
+    const [searchedUsers, setSearchUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
-    const [usersData, setUsersData] = useState(false);
-    const [SearchUsers, setSearchUsers] = useState(false);
 
     const prevPage = () => {
         if (currentPage === 0) {
-            setCurrentPage(otherUserId.length - 1);
+            setCurrentPage(searchedUsers.length - 1);
         } else {
             setCurrentPage(currentPage - 1);
         }
     }
 
     const nextPage = () => {
-        if (currentPage === otherUserId.length - 1) {
+        if (currentPage === searchedUsers.length - 1) {
             setCurrentPage(0);
         } else {
             setCurrentPage(currentPage + 1);
@@ -39,7 +38,7 @@ export default function FindPage() {
         const getUserInfo = async () => {
             const checkedUserid = [];
             const matchedUserid = [];
-            const searchedUserId = [];
+            const reportUserId = [];
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             const userData = await docSnap.data();
             const docUserLikeBy = await getDocs(collection(db, "Users", user.uid, "CheckedUser"));
@@ -50,6 +49,12 @@ export default function FindPage() {
             docUserMatch.forEach((doc) => {
                 matchedUserid.push(doc.id)
             })
+            const docUserReport = await getDocs(collection(db, "Reports"));
+            docUserReport.forEach((doc) => {
+                reportUserId.push(doc.data().victim_id);
+            })
+            console.log(reportUserId, "dfgsdf")
+
             if (docSnap.exists()) {
                 const querySnapshot = await getDocs(
                     query(
@@ -59,21 +64,10 @@ export default function FindPage() {
                         where("editInfo.userGender", "in", userData.showGender),
                     )
                 );
-                const filteredSnapshot = querySnapshot.docs.filter(doc => doc.data().userId != user.uid);
-                filteredSnapshot.forEach((doc) => {
-                    if (checkedUserid.includes(doc.data().userId) || matchedUserid.includes(doc.data().userId)) {
-                        return;
-                    } else {
-                        searchedUserId.push(doc.data().userId);
-                    }
-                });
-                setOtherUserId(searchedUserId);
-                if (searchedUserId.length < 2) setUsersData(false);
-                else setUsersData(true);
-                if (searchedUserId === [""] || searchedUserId === undefined || searchedUserId.length === 0) setSearchUsers(false);
-                else setSearchUsers(true);
-            } else {
-                console.log("No such document!");
+                const result = querySnapshot.docs.map(doc => doc.data())
+                    .filter(data => data.userId !== user.uid)
+                    .filter(data => checkedUserid.includes(data.userId) === false && matchedUserid.includes(data.userId) === false && reportUserId.includes(data.userId) === false);
+                setSearchUsers(result);
             }
             setLoading(false);
         }
@@ -86,20 +80,20 @@ export default function FindPage() {
         <div>
             <Header />
             <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] py-14  bg-[#FFFBFE]" >
-                {usersData &&
+                {searchedUsers.length > 1 &&
                     <button onClick={() => prevPage()} type="button" className="fixed top-0 -left-2 md:left-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-prev>
                         <PrevUser />
                     </button>
                 }
                 <div>
                     <Search />
-                    {SearchUsers ?
-                        <FindUser usersId={otherUserId[currentPage]} onNextUser={() => nextPage()} />
+                    {searchedUsers.length > 0 ?
+                        <UserBrowser userData={searchedUsers[currentPage]} onNextUser={() => nextPage()} matched={false} />
                         :
                         <p className="text-lg xl:text-xl font-bold items-center pt-10 text-[#5A5A5A]">No search results were found.</p>
                     }
                 </div>
-                {usersData &&
+                {searchedUsers.length > 1 &&
                     <button onClick={() => nextPage()} type="button" className="fixed top-0 -right-2 md:right-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-next>
                         <NextUser />
                     </button>

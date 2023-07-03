@@ -28,7 +28,7 @@ function centerAspectCrop(
 }
 
 function ImageCropper(props) {
-    const { imageToCrop, onImageCropped, onImageCroppedUrl } = props;
+    const { imageToCrop, onImageCropped } = props;
     const [crop, setCrop] = useState("")
     const imageRef = useRef("");
 
@@ -39,7 +39,7 @@ function ImageCropper(props) {
 
     async function cropImage(crop) {
         if (imageRef && crop.width && crop.height) {
-            const croppedImage = await getCroppedImage(
+            await getCroppedImage(
                 imageRef.current,
                 crop,
                 'croppedImage.jpeg' // destination filename
@@ -93,7 +93,7 @@ function ImageCropper(props) {
                 crossorigin="anonymous"
                 aspect={1}
             >
-                <img ref={imageRef} src={imageToCrop || demoImage} onLoad={onImageLoad} />
+                <img ref={imageRef} alt="crop image" src={imageToCrop || demoImage} onLoad={onImageLoad} />
             </ReactCrop>
         </div>
     );

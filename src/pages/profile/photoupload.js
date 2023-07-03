@@ -134,7 +134,7 @@ export default function PhotoUpload() {
                                     <div className="upload__image-wrapper">
                                         <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar1.png')] mx-auto rounded-3xl bg-cover">
                                             <div className="image-item">
-                                                {images[0] && images[0]['url'] != "" && images[0]['url'] != null && <img src={images[0]['url']} alt="Avatar" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />}
+                                                {images[0] && images[0]['url'] !== "" && images[0]['url'] !== null && <img src={images[0]['url']} alt="Avatar" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />}
                                             </div>
 
                                         </div>

@@ -9,7 +9,7 @@ export default function AddInterested({ data, onAddInterest, onRemoveInterest })
     const [inputVisible, setInputVisible] = useState(false);
     const [value, setValue] = useState('');
     const handleAddInterest = () => {
-        if (value == "" || value == undefined) return;
+        if (value === "" || value === undefined) return;
         onAddInterest(value);
         setInputVisible(false);
         setValue("")
@@ -19,7 +19,7 @@ export default function AddInterested({ data, onAddInterest, onRemoveInterest })
     }
 
     function handleButtonClick() {
-        if (inputVisible == true) setInputVisible(false);
+        if (inputVisible === true) setInputVisible(false);
         else setInputVisible(true);
     }
     function handleInputChange(event) {
