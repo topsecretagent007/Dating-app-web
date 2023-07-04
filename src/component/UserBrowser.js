@@ -29,6 +29,7 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
     }
 
     const likeAction = async (isLike) => {
+        setLoading(true);
         const likedByUserIds = [];
         const action = isLike ? "LikedUser" : "DislikedUser";
 
@@ -38,7 +39,6 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
         });
 
         if (likedByUserIds.includes(userData.userId)) {
-            setLoading(true);
             if (isLike) {
                 await setDoc(doc(db, "Users", userData.userId, "Matches", user.uid), {
                     Matches: user.uid,
@@ -62,7 +62,6 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
             } else {
                 await deleteDoc(doc(db, "Users", user.uid, "LikedBy", userData.userId));
             }
-            setLoading(false);
         } else {
             await setDoc(doc(db, "Users", user.uid, "CheckedUser", userData.userId), {
                 [action]: userData.userId,
@@ -82,6 +81,7 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
             }
         }
         onRemoveUser();
+        setLoading(false);
 
     };
 
