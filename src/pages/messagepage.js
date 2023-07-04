@@ -14,25 +14,22 @@ export default function MessagePage() {
     const { user } = UserAuth();
     const [matches, setMatches] = useState([]);
     const [currentChatUser, setCurrentChatUser] = useState();
-    console.log("currentChatUser:", currentChatUser);
-    
+    const [lastMessage, setLastMessage] = useState("");
 
     useEffect(() => {
         const getMatches = async () => {
             setLoading(true);
             console.log("user:", user);
             if (user) {
-                console.log("user.uid:", user.uid);
-
                 const querySnapshot = await getDocs(
                     collection(db, "Users", user.uid, "Matches")
                 );
                 const data = querySnapshot.docs.map((doc) => doc.data());
+                console.log(data.Matches, "data")
                 setMatches(data);
             }
             setLoading(false);
         };
-
         if (user && user.uid) {
             getMatches();
         }
@@ -41,7 +38,7 @@ export default function MessagePage() {
     return (
         <div>
             <Header />
-            <div className='w-full h-full min-h-screen bg-cover px-5 py-14 bg-[#FFFBFE]'>
+            <div className='w-full h-full min-h-[calc(100vh-186px)] bg-cover px-5 py-14 bg-[#FFFBFE]'>
                 <div className='w-full md:w-[500px] lg:w-[900px] mx-auto xl:h-[720px] bg-white rounded-xl border-[0.5px] border-black/20 '>
                     <div className='w-full lg:flex border-black/10'>
                         <div className='w-full lg:w-1/3 p-5 text-start text-3xl text-[#5a5a5a] font-bold border-b-[0.1px] lg:border-r-[0.1px] border-black/10'>Messages</div>
@@ -52,10 +49,12 @@ export default function MessagePage() {
                     <div className='w-full lg:flex text-start'>
                         <div className='w-full lg:w-1/3 overflow-y-auto lg:h-[643px] border-r-[0.1px] border-black/10'>
                             {matches.map((item, index) => (
-                                <UserMessageItem key={index} user={item} onClickUser={(e) => setCurrentChatUser(e)} />
+                                <UserMessageItem key={index} user={item} onClickUser={(e) => setCurrentChatUser(e)} itemMessage={lastMessage} selected={ currentChatUser && item && item.Matches === currentChatUser.Matches }
+
+                                />
                             ))}
                         </div>
-                        <Messages currentUser={currentChatUser} />
+                        <Messages currentUser={currentChatUser} lastMessage={(e) => setLastMessage(e)} />
                         {/* <SmallMessages currentUser={currentChatUser?.Matches} /> */}
 
                     </div>
