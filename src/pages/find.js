@@ -8,7 +8,6 @@ import LoadingModal from "../component/loadingPage";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { doc, getDoc, collection, getDocs, where, query } from "firebase/firestore";
-
 import UserBrowser from "../component/UserBrowser";
 
 export default function FindPage() {
@@ -43,7 +42,6 @@ export default function FindPage() {
     }
 
     useEffect(() => {
-
         setLoading(true);
         const getUserInfo = async () => {
             const checkedUserid = [];
