@@ -1,9 +1,10 @@
 import React from "react";
 
-export default function UserMessageItem({ user, lastMessage }) {
+export default function UserMessageItem({ user, lastMessage, onClickUser }) {
     return (
         <div
             className="w-full flex"
+            onClick={() => onClickUser(user)}
         >
             <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-1 flex w-full py-3 cursor-pointer border-b-[0.1px] border-b-black/10 items-center">
                 <img

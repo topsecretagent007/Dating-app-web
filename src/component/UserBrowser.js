@@ -12,7 +12,7 @@ import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { collection, doc, getDoc, setDoc, getDocs, deleteDoc } from "firebase/firestore";
 
-export default function UserBrowser({ userData, matched = false, onNextUser = () => { } }) {
+export default function UserBrowser({ userData, matched = false, onRemoveUser }) {
     const { user } = UserAuth();
     const navigate = useNavigate();
     const [reporteModal, setReportoModal] = useState(false);
@@ -29,34 +29,44 @@ export default function UserBrowser({ userData, matched = false, onNextUser = ()
     }
 
     const likeAction = async (isLike) => {
-        const likedByUSerIds = [];
+        const likedByUserIds = [];
         const action = isLike ? "LikedUser" : "DislikedUser";
-        const docUserLikedBy = await getDocs(collection(db, "Users", user.uid, "LikedBy"))
-        docUserLikedBy.forEach((doc) => {
-            likedByUSerIds.push(doc.id)
-        })
-        if (likedByUSerIds.includes(userData.userId)) {
+
+        const querySnapshot = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
+        querySnapshot.forEach((doc) => {
+            likedByUserIds.push(doc.id);
+        });
+
+        if (likedByUserIds.includes(userData.userId)) {
+            setLoading(true);
             if (isLike) {
                 await setDoc(doc(db, "Users", userData.userId, "Matches", user.uid), {
-                    LikedBy: user.uid,
+                    Matches: user.uid,
                     pictureUrl: myPicture,
                     timestamp: new Date(),
-                    userName: myName
+                    userName: myName,
                 });
                 await setDoc(doc(db, "Users", user.uid, "Matches", userData.userId), {
-                    LikedBy: userData.userId,
-                    pictureUrl: userData.Pictures[0]["url"],
+                    Matches: userData.userId,
+                    pictureUrl: userData.Pictures[0].url,
                     timestamp: new Date(),
-                    userName: userData.UserName
+                    userName: userData.UserName,
                 });
+                await setDoc(doc(db, "chats", `${user.uid}-${userData.userId}`), {
+                    docId: `${user.uid}-${userData.userId}`,
+                    active: false,
+                    isclear1: false,
+                    isclear2: false,
+                });
+                navigate("/message");
             } else {
                 await deleteDoc(doc(db, "Users", user.uid, "LikedBy", userData.userId));
             }
+            setLoading(false);
         } else {
-            onNextUser();
             await setDoc(doc(db, "Users", user.uid, "CheckedUser", userData.userId), {
                 [action]: userData.userId,
-                pictureUrl: userData.Pictures[0]["url"],
+                pictureUrl: userData.Pictures[0].url,
                 timestamp: new Date(),
                 userName: userData.UserName,
             });
@@ -67,9 +77,13 @@ export default function UserBrowser({ userData, matched = false, onNextUser = ()
                     timestamp: new Date(),
                     userName: myName,
                 });
-            } else await deleteDoc(doc(db, "Users", userData.userId, "LikedBy", user.uid));
+            } else {
+                await deleteDoc(doc(db, "Users", userData.userId, "LikedBy", user.uid));
+            }
         }
-    }
+        onRemoveUser();
+
+    };
 
     useEffect(() => {
         setLoading(true);
