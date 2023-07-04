@@ -79,8 +79,8 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
             } else {
                 await deleteDoc(doc(db, "Users", userData.userId, "LikedBy", user.uid));
             }
+            onRemoveUser();
         }
-        onRemoveUser();
         setLoading(false);
 
     };
