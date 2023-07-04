@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BsFillSendFill, BsEmojiSmile } from "react-icons/bs";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
@@ -6,7 +6,7 @@ import { doc, getDoc, getDocs, collection, addDoc, onSnapshot } from "firebase/f
 import LoadingModal from "../../component/loadingPage";
 
 
-export default function Messages({ currentUser }) {
+export default function Messages({ currentUser, lastMessage }) {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
     const [chatMessages, setChatMessages] = useState([]);
@@ -62,7 +62,7 @@ export default function Messages({ currentUser }) {
 
     const sendMessage = async () => {
         if (messageText === "") return;
-        await addDoc(chats, {
+        addDoc(chats, {
             receiver_id: currentUser?.Matches,
             sender_id: user.uid,
             image_url: "",
@@ -75,9 +75,9 @@ export default function Messages({ currentUser }) {
 
     }
 
-
     useEffect(() => {
         const goToGetAvatar = async () => {
+            setLoading(true)
             const myQuerySnapshot = await getDoc(doc(db, "Users", user.uid));
             if (myQuerySnapshot.exists()) {
                 const userData = myQuerySnapshot.data();
@@ -95,7 +95,10 @@ export default function Messages({ currentUser }) {
                 messageCollection = collection(db, "chats", `${currentUser?.Matches}-${user.uid}`, "messages")
             }
             setChats(messageCollection);
+            setChatMessages([]);
+            setLoading(false)
         };
+
         if (currentUser && user.uid) {
             goToGetAvatar();
             console.log(currentUser)
@@ -104,6 +107,7 @@ export default function Messages({ currentUser }) {
 
     useEffect(() => {
         if (chats) {
+            setLoading(true)
             onSnapshot(chats, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -117,6 +121,7 @@ export default function Messages({ currentUser }) {
                         setChatMessages((prevMessages) => {
                             const updatedMessages = [...prevMessages, message];
                             updatedMessages.sort((a, b) => a.time - b.time);
+                            lastMessage(updatedMessages[updatedMessages.length - 1])
                             return updatedMessages;
                         });
                     }
@@ -128,10 +133,21 @@ export default function Messages({ currentUser }) {
                     }
                 });
             });
+            setLoading(false)
         }
     }, [chats]);
 
+    const handleKeyDown = (event) => {
+        if (event && event.key === 'Enter') {
+            sendMessage();
+        }
+    };
 
+    const divRef = useRef(null);
+
+    useEffect(() => {
+        divRef.current.scrollIntoView({ behavior: 'smooth' });
+    });
 
     return (
         <>
@@ -140,6 +156,7 @@ export default function Messages({ currentUser }) {
                     {chatMessages.length > 0
                         ? chatMessages.map((message) => renderMessage(message))
                         : renderEmptyState()}
+                    <div ref={divRef} />
                 </div>
                 <div className="flex bg-gray-300 rounded-xl items-center mb-5">
                     <div className='text-2xl px-5 hover:text-pinkLight border-r-[0.5px] border-black/20'>
@@ -151,13 +168,14 @@ export default function Messages({ currentUser }) {
                         placeholder="type your message here..."
                         value={messageText}
                         onChange={(e) => { if (currentUser?.Matches) setMessageText(e.target.value) }}
+                        onKeyDown={(e) => handleKeyDown(e)}
                     />
                     <div onClick={() => { if (currentUser) sendMessage() }} className='text-2xl px-5 hover:text-pinkLight border-l-[0.5px] border-black/20'>
                         <BsFillSendFill />
                     </div>
                 </div>
             </div>
-            {loading && <LoadingModal />}
+            {loading && <LoadingModal message />}
         </>
     )
 }
