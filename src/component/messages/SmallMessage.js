@@ -9,7 +9,7 @@ import LoadingModal from "../../component/loadingPage";
 export default function Messages({ currentUser }) {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
-    const [chatMessages, setChatMessages] = useState([]);
+    const [chatMessags, setChatMessages] = useState([]);
     const [myAvatar, setMyAvatar] = useState("");
     const [userAvatar, setUserAvatar] = useState("");
     const [messageText, setMessageText] = useState("");
@@ -60,10 +60,12 @@ export default function Messages({ currentUser }) {
         </div>
     );
 
+
+
     const sendMessage = async () => {
         if (messageText === "") return;
         await addDoc(chats, {
-            receiver_id: currentUser?.Matches,
+            receiver_id: currentUser,
             sender_id: user.uid,
             image_url: "",
             isRead: true,
@@ -78,6 +80,7 @@ export default function Messages({ currentUser }) {
 
     useEffect(() => {
         const goToGetAvatar = async () => {
+            setLoading(true);
             const myQuerySnapshot = await getDoc(doc(db, "Users", user.uid));
             if (myQuerySnapshot.exists()) {
                 const userData = myQuerySnapshot.data();
@@ -85,46 +88,75 @@ export default function Messages({ currentUser }) {
             } else {
                 console.log("No such document!");
             }
-            setUserAvatar(currentUser?.pictureUrl);
-            let messageCollection; // Declare the variable here
-            const chatCollection = await getDocs(collection(db, "chats"));
-            const filteredSnapshot = await chatCollection.docs.filter(doc => doc.data().docId === `${user.uid}-${currentUser?.Matches}`);
-            if (filteredSnapshot.length != 0) {
-                messageCollection = collection(db, "chats", `${user.uid}-${currentUser?.Matches}`, "messages")
+
+            const querySnapshot = await getDoc(doc(db, "Users", currentUser));
+            if (querySnapshot.exists()) {
+                const userData = querySnapshot.data();
+                setUserAvatar(userData.Pictures[0]?.url);
             } else {
-                messageCollection = collection(db, "chats", `${currentUser?.Matches}-${user.uid}`, "messages")
+                console.log("No such document!");
             }
+
+            let messageCollection; // Declare the variable here
+            const messageId = (user.uid + "-" + currentUser);
+            const chatCollection = await getDocs(collection(db, "chats"));
+            const filteredSnapshot = await chatCollection.docs.filter(doc => doc.data().docId === messageId);
+            console.log(filteredSnapshot, "filteredSnapshot");
+
+
+            if (filteredSnapshot.length !== 0) {
+                messageCollection = collection(db, "chats", (user.uid + "-" + currentUser), "messages")
+                console.log("yse")
+            } else {
+                messageCollection = collection(db, "chats", (currentUser + "-" + user.uid), "messages")
+                console.log("no")
+
+            }
+            const docSnapShot = await getDocs(messageCollection);
+            const messages = docSnapShot.docs.map((doc) => {
+                const { sender_id, isRead, text, time } = doc.data();
+                return {
+                    id: doc.id,
+                    sender_id,
+                    isRead,
+                    text,
+                    time
+                };
+            });
+            messages.sort((a, b) => a.time - b.time);
+            setChatMessages(messages);
             setChats(messageCollection);
+            setLoading(false);
+
+
         };
         if (currentUser && user.uid) {
             goToGetAvatar();
-            console.log(currentUser)
         }
-    }, [user, currentUser])
+    }, [currentUser])
 
     useEffect(() => {
         if (chats) {
             onSnapshot(chats, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
-                        const message = {
+                        console.log("New city: ", change.doc.data());
+                        const messages = {
                             id: change.doc.id,
                             sender_id: change.doc.data().sender_id,
                             isRead: change.doc.data().isRead,
                             text: change.doc.data().text,
                             time: change.doc.data().time
-                        };
-                        setChatMessages((prevMessages) => {
-                            const updatedMessages = [...prevMessages, message];
-                            updatedMessages.sort((a, b) => a.time - b.time);
-                            return updatedMessages;
-                        });
+                        }
+                        setChatMessages([...chatMessags, messages]);
+                        console.log(chatMessags);
+
                     }
                     if (change.type === "modified") {
-                        // console.log("Modified city: ", change.doc.data());
+                        console.log("Modified city: ", change.doc.data());
                     }
                     if (change.type === "removed") {
-                        // console.log("Removed city: ", change.doc.data());
+                        console.log("Removed city: ", change.doc.data());
                     }
                 });
             });
@@ -135,10 +167,10 @@ export default function Messages({ currentUser }) {
 
     return (
         <>
-            <div className="hidden w-2/3 px-5 lg:flex flex-col justify-between">
+            <div className="w-full px-5 lg:hidden justify-between">
                 <div className="flex flex-col mt-5 overflow-y-auto px-4 h-[500px]">
-                    {chatMessages.length > 0
-                        ? chatMessages.map((message) => renderMessage(message))
+                    {chatMessags.length > 0
+                        ? chatMessags.map(renderMessage)
                         : renderEmptyState()}
                 </div>
                 <div className="flex bg-gray-300 rounded-xl items-center mb-5">
@@ -150,7 +182,7 @@ export default function Messages({ currentUser }) {
                         type="text"
                         placeholder="type your message here..."
                         value={messageText}
-                        onChange={(e) => { if (currentUser?.Matches) setMessageText(e.target.value) }}
+                        onChange={(e) => { if (currentUser) setMessageText(e.target.value) }}
                     />
                     <div onClick={() => { if (currentUser) sendMessage() }} className='text-2xl px-5 hover:text-pinkLight border-l-[0.5px] border-black/20'>
                         <BsFillSendFill />

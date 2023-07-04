@@ -17,6 +17,15 @@ export default function FindPage() {
     const [searchedUsers, setSearchUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
 
+    const removeUser = (currentPage) => {
+        console.log("currentPage on removeUser ", currentPage);
+        console.log("udpated data ", [...searchedUsers.slice(0, currentPage), ...searchedUsers.slice(currentPage + 1)])
+        setSearchUsers([...searchedUsers.slice(0, currentPage), ...searchedUsers.slice(currentPage + 1)]);
+        if (currentPage == searchedUsers.length - 1) {
+            setCurrentPage(0)
+        }
+    }
+
     const prevPage = () => {
         if (currentPage === 0) {
             setCurrentPage(searchedUsers.length - 1);
@@ -34,6 +43,7 @@ export default function FindPage() {
     }
 
     useEffect(() => {
+
         setLoading(true);
         const getUserInfo = async () => {
             const checkedUserid = [];
@@ -74,6 +84,7 @@ export default function FindPage() {
         }
     }, [user])
 
+
     return (
         <div>
             <Header />
@@ -86,7 +97,7 @@ export default function FindPage() {
                 <div>
                     <Search />
                     {searchedUsers.length > 0 ?
-                        <UserBrowser userData={searchedUsers[currentPage]} matched={false} onNextUser={() => nextPage()} />
+                        <UserBrowser userData={searchedUsers[currentPage]} matched={false} onRemoveUser={() => removeUser(currentPage)} />
                         :
                         <p className="text-lg xl:text-xl font-bold items-center pt-10 text-[#5A5A5A]">No search results were found.</p>
                     }
