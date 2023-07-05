@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Messages from "../component/messages/messages";
+import { useParams } from "react-router-dom";
+
 // import SmallMessages from "../component/messages/SmallMessage";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
@@ -10,29 +12,32 @@ import { getDocs, collection } from "firebase/firestore";
 import UserMessageItem from '../component/messages/userItem';
 
 export default function MessagePage() {
+    const { id } = useParams();
+
     const [loading, setLoading] = useState(false);
     const { user } = UserAuth();
     const [matches, setMatches] = useState([]);
     const [currentChatUser, setCurrentChatUser] = useState();
+    const [lastMessage, setLastMessage] = useState("");
+
 
     useEffect(() => {
         const getMatches = async () => {
             setLoading(true);
-            console.log("user:", user);
-            if (user) {
-                const querySnapshot = await getDocs(
-                    collection(db, "Users", user.uid, "Matches")
-                );
-                const data = querySnapshot.docs.map((doc) => doc.data());
-                console.log(data.Matches, "data")
-                setMatches(data);
-            }
+            const querySnapshot = await getDocs(
+                collection(db, "Users", user.uid, "Matches")
+            );
+            const data = querySnapshot.docs.map((doc) => doc.data());
+            console.log(data, "data")
+            setMatches(data);    
+            setCurrentChatUser(data.find((item)=> item.Matches==id));
             setLoading(false);
         };
-        if (user && user.uid) {
+
+        if (user && user.uid && id) {
             getMatches();
         }
-    }, [user]);
+    }, [user, id]);
 
     return (
         <div>
@@ -48,12 +53,12 @@ export default function MessagePage() {
                     <div className='w-full lg:flex text-start'>
                         <div className='w-full lg:w-1/3 overflow-y-auto lg:h-[643px] border-r-[0.1px] border-black/10'>
                             {matches.map((item, index) => (
-                                <UserMessageItem key={index} user={item} onClickUser={(e) => setCurrentChatUser(e)} selected={ currentChatUser && item && item.Matches === currentChatUser.Matches }
-
-                                />
+                                <div onClick={() => setCurrentChatUser(item)}>
+                                    <UserMessageItem key={index} user={item} itemMessage={lastMessage} selected={currentChatUser && item.Matches === currentChatUser.Matches} />
+                                </ div>
                             ))}
                         </div>
-                        <Messages currentUser={currentChatUser} />
+                        <Messages currentUser={currentChatUser} lastMessage={(e) => setLastMessage(e)} />
                         {/* <SmallMessages currentUser={currentChatUser?.Matches} /> */}
 
                     </div>
