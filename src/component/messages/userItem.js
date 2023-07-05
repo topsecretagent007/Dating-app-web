@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export default function UserMessageItem({ user, onClickUser, itemMessage, selected }) {
+export default function UserMessageItem({ user, onClickUser, selected }) {
 
 
     return (
@@ -17,10 +17,12 @@ export default function UserMessageItem({ user, onClickUser, itemMessage, select
                 <div className="w-full text-[#888888] text-start pl-1 text-sm justify-between pr-3 sm:flex ">
                     <div className="">
                         <div className="w-32 truncate">{user.userName}</div>
-                        <div className="w-32 truncate">{itemMessage.text}</div>
+                        <div className="w-32 truncate">
+                            {/* {itemMessage.text} */}
+                        </div>
                     </div>
                     <div className="lg:text-end lg:w-20">
-                        {itemMessage.time?.toDate().toLocaleString()}
+                        {/* {itemMessage.time?.toDate().toLocaleString()} */}
                     </div>
                 </div>
             </div>

@@ -14,7 +14,6 @@ export default function MessagePage() {
     const { user } = UserAuth();
     const [matches, setMatches] = useState([]);
     const [currentChatUser, setCurrentChatUser] = useState();
-    const [lastMessage, setLastMessage] = useState("");
 
     useEffect(() => {
         const getMatches = async () => {
@@ -49,12 +48,12 @@ export default function MessagePage() {
                     <div className='w-full lg:flex text-start'>
                         <div className='w-full lg:w-1/3 overflow-y-auto lg:h-[643px] border-r-[0.1px] border-black/10'>
                             {matches.map((item, index) => (
-                                <UserMessageItem key={index} user={item} onClickUser={(e) => setCurrentChatUser(e)} itemMessage={lastMessage} selected={ currentChatUser && item && item.Matches === currentChatUser.Matches }
+                                <UserMessageItem key={index} user={item} onClickUser={(e) => setCurrentChatUser(e)} selected={ currentChatUser && item && item.Matches === currentChatUser.Matches }
 
                                 />
                             ))}
                         </div>
-                        <Messages currentUser={currentChatUser} lastMessage={(e) => setLastMessage(e)} />
+                        <Messages currentUser={currentChatUser} />
                         {/* <SmallMessages currentUser={currentChatUser?.Matches} /> */}
 
                     </div>
