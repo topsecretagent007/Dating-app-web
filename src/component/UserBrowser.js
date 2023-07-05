@@ -183,7 +183,7 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
                 </div>
                 {matched ?
                     <div className="justify-between pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
-                        <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => navigate("/message")} >
+                        <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => navigate(`/message/${userData.userId}`)} >
                             <BsHeartFill />
                             <div>Send Message</div>
                         </div>

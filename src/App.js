@@ -78,7 +78,7 @@ const router = createBrowserRouter([
     element: <Protected><Notification /></Protected>
   },
   {
-    path: "/message",
+    path: "/message/:id",
     element: <Protected><Message /></Protected>
   },
   {
