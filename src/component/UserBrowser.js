@@ -152,9 +152,9 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
                         Location
                     </div>
                 </div>
-                <div className="text-start py-5">
+                <div className="w-full text-start py-5">
                     <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">About me</div>
-                    <div className="text-sm lg:text-lg text-[#888888] leading-relaxed">
+                    <div className=" text-sm lg:text-lg text-[#888888] leading-relaxed break-words">
                         {userData.editInfo?.about}
                     </div>
                 </div>

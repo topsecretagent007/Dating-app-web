@@ -63,7 +63,7 @@ export default function SettingsPage() {
     }
 
     const SettingSave = async () => {
-        // setLoading(true);
+        setLoading(true);
         await updateDoc(doc(db, "Users", user.uid), {
             age_range: {
                 max: lastAge,
@@ -112,8 +112,8 @@ export default function SettingsPage() {
 
 
     useEffect(() => {
-        // setLoading(true);
         const getUserInfo = async () => {
+            setLoading(true);
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
@@ -221,7 +221,7 @@ export default function SettingsPage() {
                                 <div className="gap-6 py-1 justify-between text-start items-center border-b-2 border-b-black/5">
                                     <div className="w-full pl-5 text-sm xl:text-lg py-2">
                                         <div className="justify-start w-full font-bold text-[#5a5a5a]">Maximum distance</div>
-                                        <Distance distance={distance} miles={miles} onMiles={e => (setMiles(e))} onDistance={e => (setDistance(e))} />
+                                        <Distance distance={distance} miles={miles} onMiles={(e) => (setMiles(e), setShowDialog(true))} onDistance={(e) => (setDistance(e), setShowDialog(true))} />
                                     </div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 xl:texl-xl justify-between text-start items-center">
@@ -361,7 +361,7 @@ export default function SettingsPage() {
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                         <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                             <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
-                                <PhoneVerification />
+                                <PhoneVerification closeModal={() => setPhoneVerification(false)} />
                             </div>
                         </div >
                     </div>

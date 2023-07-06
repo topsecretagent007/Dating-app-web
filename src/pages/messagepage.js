@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Messages from "../component/messages/messages";
 import { useParams } from "react-router-dom";
-
-// import SmallMessages from "../component/messages/SmallMessage";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import LoadingModal from "../component/loadingPage";
@@ -13,7 +11,6 @@ import UserMessageItem from '../component/messages/userItem';
 
 export default function MessagePage() {
     const { id } = useParams();
-
     const [loading, setLoading] = useState(false);
     const { user } = UserAuth();
     const [matches, setMatches] = useState([]);
@@ -63,17 +60,33 @@ export default function MessagePage() {
                             <div className='text-lg'>{currentChatUser?.userName}</div>
                         </div>
                     </div>
-                    <div className='w-full lg:flex text-start'>
-                        <div className='w-full lg:w-1/3 overflow-y-auto lg:h-[643px] border-r-[0.1px] border-black/10'>
-                            {matches.map((item, index) => (
-                                <div key={index} onClick={() => setCurrentChatUser(item)}>
-                                    <UserMessageItem chatter={item} selected={currentChatUser && item.Matches === currentChatUser.Matches} />
-                                </ div>
-                            ))}
+                    <div className=''>
+                        <div className='w-full hidden lg:flex text-start'>
+                            <div className='w-full lg:w-1/3 overflow-y-auto min-h-[640px] border-r-[0.1px] border-black/10'>
+                                {matches.map((item, index) => (
+                                    <div key={index} onClick={() => setCurrentChatUser(item)}>
+                                        <UserMessageItem chatter={item} selected={currentChatUser && item.Matches === currentChatUser.Matches} />
+                                    </ div>
+                                ))}
+                            </div>
+                            <Messages currentUser={currentChatUser} />
                         </div>
-                        <Messages currentUser={currentChatUser} />
-                        {/* <SmallMessages currentUser={currentChatUser?.Matches} /> */}
+                        <div className='w-full lg:hidden text-start'>
 
+                            {
+                                currentChatUser == null || currentChatUser == undefined ?
+                                    <div className='w-full lg:w-1/3 overflow-y-auto min-h-[640px] border-r-[0.1px] border-black/10'>
+                                        {matches.map((item, index) => (
+                                            <div key={index} onClick={() => setCurrentChatUser(item)}>
+                                                <UserMessageItem chatter={item} selected={currentChatUser && item.Matches === currentChatUser.Matches} />
+                                            </ div>
+                                        ))}
+                                    </div>
+                                    :
+                                    <Messages currentUser={currentChatUser} prevUsers={() => setCurrentChatUser()} />
+
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

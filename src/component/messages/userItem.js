@@ -60,7 +60,6 @@ export default function UserMessageItem({ chatter, selected }) {
                 console.log(lastMessage, "lastMessage");
                 // Do something with the last message
             }
-
             setLoading(false);
         };
 
