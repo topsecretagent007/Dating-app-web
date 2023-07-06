@@ -4,9 +4,9 @@ import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { doc, getDoc, getDocs, collection, addDoc, onSnapshot } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
+import { FiArrowLeft } from "react-icons/fi";
 
-
-export default function Messages({ currentUser }) {
+export default function Messages({ currentUser, prevUsers }) {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
     const [chatMessages, setChatMessages] = useState([]);
@@ -14,6 +14,8 @@ export default function Messages({ currentUser }) {
     const [userAvatar, setUserAvatar] = useState("");
     const [messageText, setMessageText] = useState("");
     const [chats, setChats] = useState();
+    const [lastMessage, setLastMessage] = useState();
+
 
     const renderMessage = ({ id, sender_id, text, time }) => (
         <div
@@ -23,7 +25,7 @@ export default function Messages({ currentUser }) {
             {sender_id === user.uid ?
                 <div className="flex justify-end mb-4">
                     <div
-                        className="mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white"
+                        className="max-w-[150px] sm:max-w-xs lg:max-w-sm mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white break-words"
                     >
                         {text}
                         <br />
@@ -45,7 +47,7 @@ export default function Messages({ currentUser }) {
                         alt=""
                     />
                     <div
-                        className="ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white"
+                        className="max-w-[150px] sm:max-w-xs lg:max-w-sm ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white break-words"
                     >
                         {text}
                         <br />
@@ -99,12 +101,6 @@ export default function Messages({ currentUser }) {
                 messageCollection = collection(db, "chats", `${currentUser?.Matches}-${user.uid}`, "messages")
             }
 
-
-
-
-
-
-
             setChats(messageCollection);
             setChatMessages([]);
             setLoading(false)
@@ -131,7 +127,7 @@ export default function Messages({ currentUser }) {
                         setChatMessages((prevMessages) => {
                             const updatedMessages = [...prevMessages, message];
                             updatedMessages.sort((a, b) => a.time - b.time);
-                            // lastMessage(updatedMessages[updatedMessages.length - 1])
+                            setLastMessage(updatedMessages[updatedMessages.length - 1])
                             return updatedMessages;
                         });
                     }
@@ -161,27 +157,45 @@ export default function Messages({ currentUser }) {
 
     return (
         <>
-            <div className="hidden w-2/3 px-5 lg:flex flex-col justify-between">
-                <div className="flex flex-col mt-5 overflow-y-auto px-4 h-[500px]">
-                    {chatMessages.length > 0
-                        ? chatMessages.map((message) => renderMessage(message))
-                        : renderEmptyState()}
-                    <div ref={divRef} />
-                </div>
-                <div className="flex bg-gray-300 rounded-xl items-center mb-5">
-                    <div className='text-2xl px-5 hover:text-pinkLight border-r-[0.5px] border-black/20'>
-                        <BsEmojiSmile />
+            <div className="lg:w-2/3 lg:flex flex-col justify-between">
+                <div className="lg:hidden items-center gap-4 flex border-b-[0.5px] border-black/10">
+                    <div onClick={() => prevUsers()} className=" cursor-pointer text-xl text-pinkLight mt-2">
+                        <FiArrowLeft />
                     </div>
-                    <input
-                        className="w-full py-5 px-3  bg-gray-300 rounded-l-xl"
-                        type="text"
-                        placeholder="type your message here..."
-                        value={messageText}
-                        onChange={(e) => { if (currentUser?.Matches) setMessageText(e.target.value) }}
-                        onKeyDown={(e) => handleKeyDown(e)}
+                    <img
+                        src={userAvatar}
+                        className="object-cover h-8 w-8 rounded-full"
+                        alt=""
                     />
-                    <div onClick={() => { if (currentUser) sendMessage() }} className='text-2xl px-5 hover:text-pinkLight border-l-[0.5px] border-black/20'>
-                        <BsFillSendFill />
+                    <div className="text-sm">
+                        <div className="w-32 truncate">{currentUser?.userName}</div>
+                        <div className="w-32 truncate">
+                            {lastMessage?.text}
+                        </div>
+                    </div>
+                </div>
+                <div className="px-5">
+                    <div className="flex flex-col mt-5 overflow-y-auto px-4 h-[500px]">
+                        {chatMessages.length > 0
+                            ? chatMessages.map((message) => renderMessage(message))
+                            : renderEmptyState()}
+                        <div ref={divRef} />
+                    </div>
+                    <div className="flex bg-gray-300 rounded-xl items-center mb-5">
+                        <div className='text-2xl px-5 hover:text-pinkLight border-r-[0.5px] border-black/20'>
+                            <BsEmojiSmile />
+                        </div>
+                        <input
+                            className="w-full py-5 px-3  bg-gray-300 rounded-l-xl"
+                            type="text"
+                            placeholder="type your message here..."
+                            value={messageText}
+                            onChange={(e) => { if (currentUser?.Matches) setMessageText(e.target.value) }}
+                            onKeyDown={(e) => handleKeyDown(e)}
+                        />
+                        <div onClick={() => { if (currentUser) sendMessage() }} className='text-2xl px-5 hover:text-pinkLight border-l-[0.5px] border-black/20'>
+                            <BsFillSendFill />
+                        </div>
                     </div>
                 </div>
             </div>

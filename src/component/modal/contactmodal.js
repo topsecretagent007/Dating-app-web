@@ -36,7 +36,7 @@ export default function ContactModal({ closeModal }) {
                         <div className="w-full bg-[#888888]/10 border-[0.5px] rounded-md my-2 text-start py-2 px-3 border-pinkLight text-sm truncate">From : {user.email}</div>
                         <div className="w-full bg-[#888888]/10 border-[0.5px] rounded-md my-2 text-start py-2 px-3 border-pinkLight flex gap-2 text-sm truncate">
                             <div className="">To :</div>
-                            <input type="text" className="text-start w-full" placeholder="info@unjabbed.app" value={sendEmail} onChange={(e => setSendEmail(e.target.value))} ></input>
+                            <input type="text" className="bg-[#f1f1f1] text-start w-full" placeholder="info@unjabbed.app" value={sendEmail} onChange={(e => setSendEmail(e.target.value))} ></input>
                         </div>
 
                         <input type="text" className="w-full bg-[#888888]/10 border-[0.5px] rounded-md my-2 text-start text-sm py-2 px-3 border-pinkLight" value={support} onChange={(e => setSupport(e.target.value))} ></input>

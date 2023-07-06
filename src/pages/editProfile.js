@@ -22,10 +22,10 @@ import WebcamImage from "../component/camera";
 
 export default function EditProfilePage() {
     const [showDialog, setShowDialog] = useState(false);
-    const onConfirmFunc = async () => {
+    const onConfirm = async () => {
         await dataSave();
     }
-    usePrompt(showDialog, onConfirmFunc);
+    usePrompt(showDialog, onConfirm);
     const navigate = useNavigate();
     const { user } = UserAuth();
     const [uploadModal, setUploadModal] = useState(false);

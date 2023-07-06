@@ -80,7 +80,7 @@ export default function DistanceSlider({ distance, miles, onMiles, onDistance })
             setLength(parseInt(length * 2.48 / 4));
             onDistance(parseInt(length * 2.48 / 4));
         }
-    }, [unit, length]);
+    }, [unit]);
 
     useEffect(() => {
         const distanceValue = () => {
@@ -93,21 +93,12 @@ export default function DistanceSlider({ distance, miles, onMiles, onDistance })
         if (distance && miles) {
             distanceValue();
         }
-    }, [distance, miles]);
+    }, []);
 
-    useEffect(() => {
-        if (miles == true && distance > 248) {
-            setLength(248);
-        } else if (miles === false && distance > 400) {
-            setLength(400);
-        } else {
-            setLength(distance);
-        }
-    }, [distance])
 
     return (
         <div className="p-3">
-            <div className="justify-start">{length}{unit ? "Mile" : "Km"}</div>
+            <div className="justify-start">{distance}{unit ? "Mile" : "Km"}</div>
             <Slider size="sm" defaultValue={valueLength} onChange={(e) => selectLength(e)} />
             <div className="justify-start flex gap-4 items-center mt-5">
                 <div>Miles</div>
