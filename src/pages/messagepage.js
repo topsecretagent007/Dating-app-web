@@ -8,7 +8,7 @@ import Footer from "../component/footer/index";
 import LoadingModal from "../component/loadingPage";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, query, where } from "firebase/firestore";
 import UserMessageItem from '../component/messages/userItem';
 
 export default function MessagePage() {
@@ -18,8 +18,6 @@ export default function MessagePage() {
     const { user } = UserAuth();
     const [matches, setMatches] = useState([]);
     const [currentChatUser, setCurrentChatUser] = useState();
-    const [lastMessage, setLastMessage] = useState("");
-
 
     useEffect(() => {
         const getMatches = async () => {
@@ -28,16 +26,31 @@ export default function MessagePage() {
                 collection(db, "Users", user.uid, "Matches")
             );
             const data = querySnapshot.docs.map((doc) => doc.data());
-            console.log(data, "data")
-            setMatches(data);    
-            setCurrentChatUser(data.find((item)=> item.Matches==id));
+            setMatches(data);
+            setCurrentChatUser(data.find((item) => item.Matches == id));
             setLoading(false);
         };
 
-        if (user && user.uid && id) {
-            getMatches();
+        const getChats = async () => {
+            setLoading(true);
+            const querySnapshot = await getDocs(
+                query(
+                    collection(db, "chats"),
+                    where('docId', '>=', user.uid),
+                    where('docId', '<=', user.uid + '\uf8ff')
+                )
+            );
+            const result = querySnapshot.docs.map(doc => doc.data());
+            setLoading(false);
+
+            console.log(result, "result")
         }
-    }, [user, id]);
+
+        if (user && user.uid) {
+            getMatches();
+            getChats();
+        }
+    }, [user]);
 
     return (
         <div>
@@ -53,12 +66,12 @@ export default function MessagePage() {
                     <div className='w-full lg:flex text-start'>
                         <div className='w-full lg:w-1/3 overflow-y-auto lg:h-[643px] border-r-[0.1px] border-black/10'>
                             {matches.map((item, index) => (
-                                <div onClick={() => setCurrentChatUser(item)}>
-                                    <UserMessageItem key={index} user={item} itemMessage={lastMessage} selected={currentChatUser && item.Matches === currentChatUser.Matches} />
+                                <div key={index} onClick={() => setCurrentChatUser(item)}>
+                                    <UserMessageItem chatter={item} selected={currentChatUser && item.Matches === currentChatUser.Matches} />
                                 </ div>
                             ))}
                         </div>
-                        <Messages currentUser={currentChatUser} lastMessage={(e) => setLastMessage(e)} />
+                        <Messages currentUser={currentChatUser} />
                         {/* <SmallMessages currentUser={currentChatUser?.Matches} /> */}
 
                     </div>

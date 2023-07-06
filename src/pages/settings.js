@@ -7,6 +7,7 @@ import { HiUsers } from "react-icons/hi";
 import { AiOutlineMail } from "react-icons/ai";
 import PatnerUser from "../component/users/partnerUser";
 import GoolgleMap from "../component/other/maps";
+import NotificationModal from "../component/modal/notificationmodal";
 import InviteModal from "../component/modal/invitemodal";
 import LogoutModal from "../component/modal/logoutmodal";
 import DeleteModal from "../component/modal/deletemodal";
@@ -40,6 +41,7 @@ export default function SettingsPage() {
     const [contactModal, setContactModal] = useState(false);
     const [addPartnerModal, setAddPartnerModal] = useState(false);
     const [phoneVerification, setPhoneVerification] = useState(false);
+    const [notificationModal, setNotificationModal] = useState(false);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const menuDropdown = useRef(null);
     const [phoneNumber, setPhoneNumber] = useState();
@@ -52,7 +54,7 @@ export default function SettingsPage() {
     const [countryID, setCountryID] = useState('');
     const [countryName, setCountryName] = useState('');
     const [userShow, setUserShow] = useState([]);
-    const [userVerified, setUserVerified] = useState(false)
+    const [userVerified, setUserVerified] = useState(false);
 
     const modalClose = () => {
         setLogoutModal(false);
@@ -61,7 +63,7 @@ export default function SettingsPage() {
     }
 
     const SettingSave = async () => {
-        setLoading(true);
+        // setLoading(true);
         await updateDoc(doc(db, "Users", user.uid), {
             age_range: {
                 max: lastAge,
@@ -91,6 +93,7 @@ export default function SettingsPage() {
     useEffect(() => {
         function handleClickOutside(event) {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
+                setNotificationModal(false);
                 setInviteModal(false);
                 setLogoutModal(false);
                 setDeleteModal(false);
@@ -109,7 +112,7 @@ export default function SettingsPage() {
 
 
     useEffect(() => {
-        setLoading(true);
+        // setLoading(true);
         const getUserInfo = async () => {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
@@ -126,17 +129,12 @@ export default function SettingsPage() {
                 setUserVerified(userData.verified === 3);
             }
             setLoading(false);
-
         }
         if (user && user.uid) {
             getUserInfo();
         }
     }, [user])
 
-    const goToPage = (url) => {
-        navigate(url);
-
-    }
 
     return (
         <div>
@@ -154,7 +152,7 @@ export default function SettingsPage() {
                                         <div className="justify-start w-full">Verification Status</div>
                                         {
                                             !userVerified ?
-                                                <div onClick={() => goToPage("/verifyprofile")} className="justify-end text-red-600 cursor-pointer">Unverified</div>
+                                                <div onClick={() => navigate("/verifyprofile")} className="justify-end text-red-600 cursor-pointer">Unverified</div>
                                                 :
                                                 <div className="justify-end text-green-600">Verified</div>
                                         }
@@ -236,7 +234,7 @@ export default function SettingsPage() {
                         </div>
                     </div>
                     <div className="w-full xl:w-1/3  md:px-14 xl:px-5">
-                        <button onClick={() => goToPage("/notification")} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <button onClick={() => setNotificationModal(!notificationModal)} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <MdNotifications />
@@ -286,7 +284,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </button>
-                        <button onClick={() => goToPage("/tutorial")} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <button onClick={() => navigate("/tutorial")} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <MdVideoLibrary />
@@ -298,6 +296,16 @@ export default function SettingsPage() {
                         </button>
                     </div>
                 </div>
+                {
+                    notificationModal &&
+                    <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                        <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                                <NotificationModal />
+                            </div>
+                        </div >
+                    </div>
+                }
                 {
                     inviteModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
@@ -332,8 +340,8 @@ export default function SettingsPage() {
                     contactModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                         <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
-                                <ContactModal />
+                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-8 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                                <ContactModal closeModal={() => setContactModal(false)} />
                             </div>
                         </div >
                     </div>

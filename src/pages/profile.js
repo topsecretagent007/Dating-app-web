@@ -8,12 +8,13 @@ import { db } from "../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import LoadingModal from "../component/loadingPage";
 import ImageSaveModal from "../component/modal/imagesave";
-import { GiCheckMark } from "react-icons/gi";
-import { TiEdit } from "react-icons/ti";
-import { BiError } from "react-icons/bi";
-import { MdSettingsSuggest } from "react-icons/md";
+import { AiOutlineCheck, AiFillCamera } from "react-icons/ai";
+import { BsFillPencilFill } from "react-icons/bs";
+import { IoMdClose } from "react-icons/io";
+import { IoMdSettings } from "react-icons/io";
 import ImageCropper from '../component/imageCropper'
 import { uploadImage } from "../config/helpers";
+import WebcamImage from "../component/camera";
 
 export default function ProfilePage() {
     const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function ProfilePage() {
     const [croppedImage, setCroppedImage] = useState(null);
     const maxNumber = 100;
     const [userVerified, setUserVerified] = useState(false)
+    const [cameraModal, setCameraModal] = useState(false);
 
     const goToPage = (url) => {
         navigate(url);
@@ -46,6 +48,13 @@ export default function ProfilePage() {
             console.log("No such document!");
         }
         setLoading(false);
+    }
+
+    const cameraOk = async (capturedImage) => {
+        const file = new File([capturedImage], "camera-image.jpg", { type: "image/jpeg" });
+        setImages([{ url: capturedImage, file: file }]);
+        setImageSave(true);
+        setCameraModal(false);
     }
 
     const updateAvatar = async () => {
@@ -96,6 +105,7 @@ export default function ProfilePage() {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
             setPrevScrollPos(currentScrollPos);
+            setCameraModal(false);
         }
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -105,6 +115,8 @@ export default function ProfilePage() {
         function handleClickOutside(event) {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setImageSave(false);
+                setCameraModal(false);
+
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
@@ -139,23 +151,30 @@ export default function ProfilePage() {
                                                 {...dragProps} src={images[0]['url']} alt="Avatar" className="mx-auto rounded-full w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover cursor-pointer" />
                                         }
                                     </div>
+
+                                    <div className="justify-center flex relative z-10 -mt-20 ml-52 lg:-mt-28 lg:ml-80 ">
+                                        <button onClick={() => setCameraModal(true)} className="justify-start text-xl p-2 lg:text-4xl  rounded-full bg-pinkLight  text-white border-4 border-white hover:text-pinkLight hover:border-pinkLight hover:bg-white"
+                                        >
+                                            <AiFillCamera />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}
                     </ImageUploading>
-                    <div className="text-xl xl:text-2xl font-bold pt-6 xl:pt-10 text-[#5a5a5a]">{name}</div>
-                    <div className="justify-center flex mx-auto gap-44 xl:gap-52 -mt-10">
+                    <div className="text-xl xl:text-2xl font-bold pt-6 xl:pt-10">{name}</div>
+                    <div className="justify-center flex mx-auto gap-44 xl:gap-52 ">
                         <div onClick={() => goToPage("/settings")} >
-                            <button className="justify-start cursor-pointer text-pinkLight text-xl lg:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
+                            <button className="justify-start cursor-pointer text-[#888888] text-xl lg:text-3xl p-2 rounded-full border-2 xl:border-4 border-[#888888]/20"
                             >
-                                <MdSettingsSuggest />
+                                <IoMdSettings />
                             </button>
                             <div className="block xl:text-xl text-[#888888]">Setting</div>
                         </div>
                         <div onClick={() => goToPage("/editprofile")}>
-                            <button className="justify-start cursor-pointer text-pinkLight text-xl lg:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
+                            <button className="justify-start cursor-pointer text-[#888888] text-xl lg:text-3xl p-2 rounded-full border-2 xl:border-4 border-[#888888]/20"
                             >
-                                <TiEdit />
+                                <BsFillPencilFill />
                             </button>
                             <div className="block xl:text-xl text-[#888888]">Edit Info</div>
                         </div>
@@ -165,9 +184,9 @@ export default function ProfilePage() {
                             {
                                 !userVerified ?
                                     <>
-                                        <button className="justify-start cursor-pointer text-pinkLight text-xl lg:text-5xl p-2 rounded-full border-2 xl:border-4 border-pinkLight/80 hover:text-white hover:bg-pinkLight"
+                                        <button className="justify-start cursor-pointer bg-red-600 text-white text-xl lg:text-3xl p-2 rounded-full border-2 xl:border-4 border-[#888888]/20"
                                         >
-                                            <BiError />
+                                            <IoMdClose />
                                         </button>
                                         <div className="block xl:text-xl text-[#888888] xl:mt-2">Not verified</div>
                                     </>
@@ -175,7 +194,7 @@ export default function ProfilePage() {
                                     <>
                                         <button className="justify-start text-xl text-white bg-green-500 lg:text-5xl p-2 rounded-full border-2 xl:border-4"
                                         >
-                                            <GiCheckMark />
+                                            <AiOutlineCheck />
                                         </button>
                                         <div className="block xl:text-xl text-[#888888] xl:mt-2">verified</div>
                                     </>
@@ -206,6 +225,16 @@ export default function ProfilePage() {
                                 onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
                             />
                             <ImageSaveModal onSaveImage={updateAvatar} onCloseImage={() => removeImage()} />
+                        </div>
+                    </div >
+                </div>
+            }
+            {
+                cameraModal &&
+                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                            <WebcamImage onSaveImage={(img) => cameraOk(img)} onCloseModal={() => setCameraModal(false)} />
                         </div>
                     </div >
                 </div>

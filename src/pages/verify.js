@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import ImageUploading from 'react-images-uploading';
 import { FiImage, FiCamera } from "react-icons/fi"
-import SimpleImg from "../assets/image4.png"
+import SimpleImg from "../assets/image 4.png"
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import GenerateRandomNumber from "../component/other/randomnumber"
