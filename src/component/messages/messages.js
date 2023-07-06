@@ -6,7 +6,7 @@ import { doc, getDoc, getDocs, collection, addDoc, onSnapshot } from "firebase/f
 import LoadingModal from "../../component/loadingPage";
 
 
-export default function Messages({ currentUser, lastMessage }) {
+export default function Messages({ currentUser }) {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
     const [chatMessages, setChatMessages] = useState([]);
@@ -27,7 +27,9 @@ export default function Messages({ currentUser, lastMessage }) {
                     >
                         {text}
                         <br />
-                        {time?.toDate().toLocaleString()}
+                        <div className="text-sm">
+                            {time?.toDate().toLocaleString()}
+                        </div>
                     </div>
                     <img
                         src={myAvatar}
@@ -47,7 +49,9 @@ export default function Messages({ currentUser, lastMessage }) {
                     >
                         {text}
                         <br />
-                        {time?.toDate().toLocaleString()}
+                        <div className="text-sm">
+                            {time?.toDate().toLocaleString()}
+                        </div>
                     </div>
                 </div>
             }
@@ -94,6 +98,13 @@ export default function Messages({ currentUser, lastMessage }) {
             } else {
                 messageCollection = collection(db, "chats", `${currentUser?.Matches}-${user.uid}`, "messages")
             }
+
+
+
+
+
+
+
             setChats(messageCollection);
             setChatMessages([]);
             setLoading(false)
@@ -101,7 +112,6 @@ export default function Messages({ currentUser, lastMessage }) {
 
         if (currentUser && user.uid) {
             goToGetAvatar();
-            console.log(currentUser)
         }
     }, [user, currentUser])
 
@@ -121,7 +131,7 @@ export default function Messages({ currentUser, lastMessage }) {
                         setChatMessages((prevMessages) => {
                             const updatedMessages = [...prevMessages, message];
                             updatedMessages.sort((a, b) => a.time - b.time);
-                            lastMessage(updatedMessages[updatedMessages.length - 1])
+                            // lastMessage(updatedMessages[updatedMessages.length - 1])
                             return updatedMessages;
                         });
                     }

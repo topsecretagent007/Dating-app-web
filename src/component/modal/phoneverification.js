@@ -21,6 +21,15 @@ export default function PhoneVerification() {
     const { setUpRecaptcha, user } = UserAuth();
     const [loading, setLoading] = useState(false);
 
+    const verifyEnterCode = async () => {
+        if (code === "" || code === null) return;
+        try {
+            const res = await confirmObj.confirm(code);
+        } catch (error) {
+            setErrMessage(error.message);
+        }
+    }
+
     const getEnterCode = async () => {
         setErrMessage("")
         if (number === "" || number === undefined) return setErrMessage("Invalid Phone Number");
@@ -91,7 +100,7 @@ export default function PhoneVerification() {
                 </div>
             }
             {flag &&
-                <div className="w-full bg-white rounded-xl px-2  relative 2xl:w-[950px]">
+                <div className="w-full bg-white rounded-xl px-2  relative">
                     <h2 className="w-16 lg:w-24 absolute justify-center flex -top-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <img src={ModelLogo} alt="ModelLogo" />
                     </h2>
@@ -111,8 +120,7 @@ export default function PhoneVerification() {
                         <button className="text-blueLight block mx-auto py-3" onClick={getEnterCode}>RESEND</button>
 
                     </div>
-                    <div className="mb-10" 
-                    >
+                    <div className="mb-10" onClick={verifyEnterCode}>
                         <button className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-10 xl:py-4 xl:px-20">VERIFY</button>
                     </div>
                 </div>

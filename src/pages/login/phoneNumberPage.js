@@ -38,6 +38,7 @@ export default function PhoneNumberPage() {
         if (code === "" || code === null) return;
         try {
             const res = await confirmObj.confirm(code);
+            
         } catch (error) {
             setErrMessage(error.message);
         }

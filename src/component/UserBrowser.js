@@ -158,20 +158,20 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
                         {userData.editInfo?.about}
                     </div>
                 </div>
-                <div className="text-start py-5">
+                <div className="text-start py-5 max-w-xl">
                     <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">Desires</div>
-                    <div className="grid grid-cols-2 xl:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed">
+                    <div className="grid grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed">
                         {userData.desires?.map((item, index) => (
-                            <div key={index} className="px-1">
+                            <div key={index} className="px-1 capitalize">
                                 <div >{item}</div>
                             </div>
                         ))}
                     </div>
                 </div>
-                <div className="text-start py-5">
+                <div className="text-start py-5 max-w-xl">
                     <div className=" text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">Interest</div>
                     {userData.interest && userData.interest.length > 0 &&
-                        <div className="grid grid-cols-2 xl:grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
+                        <div className="grid grid-cols-3 text-sm lg:text-lg xl:text-xl text-[#888888] leading-relaxed">
                             {userData.interest.map((item, index) => (
                                 <div key={index} className="px-1">
                                     <div >{item}</div>

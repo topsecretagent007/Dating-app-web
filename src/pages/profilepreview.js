@@ -81,8 +81,8 @@ export default function PreviewProfile() {
                         </div>
                         <div className="text-start py-5">
                             <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">Interest</div>
-                            <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed list-none">
-                                {interests !== [] &&
+                            {interests && interests.length > 0 &&
+                                <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed list-none">
                                     <>
                                         {interests.map((item, index) => (
                                             <div key={index} className="px-1">
@@ -90,8 +90,9 @@ export default function PreviewProfile() {
                                             </div>
                                         ))}
                                     </>
-                                }
-                            </div>
+                                </div>
+                            }
+
                         </div>
                         <div onClick={() => goToPage('/editprofile')} className="mt-16 md:mt-6 justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2 text-xl cursor-pointer" >
                             <div>OK</div>
