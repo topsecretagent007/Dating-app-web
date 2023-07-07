@@ -15,6 +15,9 @@ import { IoMdSettings } from "react-icons/io";
 import ImageCropper from '../component/imageCropper'
 import { uploadImage } from "../config/helpers";
 import WebcamImage from "../component/camera";
+import { FiImage, FiCamera } from "react-icons/fi"
+
+import ModelLogo from "../assets/Modal-Logo.png"
 
 export default function ProfilePage() {
     const navigate = useNavigate();
@@ -30,6 +33,7 @@ export default function ProfilePage() {
     const maxNumber = 100;
     const [userVerified, setUserVerified] = useState(false)
     const [cameraModal, setCameraModal] = useState(false);
+    const [uploadModal, setUploadModal] = useState(false);
 
     const goToPage = (url) => {
         navigate(url);
@@ -106,6 +110,7 @@ export default function ProfilePage() {
             const currentScrollPos = window.pageYOffset;
             setPrevScrollPos(currentScrollPos);
             setCameraModal(false);
+            setUploadModal(false);
         }
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -116,7 +121,8 @@ export default function ProfilePage() {
             if (menuDropdown.current && !menuDropdown.current.contains(event.target)) {
                 setImageSave(false);
                 setCameraModal(false);
-
+                setUploadModal(false);
+                removeImage();
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
@@ -133,7 +139,7 @@ export default function ProfilePage() {
                     <div className="text-xl xl:text-2xl font-bold justify-start xl:absolute z-10 text-[#5a5a5a]">My Profile</div>
                     <ImageUploading
                         value={images}
-                        onChange={(imageList) => (setImages(imageList), setImageSave(true))}
+                        onChange={(imageList) => (setImages(imageList), setImageSave(true), setUploadModal(false))}
                         maxNumber={maxNumber}
                         dataURLKey="url"
                     >
@@ -147,32 +153,69 @@ export default function ProfilePage() {
                                     <div className="image-item">
                                         {images[0] && images[0]['url'] !== "" && images[0]['url'] !== null &&
                                             <img style={isDragging ? { color: 'red' } : undefined}
-                                                onClick={onImageUpload}
-                                                {...dragProps} src={images[0]['url']} alt="Avatar" className="mx-auto rounded-full w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover cursor-pointer" />
+                                                {...dragProps} src={images[0]['url']} alt="Avatar" className="mx-auto rounded-full w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />
                                         }
                                     </div>
 
-                                    <div className="justify-center flex relative z-10 -mt-20 ml-52 lg:-mt-28 lg:ml-80 ">
-                                        <button onClick={() => setCameraModal(true)} className="justify-start text-xl p-2 lg:text-4xl  rounded-full bg-pinkLight  text-white border-4 border-white hover:text-pinkLight hover:border-pinkLight hover:bg-white"
+                                    <div className="justify-center flex relative z-10 -mt-20 ml-52 lg:-mt-28 lg:ml-72 ">
+                                        <button onClick={() => setUploadModal(!uploadModal)} className="justify-start text-3xl p-2 lg:text-6xl  rounded-full bg-pinkLight  text-white border-4 border-white hover:text-pinkLight hover:border-pinkLight hover:bg-white"
                                         >
                                             <AiFillCamera />
                                         </button>
                                     </div>
+                                    {uploadModal &&
+                                        <div className="z-[99] top-0 fixed left-0 w-full h-full min-h-screen">
+                                            <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                                                <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                                                    <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                                        <img src={ModelLogo} alt="ModelLogo" />
+                                                    </h2>
+                                                    <div onClick={() => setUploadModal(!uploadModal)} className="text-3xl text-pinkLight cursor-pointer ml-[100%]">
+                                                        <IoMdClose />
+                                                    </div>
+                                                    <p className="text-lg lg:text-xl xl:text-3xl font-bold my-3 text-pinkLight">Update profile picture</p>
+                                                    <span className="text-sm xl:text-lg 2xl:text-xl font-medium my-3 lg:leading-relaxed">
+                                                        Select source
+                                                    </span>
+                                                    <div className="justify-center">
+                                                        <div className="justify-center flex mx-auto gap-24 lg:gap-40 cursor-pointer">
+                                                            <div onClick={() => (setCameraModal(true), setUploadModal(!uploadModal))} className="flex items-center text-pinkLight gap-2">
+                                                                <button className="justify-start text-4xl p-2 rounded-full bg-white  border-4 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
+                                                                >
+                                                                    <AiFillCamera />
+                                                                </button>
+                                                                <div className="text-2xl">Camera</div>
+                                                            </div>
+                                                            <div onClick={onImageUpload} className="flex items-center text-pinkLight gap-2 cursor-pointer">
+                                                                <button className="justify-start text-4xl p-2 rounded-full bg-white text-pinkLight border-4 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
+                                                                    style={isDragging ? { color: 'red' } : undefined}
+                                                                    {...dragProps}
+                                                                >
+                                                                    <FiImage />
+                                                                </button>
+                                                                <div className="text-2xl">Gallery</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div >
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         )}
                     </ImageUploading>
                     <div className="text-xl xl:text-2xl font-bold pt-6 xl:pt-10">{name}</div>
-                    <div className="justify-center flex mx-auto gap-44 xl:gap-52 ">
+                    <div className="justify-center flex mx-auto gap-40 xl:gap-52 ">
                         <div onClick={() => goToPage("/settings")} >
-                            <button className="justify-start cursor-pointer text-[#888888] text-xl lg:text-3xl p-2 rounded-full border-2 xl:border-4 border-[#888888]/20"
+                            <button className="justify-start cursor-pointer text-[#888888] text-xl lg:text-4xl p-3 rounded-full border-2 xl:border-4 border-[#888888]/20"
                             >
                                 <IoMdSettings />
                             </button>
                             <div className="block xl:text-xl text-[#888888]">Setting</div>
                         </div>
                         <div onClick={() => goToPage("/editprofile")}>
-                            <button className="justify-start cursor-pointer text-[#888888] text-xl lg:text-3xl p-2 rounded-full border-2 xl:border-4 border-[#888888]/20"
+                            <button className="justify-start cursor-pointer text-[#888888] text-xl lg:text-4xl p-3 rounded-full border-2 xl:border-4 border-[#888888]/20"
                             >
                                 <BsFillPencilFill />
                             </button>
@@ -184,7 +227,7 @@ export default function ProfilePage() {
                             {
                                 !userVerified ?
                                     <>
-                                        <button className="justify-start cursor-pointer bg-red-600 text-white text-xl lg:text-3xl p-2 rounded-full border-2 xl:border-4 border-[#888888]/20"
+                                        <button className="justify-start cursor-pointer bg-red-600 text-white text-xl lg:text-4xl p-3 rounded-full border-2 xl:border-4 border-[#888888]/20"
                                         >
                                             <IoMdClose />
                                         </button>

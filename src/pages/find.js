@@ -42,8 +42,8 @@ export default function FindPage() {
     }
 
     useEffect(() => {
-        setLoading(true);
         const getUserInfo = async () => {
+            setLoading(true);
             const checkedUserid = [];
             const matchedUserid = [];
             const reportUserId = [];

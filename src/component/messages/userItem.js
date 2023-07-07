@@ -3,49 +3,41 @@ import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import {
     collection,
-    addDoc,
     getDocs,
     query,
     orderBy,
     limit,
+    where,
+    or,
+    onSnapshot
 } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
 export default function UserMessageItem({ chatter, selected }) {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
-    const [laseData, setLastData] = useState();
-
+    const [lastData, setLastData] = useState({});
+    const [msgCollection, setMsgCollection] = useState(null)
 
     useEffect(() => {
         const getUserChatMsg = async () => {
             setLoading(true);
             let messageCollection;
-            const chatCollection = await getDocs(collection(db, "chats"));
-            const filteredSnapshot = chatCollection.docs.filter(
-                (doc) =>
-                    doc.data().docId === `${user.uid}-${chatter?.Matches}` ||
-                    doc.data().docId === `${chatter?.Matches}-${user.uid}`
+            const chatDocs = await getDocs(query(collection(db, "chats"), 
+                or(
+                    where("docId", "==", user.uid+"-"+chatter.Matches),
+                    where("docId", "==", chatter.Matches+"-"+user.uid)
+                    )
+            ));
+            const docs = chatDocs.docs.map(data=>data.data());
+            messageCollection = collection(
+                db,
+                "chats",
+                docs[0]["docId"],
+                "messages"
             );
-
-            if (filteredSnapshot.length !== 0) {
-                messageCollection = collection(
-                    db,
-                    "chats",
-                    `${user.uid}-${chatter?.Matches}`,
-                    "messages"
-                );
-            } else {
-                messageCollection = collection(
-                    db,
-                    "chats",
-                    `${chatter?.Matches}-${user.uid}`,
-                    "messages"
-                );
-            }
-
-            console.log(messageCollection, "messageCollection");
-
+            setMsgCollection(messageCollection);
+            
             const lastMessageQuery = query(
                 messageCollection,
                 orderBy("time", "desc"),
@@ -53,20 +45,33 @@ export default function UserMessageItem({ chatter, selected }) {
             );
 
             const lastMessageSnapshot = await getDocs(lastMessageQuery);
-
-            if (!lastMessageSnapshot.empty) {
-                const lastMessage = lastMessageSnapshot.docs[0].data();
-                setLastData(lastMessage);
-                console.log(lastMessage, "lastMessage");
-                // Do something with the last message
-            }
+            const lastMessage = lastMessageSnapshot.docs[0].data();
+            setLastData(lastMessage);
             setLoading(false);
         };
 
         if (chatter) {
             getUserChatMsg();
         }
-    }, [chatter, user.uid]);
+    }, [chatter]);
+
+    useEffect(()=> {
+        if(msgCollection) {
+            onSnapshot(msgCollection, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        setLastData(change.doc.data());
+                    }
+                    if (change.type === "modified") {
+                        // console.log("Modified city: ", change.doc.data());
+                    }
+                    if (change.type === "removed") {
+                        // console.log("Removed city: ", change.doc.data());
+                    }
+                });
+            })
+        }
+    }, [msgCollection])
 
     return (
         <div className="w-full flex">
@@ -82,11 +87,11 @@ export default function UserMessageItem({ chatter, selected }) {
                     <div className="">
                         <div className="w-32 truncate">{chatter.userName}</div>
                         <div className="w-32 truncate">
-                            {laseData?.text}
+                            {lastData?.text}
                         </div>
                     </div>
                     <div className="lg:text-end lg:w-20 text-sm">
-                        {laseData?.time?.toDate().toLocaleString()}
+                        {lastData?.time?.toDate().toLocaleString()}
                     </div>
                 </div>
             </div>
