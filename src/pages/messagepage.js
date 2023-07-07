@@ -39,8 +39,6 @@ export default function MessagePage() {
             );
             const result = querySnapshot.docs.map(doc => doc.data());
             setLoading(false);
-
-            console.log(result, "result")
         }
 
         if (user && user.uid) {

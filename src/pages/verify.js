@@ -144,7 +144,7 @@ export default function Verify() {
                                                 // write your building UI
 
                                                 <div className="upload__image-wrapper">
-                                                    <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/avatar.png')] mx-auto rounded-3xl bg-cover">
+                                                    <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/verifiedImage.png')] mx-auto rounded-3xl bg-cover">
                                                         {imageList.map((image, index) => (
                                                             <div key={index} className="image-item">
                                                                 <img src={image['url']} alt="" className="mx-auto rounded-3xl w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] object-cover" />

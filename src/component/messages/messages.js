@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { BsFillSendFill, BsEmojiSmile } from "react-icons/bs";
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
-import { doc, getDoc, getDocs, collection, addDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection, addDoc, onSnapshot, query, or, where } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 import { FiArrowLeft } from "react-icons/fi";
 
@@ -11,10 +11,9 @@ export default function Messages({ currentUser, prevUsers }) {
     const [loading, setLoading] = useState(false);
     const [chatMessages, setChatMessages] = useState([]);
     const [myAvatar, setMyAvatar] = useState("");
-    const [userAvatar, setUserAvatar] = useState("");
     const [messageText, setMessageText] = useState("");
-    const [chats, setChats] = useState();
-    const [lastMessage, setLastMessage] = useState();
+    const [msgCollection, setMsgCollection] = useState(null);
+    const [lastMessage, setLastMessage] = useState(null);
 
 
     const renderMessage = ({ id, sender_id, text, time }) => (
@@ -25,7 +24,7 @@ export default function Messages({ currentUser, prevUsers }) {
             {sender_id === user.uid ?
                 <div className="flex justify-end mb-4">
                     <div
-                        className="max-w-[150px] sm:max-w-xs lg:max-w-sm mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white break-words"
+                        className="max-w-[80%] lg:max-w-[70%] mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white break-words"
                     >
                         {text}
                         <br />
@@ -42,12 +41,12 @@ export default function Messages({ currentUser, prevUsers }) {
                 :
                 <div className="flex justify-start mb-4">
                     <img
-                        src={userAvatar}
+                        src={currentUser?.pictureUrl}
                         className="object-cover h-8 w-8 rounded-full"
                         alt=""
                     />
                     <div
-                        className="max-w-[150px] sm:max-w-xs lg:max-w-sm ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white break-words"
+                        className="max-w-[80%] lg:max-w-[70%] ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white break-words"
                     >
                         {text}
                         <br />
@@ -68,7 +67,7 @@ export default function Messages({ currentUser, prevUsers }) {
 
     const sendMessage = async () => {
         if (messageText === "") return;
-        addDoc(chats, {
+        addDoc(msgCollection, {
             receiver_id: currentUser?.Matches,
             sender_id: user.uid,
             image_url: "",
@@ -91,17 +90,14 @@ export default function Messages({ currentUser, prevUsers }) {
             } else {
                 console.log("No such document!");
             }
-            setUserAvatar(currentUser?.pictureUrl);
-            let messageCollection; // Declare the variable here
-            const chatCollection = await getDocs(collection(db, "chats"));
-            const filteredSnapshot = await chatCollection.docs.filter(doc => doc.data().docId === `${user.uid}-${currentUser?.Matches}`);
-            if (filteredSnapshot.length != 0) {
-                messageCollection = collection(db, "chats", `${user.uid}-${currentUser?.Matches}`, "messages")
-            } else {
-                messageCollection = collection(db, "chats", `${currentUser?.Matches}-${user.uid}`, "messages")
-            }
-
-            setChats(messageCollection);
+            const chatDocs = await getDocs(query(collection(db, "chats"),
+                or(
+                    where("docId", "==", user.uid + "-" + currentUser.Matches),
+                    where("docId", "==", currentUser.Matches + "-" + user.uid)
+                )
+            ));
+            const docs = chatDocs.docs.map(data => data.data());
+            setMsgCollection(collection(db, "chats", docs[0]["docId"], "messages"));
             setChatMessages([]);
             setLoading(false)
         };
@@ -112,9 +108,9 @@ export default function Messages({ currentUser, prevUsers }) {
     }, [user, currentUser])
 
     useEffect(() => {
-        if (chats) {
+        if (msgCollection) {
             setLoading(true)
-            onSnapshot(chats, (snapshot) => {
+            onSnapshot(msgCollection, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const message = {
@@ -141,16 +137,14 @@ export default function Messages({ currentUser, prevUsers }) {
             });
             setLoading(false)
         }
-    }, [chats]);
+    }, [msgCollection]);
 
     const handleKeyDown = (event) => {
         if (event && event.key === 'Enter') {
             sendMessage();
         }
     };
-
     const divRef = useRef(null);
-
     useEffect(() => {
         divRef.current.scrollIntoView({ behavior: 'smooth' });
     });
@@ -158,13 +152,13 @@ export default function Messages({ currentUser, prevUsers }) {
     return (
         <>
             <div className="lg:w-2/3 lg:flex flex-col justify-between">
-                <div className="lg:hidden items-center gap-4 flex border-b-[0.5px] border-black/10">
+                <div className="lg:hidden items-center gap-6 flex border-b-[0.5px] border-black/10 py-2 px-4">
                     <div onClick={() => prevUsers()} className=" cursor-pointer text-xl text-pinkLight mt-2">
                         <FiArrowLeft />
                     </div>
                     <img
-                        src={userAvatar}
-                        className="object-cover h-8 w-8 rounded-full"
+                        src={currentUser?.pictureUrl}
+                        className="object-cover h-10 w-10 rounded-full"
                         alt=""
                     />
                     <div className="text-sm">
