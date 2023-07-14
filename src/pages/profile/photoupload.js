@@ -111,7 +111,7 @@ export default function PhotoUpload() {
     }, [menuDropdown]);
 
     return (
-        <div className="bg-[#FFFBFE] min-h-screen justify-center rounded-xl w-full h-full flex pb-32">
+        <div className="bg-[#FFFBFE] min-h-screen justify-center rounded-xl w-full h-full flex pb-10">
             <div className="w-4/5">
                 <div className="w-full p-6 items-center">
                     <img src={Logo} alt="Logo" className="mx-auto" />
@@ -159,7 +159,7 @@ export default function PhotoUpload() {
                         </div>
                     </div>
                     <div className="text-xl lg:text-2xl font-bold">Add profile photo</div>
-                    <div className="text-sm lg:text-xl py-10 xl:leading-loose">
+                    <div className="text-sm lg:text-xl py-3 xl:leading-loose">
                         You need to upload at least one image as part of the registration process. <br />
                         Once you have completed the registration you will be able to add more <br />
                         photos to your profile.

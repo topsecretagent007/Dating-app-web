@@ -89,7 +89,6 @@ export default function WelcomePage() {
                     timestamp: new Date(),
                     userId: user.uid,
                     metode: user.providerData[0].providerId,
-                    verified: 0,
                     UserName: "",
                     user_DOB: "",
                     age: "",

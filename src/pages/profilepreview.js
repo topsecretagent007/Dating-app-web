@@ -12,10 +12,7 @@ import Footer from "../component/footer/index";
 export default function PreviewProfile() {
     const navigate = useNavigate();
     const { user } = UserAuth();
-    const [userName, setUserName] = useState();
-    const [description, setDescription] = useState();
-    const [userLooking, setUserLooking] = useState([]);
-    const [interests, setInterests] = useState([]);
+    const [myData, setMyData] = useState();
     const [loading, setLoading] = useState(false);
 
     const goToPage = (url) => {
@@ -28,10 +25,7 @@ export default function PreviewProfile() {
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
-                setDescription(userData.editInfo?.about)
-                setUserName(userData.UserName)
-                setUserLooking(userData.desires)
-                setInterests(userData.interest)
+                setMyData(userData);
                 setLoading(false);
             } else {
                 console.log("No such document!");
@@ -53,38 +47,42 @@ export default function PreviewProfile() {
                     <div className="w-full xl:w-1/2 max-w-lg">
                         <div className="justify-between flex">
                             <div className="text-start">
-                                <div className="text-lg md:text-xl xl:text-2xl font-bold text-[#5a5a5a]">{userName}</div>
-                                <div className="text-sm lg:text-lg text-[#888888]">Address </div>
+                                <div className="text-lg md:text-xl xl:text-2xl font-bold text-[#5a5a5a]">{myData?.UserName}</div>
+                                <div className="text-sm lg:text-lg text-[#888888] capitalize">
+                                    {myData?.age}, {myData?.editInfo?.userGender.toLowerCase()}, {myData?.sexualOrientation?.orientation.toLowerCase()}
+                                    <br />
+                                    {myData?.status.toLowerCase()}, distance
+                                </div>
                             </div>
                         </div>
                         <div className="flex text-md xl:text-2xl items-center gap-2 text-[#888888]">
                             <div className="text-pinkLight text-xl" >
                                 <MdOutlineLocationOn />
                             </div>
-                            <div>
-                                Location
+                            <div className="capitalize">
+                                {myData?.location.countryName.toLowerCase()}
                             </div>
                         </div>
                         <div className="text-start py-5">
                             <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">About me</div>
                             <div className="text-sm lg:text-lg text-[#888888] leading-relaxed">
-                                {description}
+                                {myData?.editInfo?.about}
                             </div>
                         </div>
                         <div className="text-start py-5">
                             <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">Desires</div>
-                            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed">{userLooking.map((item, index) => (
-                                <div key={index} className="px-1">
-                                    <div >{item}</div>
+                            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed capitalize" >{myData?.desires.map((item, index) => (
+                                <div key={index} className="px-1 ">
+                                    <div >{item.toLowerCase()}</div>
                                 </div>
                             ))}</div>
                         </div>
                         <div className="text-start py-5">
                             <div className="text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-[#5a5a5a]">Interest</div>
-                            {interests && interests.length > 0 &&
-                                <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed list-none">
+                            {myData?.interest && myData?.interest.length > 0 &&
+                                <div className="grid grid-cols-2 md:grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed list-none capitalize">
                                     <>
-                                        {interests.map((item, index) => (
+                                        {myData?.interest.map((item, index) => (
                                             <div key={index} className="px-1">
                                                 <div >{item}</div>
                                             </div>

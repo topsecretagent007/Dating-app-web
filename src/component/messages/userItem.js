@@ -45,7 +45,7 @@ export default function UserMessageItem({ chatter, selected }) {
             );
 
             const lastMessageSnapshot = await getDocs(lastMessageQuery);
-            const lastMessage = lastMessageSnapshot.docs[0].data();
+            const lastMessage = lastMessageSnapshot.docs[0]?.data();
             setLastData(lastMessage);
             setLoading(false);
         };

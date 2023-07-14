@@ -51,8 +51,28 @@ function ImageCropper(props) {
         const canvas = document.createElement('canvas');
         const scaleX = sourceImage.naturalWidth / sourceImage.width;
         const scaleY = sourceImage.naturalHeight / sourceImage.height;
-        canvas.width = cropConfig.width;
-        canvas.height = cropConfig.height;
+
+
+        var originWidth = cropConfig.width * scaleX;
+        var originHeight = cropConfig.height * scaleY;
+        // maximum width/height
+        var maxWidth = 1200, maxHeight = 1200 / (9 / 9);
+        var targetWidth = originWidth,
+            targetHeight = originHeight;
+        if (originWidth > maxWidth || originHeight > maxHeight) {
+            if (originWidth / originHeight > maxWidth / maxHeight) {
+                targetWidth = maxWidth;
+                targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+            } else {
+                targetHeight = maxHeight;
+                targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+            }
+        }
+        // set canvas size
+
+
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
         const ctx = canvas.getContext('2d');
 
         ctx.drawImage(
@@ -63,8 +83,8 @@ function ImageCropper(props) {
             cropConfig.height * scaleY,
             0,
             0,
-            cropConfig.width,
-            cropConfig.height
+            targetWidth,
+            targetHeight
         );
 
         return new Promise((resolve, reject) => {

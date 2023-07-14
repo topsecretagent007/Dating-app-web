@@ -105,7 +105,7 @@ export default function LikedBy() {
 
     const listItems = numbers && numbers.length > 0 ? numbers.map((numbers, index) =>
         <div key={index} className="w-full flex cursor-pointer" onClick={() => Lookingprofile(numbers)}>
-            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white items-center border-l-2 gap-5 flex w-full py-3 border-b-[0.1px] border-b-black/10">
+            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white items-center border-l-2 gap-5 flex w-full px-5 py-3 border-b-[0.1px] border-b-black/10">
                 <img src={likedUserAvatar[index]} alt="avatar" className="w-12 h-12 ml-2 mr-1 my-auto object-cover rounded-full " />
                 <div className="w-full text-[#888888] text-start pl-1 text-base justify-between pr-3 sm:flex ">
                     <div className="w-40 sm:w-52 truncate">You liked {likedUserName[index]}</div>
@@ -120,15 +120,15 @@ export default function LikedBy() {
 
     return (
         <div>
-            <div className="grid grid-cols-2 gap-2 py-3 border-b-[0.5px] border-b-[#888888]">
-                <button onClick={() => setUserLikes(true)} className={`${userLikes ? "bg-pinkLight text-white border-none" : "text-pinkLight bg-white border-[0.5px]"} md:py-1 xl:py-2 text-base mx-auto border-pinkLight rounded-lg w-32 hover:bg-pinkLight hover:text-white`}>
-                    <div className="flex items-center gap-2 px-7">
+            <div className="flex py-3 border-b-[0.1px] border-b-black/10 gap-[20%] px-[10%] justify-center" >
+                <button onClick={() => setUserLikes(true)} className={`${userLikes ? "bg-pinkLight text-white border-none" : "text-pinkLight bg-white border-[0.5px]"} md:py-1 xl:py-2 text-base border-pinkLight rounded-lg w-40 hover:bg-pinkLight hover:text-white`}>
+                    <div className="flex items-center gap-2 justify-center">
                         <AiFillHeart />
                         Likes
                     </div>
                 </button>
-                <button onClick={() => setUserLikes(false)} className={`${userLikes ? "text-pinkLight bg-white border-[0.5px]" : "bg-pinkLight text-white border-none"} md:py-1 xl:py-2 text-base mx-auto border-pinkLight rounded-lg w-32 hover:bg-pinkLight hover:text-white`}>
-                    <div className="flex items-center gap-2 px-5">
+                <button onClick={() => setUserLikes(false)} className={`${userLikes ? "text-pinkLight bg-white border-[0.5px]" : "bg-pinkLight text-white border-none"} md:py-1 xl:py-2 text-base  border-pinkLight rounded-lg w-40 hover:bg-pinkLight hover:text-white`}>
+                    <div className="flex items-center gap-2 justify-center ">
                         <AiFillHeart />
                         My Likes
                     </div></button>

@@ -75,6 +75,7 @@ export default function ProfileData() {
         if (nextPage) {
             if (name !== "" && brithday !== "" && userSex !== "" && userOri !== "" && userStatus !== "" && userLooking !== [] && userShow !== []) {
                 setLoading(true);
+
                 await updateDoc(doc(db, "Users", user.uid), {
                     UserName: name,
                     user_DOB: brithday,
@@ -95,8 +96,6 @@ export default function ProfileData() {
                         geohash: "",
                         geopoint: [0, 0]
                     },
-                    geoHash: "",
-                    geoLocation: [0, 0],
                     location: {
                         address: "",
                         countryID: "",
@@ -160,7 +159,7 @@ export default function ProfileData() {
                 </Link>
             </div>
             <div className="w-full">
-                <div className="w-full px-10 pt-20 pb-10 items-center">
+                <div className="w-full px-10 pt-10 pb-10 items-center">
                     <img src={Logo} alt="Logo" className="mx-auto" />
                 </div>
                 <div className=" text-3xl text-start">
@@ -194,7 +193,7 @@ export default function ProfileData() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
                             <AlertModal text="Please fill all the fields." onCloseModal={() => modalClose()} />
                         </div>
                     </div >

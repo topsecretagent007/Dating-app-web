@@ -1,18 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
 import YouTube from 'react-youtube-embed'
 
 export default function TutorialPage() {
 
+    // const [playerOptions, setPlayerOptions] = useState({
+
+    // });
+
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-10">
-                <div className="w-[300px] md:w-[600px] xl:w-[1000px] 2xl:w-[1750px] px-5 mx-auto xl:flex gap-12">
-                    <div className="w-full grid md:grid-cols-2 gap-3 pb-10 overflow-y-hidden">
-                        <YouTube id='8nPs61YalRY' />
-                        <YouTube id='7pHCB6agyR0' />
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-[calc(100vh-186px)] py-10">
+                <div className="w-[300px] md:w-[600px] xl:w-[1000px]  px-5 mx-auto xl:flex gap-12">
+                    <div className="w-full grid md:grid-cols-2 gap-3 pb-10">
+                        <div className="bg-black py-6 rounded-xl xl:h-[315px] ">
+                            <YouTube id='C22HoOmm0V4' />
+                        </div>
+                        <div className="bg-black py-6 rounded-xl xl:h-[315px] ">
+                            <YouTube id='7pHCB6agyR0' />
+                        </div>
+                        <div className="bg-black py-6 rounded-xl xl:h-[315px] ">
+                            <YouTube id='8nPs61YalRY' />
+                        </div>
                     </div>
                 </div>
             </div>

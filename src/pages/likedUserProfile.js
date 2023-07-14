@@ -22,12 +22,12 @@ export default function PreviewProfile() {
             const docUserMatches = await getDocs(collection(db, "Users", user.uid, "Matches"))
             docUserMatches.forEach((doc) => {
                 if (doc.id === id) setState(true);
+                else setState(false);
             })
             const docSnap = await getDoc(doc(db, "Users", id));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
                 setData(userData);
-                console.log(userData)
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
@@ -46,7 +46,7 @@ export default function PreviewProfile() {
             <Header />
             <div className="w-full h-full min-h-screen bg-cover px-[13%] bg-[#FFFBFE] py-14">
                 {data &&
-                    <UserBrowser userData={data} matched={state} />
+                    <UserBrowser userData={data} matched={state} onRemoveUser />
                 }
                 {
                     loading &&

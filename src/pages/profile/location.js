@@ -6,40 +6,47 @@ import Logo from "../../assets/Logo1.svg";
 import Image3 from "../../assets/image-3.png"
 import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
-import { doc, updateDoc } from "firebase/firestore";
-import axios from 'axios';
+import { doc, updateDoc, GeoPoint } from "firebase/firestore";
+import ngeohash from 'ngeohash';
+import geolocator from 'geolocator';
+geolocator.config({
+    language: "en",
+    google: {
+        version: "3",
+        key: "AIzaSyC5bHiW99yF2oAPsaqNHeZZc5AlrgDdFd8"
+    }
+});
 
 export default function Location() {
     const { user } = UserAuth();
     const navigate = useNavigate();
-    const [latitude, setLatitude] = useState(null);
-    const [longitude, setLongitude] = useState(null);
+    const [userLatitude, setUserLatitude] = useState(null);
+    const [userLongitude, setUserLongitude] = useState(null);
     const [country, setCountry] = useState(null);
     const [countryCode, setCountryCode] = useState(null);
+    const [userHash, setUserHash] = useState(null);
     const [address, setAddress] = useState(null);
     const [loading, setLoading] = useState(false);
 
 
     const updataLocation = async () => {
-        if (latitude !== "" && longitude !== "") {
+        if (userLatitude !== null && userLongitude !== null) {
             setLoading(true);
             await updateDoc(doc(db, "Users", user.uid), {
                 currentPoint: {
-                    geohash: "",
-                    geopoint: [latitude + "," + longitude]
+                    geohash: userHash,
+                    geopoint: new GeoPoint(userLatitude, userLongitude)
                 },
-                geoHash: "",
-                geoLocation: [latitude + "," + longitude],
                 location: {
-                    address: "",
-                    countryID: "",
-                    countryName: "",
-                    latitude: latitude,
-                    longitude: longitude
+                    address: address,
+                    countryID: countryCode,
+                    countryName: country,
+                    latitude: userLatitude,
+                    longitude: userLongitude
                 },
                 point: {
-                    geohash: "",
-                    geopoint: [latitude + "," + longitude]
+                    geohash: userHash,
+                    geopoint: new GeoPoint(userLatitude, userLongitude)
                 },
                 Pictures: [{
                     show: "true",
@@ -51,48 +58,45 @@ export default function Location() {
         }
     }
 
-    useEffect(() => {
-        setLoading(true);
-        // Get user's current location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    setLatitude(position.coords.latitude);
-                    setLongitude(position.coords.longitude);
-                },
-                error => {
-                    console.error(error);
-                }
-            );
-        } else {
-            console.error('Geolocation is not supported by this browser.');
-        }
-    }, []);
 
     useEffect(() => {
-        if (latitude && longitude) {
-            // Get country and address using geocoding API
-            axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`)
-                .then(response => {
-                    const results = response.data.results;
-                    if (results.length > 0) {
-                        for (let i = 0; i < results[0].address_components.length; i++) {
-                            const addressComponent = results[0].address_components[i];
-                            if (addressComponent.types.includes('country')) {
-                                setCountry(addressComponent.long_name);
-                                setCountryCode(addressComponent.short_name);
-                            }
-                        }
-                        setAddress(results[0].formatted_address);
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
+        const goToLocation = async () => {
+            setLoading(true);
+            var options = {
+                enableHighAccuracy: true,
+                desiredAccuracy: 30,
+                timeout: 1000,
+                maximumWait: 10000,
+                maximumAge: 0,
+                addressLookup: true,
+                timezone: true,
+                fallbackToIP: true,
+                staticMap: false
+            };
+
+            const address = await new Promise((resolve, reject) => {
+                geolocator.locate(options, function (err, location) {
+                    if (err) return reject(err);
+                    console.log(location);
+                    return resolve(location);
+
                 });
-        }
-        setLoading(false);
+            })
 
-    }, [latitude, longitude]);
+            const encodedGeohash = ngeohash.encode(address.coords.latitude, address.coords.longitude);
+            setUserHash(encodedGeohash);
+
+            setUserLatitude(address.coords?.latitude);
+            setUserLongitude(address.coords?.longitude);
+            setAddress(address.address?.route)
+            setCountry(address.address?.country)
+            setCountryCode(address.address?.countryCode)
+            setLoading(false);
+        }
+        if (user) {
+            goToLocation();
+        }
+    }, [user]);
 
     return (
         <div className="bg-[#FFFBFE] w-full min-h-screen h-full flex pt-10 pb-20">
