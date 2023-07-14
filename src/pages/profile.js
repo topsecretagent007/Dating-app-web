@@ -16,7 +16,7 @@ import ImageCropper from '../component/imageCropper'
 import { uploadImage } from "../config/helpers";
 import WebcamImage from "../component/camera";
 import { FiImage, FiCamera } from "react-icons/fi"
-
+import PremiumModal from "../component/modal/PremiumModal";
 import ModelLogo from "../assets/Modal-Logo.png"
 
 export default function ProfilePage() {
@@ -34,6 +34,7 @@ export default function ProfilePage() {
     const [userVerified, setUserVerified] = useState(false)
     const [cameraModal, setCameraModal] = useState(false);
     const [uploadModal, setUploadModal] = useState(false);
+    const [premiumModal, setPremiumModal] = useState(false);
 
     const goToPage = (url) => {
         navigate(url);
@@ -109,8 +110,6 @@ export default function ProfilePage() {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
             setPrevScrollPos(currentScrollPos);
-            setCameraModal(false);
-            setUploadModal(false);
         }
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -122,6 +121,7 @@ export default function ProfilePage() {
                 setImageSave(false);
                 setCameraModal(false);
                 setUploadModal(false);
+                setPremiumModal(false);
                 removeImage();
             }
         }
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                         for unlimited matches and contacts
                     </div>
                     <div className="pb-20">
-                        <button className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Subscribe now</button>
+                        <button onClick={() => setPremiumModal(true)} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32">Subscribe now</button>
                     </div>
                 </div>
             </div>
@@ -278,6 +278,16 @@ export default function ProfilePage() {
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
                         <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
                             <WebcamImage onSaveImage={(img) => cameraOk(img)} onCloseModal={() => setCameraModal(false)} />
+                        </div>
+                    </div >
+                </div>
+            }
+            {
+                premiumModal &&
+                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-64 bg-[#faeaf6] rounded-xl px-8 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                            <PremiumModal closeModal={() => setPremiumModal(false)} />
                         </div>
                     </div >
                 </div>

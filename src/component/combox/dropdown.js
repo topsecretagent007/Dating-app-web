@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import AlertModal from "../modal/alertmodal";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -20,7 +21,13 @@ const MenuProps = {
 
 export default function DropDown({ text, value, items, onHandleChange, multiple = false }) {
     const [data, setData] = useState([]);
+    const [saveErr, setSaveErr] = useState(false);
+
     const handleChange = (event) => {
+        if (event.target.value == "") {
+            event.target.value = items[0];
+            setSaveErr(true);
+        }
         const {
             target: { value },
         } = event;
@@ -29,7 +36,7 @@ export default function DropDown({ text, value, items, onHandleChange, multiple 
     };
 
     useEffect(() => {
-        setData(value)
+        setData(value);
     }, [value])
 
     return (
@@ -61,6 +68,16 @@ export default function DropDown({ text, value, items, onHandleChange, multiple 
                     </Select>
                 </FormControl>
             </div>
+            {
+                saveErr &&
+                <div className={`fixed z-[999999] top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div className="w-3/5 bg-white rounded-xl px-3 relative text-center py-12">
+                            <AlertModal text="You must have at least one preference." onCloseModal={() => setSaveErr(false)} />
+                        </div>
+                    </div >
+                </div>
+            }
         </div>
     );
 }

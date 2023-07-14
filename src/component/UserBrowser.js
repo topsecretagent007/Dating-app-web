@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { AiTwotoneFlag, AiOutlineClose } from "react-icons/ai";
 import { MdOutlineLocationOn } from "react-icons/md";
 import { BsHeartFill } from "react-icons/bs";
@@ -11,6 +10,14 @@ import LoadingModal from "../component/loadingPage";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { collection, doc, getDoc, setDoc, getDocs, deleteDoc } from "firebase/firestore";
+import geolocator from 'geolocator';
+geolocator.config({
+    language: "en",
+    google: {
+        version: "3",
+        key: "AIzaSyC5bHiW99yF2oAPsaqNHeZZc5AlrgDdFd8"
+    }
+});
 
 export default function UserBrowser({ userData, matched = false, onRemoveUser }) {
     const { user } = UserAuth();
@@ -22,6 +29,14 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
     const [loading, setLoading] = useState(false);
     const [myName, setMyName] = useState("");
     const [myPicture, setMyPicture] = useState("");
+    const [distance, setDistance] = useState(0);
+    const [partnerName, setPartnerName] = useState("");
+    const [partnerAvarta, setPartnerAvatar] = useState("");
+    const [partnerId, setPartnerId] = useState("");
+
+    const Lookingprofile = async (userId) => {
+        navigate(`/likedUsers/${userId}`)
+    }
 
     const openUserModal = () => {
         setReportUser(false);
@@ -32,7 +47,6 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
         setLoading(true);
         const likedByUserIds = [];
         const action = isLike ? "LikedUser" : "DislikedUser";
-
         const querySnapshot = await getDocs(collection(db, "Users", user.uid, "LikedBy"));
         querySnapshot.forEach((doc) => {
             likedByUserIds.push(doc.id);
@@ -86,22 +100,47 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
     };
 
     useEffect(() => {
-        setLoading(true);
         const getUserInfo = async () => {
+            setLoading(true);
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const myData = docSnap.data();
                 setMyName(myData.UserName);
                 setMyPicture(myData.Pictures[0]?.url);
+                var options = {
+                    from: {
+                        latitude: parseFloat(myData.location?.latitude),
+                        longitude: parseFloat(myData.location?.longitude)
+                    },
+                    to: {
+                        latitude: parseFloat(userData.location?.latitude),
+                        longitude: parseFloat(userData.location?.longitude)
+                    },
+                    formula: "HAVERSINE",
+                    unitSystem: 0
+                };
+                const address = await new Promise((resolve) => {
+                    const result = geolocator.calcDistance(options);
+                    return resolve(result);
+                })
+                setDistance(parseInt(address))
             } else {
                 console.log("No such document!");
             }
+            const docSnapPartner = await getDoc(doc(db, "Relationship", userData.userId));
+            if (docSnapPartner.exists()) {
+                const partnerData = docSnapPartner.data();
+                console.log(partnerData, "partnerData")
+                setPartnerName(partnerData.partner.partnerName);
+                setPartnerAvatar(partnerData.partner.partnerImage);
+                setPartnerId(partnerData.partner.partnerId);
+            }
             setLoading(false);
         }
-        if (user && user.uid) {
+        if (user && user.uid && userData) {
             getUserInfo();
         }
-    }, [user])
+    }, [userData])
 
     useEffect(() => {
         function handleScroll() {
@@ -134,8 +173,13 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
             <div className="w-full pt-5 xl:pt-0 xl:w-2/5">
                 <div className="justify-between flex">
                     <div className="text-start">
-                        <div className="text-lg md:text-xl xl:text-2xl font-bold text-[#5a5a5a]">{userData.UserName}</div>
-                        <div className="text-sm lg:text-lg py-1 text-[#888888]">Address </div>
+                        <div className="text-lg md:text-xl xl:text-2xl font-bold text-[#5a5a5a]">{userData?.UserName}</div>
+                        <div className="text-sm lg:text-lg py-1 text-[#888888] capitalize">
+                            {userData?.age}, {userData.editInfo?.userGender.toLowerCase()}, {userData.sexualOrientation?.orientation.toLowerCase()}
+                            <br />
+                            {userData?.status.toLowerCase()}, {distance}Km
+
+                        </div>
                     </div>
                     {
                         !matched &&
@@ -148,8 +192,8 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
                     <div className="text-pinkLight text-2xl" >
                         <MdOutlineLocationOn />
                     </div>
-                    <div>
-                        Location
+                    <div className="capitalize">
+                        {userData.location?.countryName}
                     </div>
                 </div>
                 <div className="w-full text-start py-5">
@@ -163,7 +207,7 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
                     <div className="grid grid-cols-3 text-sm lg:text-lg text-[#888888] leading-relaxed">
                         {userData.desires?.map((item, index) => (
                             <div key={index} className="px-1 capitalize">
-                                <div >{item}</div>
+                                <div >{item.toLowerCase()}</div>
                             </div>
                         ))}
                     </div>
@@ -181,6 +225,18 @@ export default function UserBrowser({ userData, matched = false, onRemoveUser })
                         </div>
                     }
                 </div>
+                {
+                    partnerName !== "" &&
+                    <>
+                        <div className="text-start text-md md:text-lg lg:text-xl xl:text-2xl pb-3 font-bold text-[#5a5a5a]">Partner</div>
+                        <div className="flex border-[0.5px] border-black/10 rounded-xl px-6 py-4 max-w-xl text-start items-center gap-5 cursor-pointer" onClick={() => Lookingprofile(partnerId)}>
+                            <img src={partnerAvarta} alt="partnerAvarta" className="w-14 h-14 rounded-full" />
+                            <div className="text-2xl text-[#5a5a5a] font-semibold">
+                                {partnerName}
+                            </div>
+                        </div>
+                    </>
+                }
                 {matched ?
                     <div className="justify-between pt-5 text-sm md:text-base lg:text-lg xl:text-xl">
                         <div className="justify-center xl:py-3 flex rounded-xl text-white bg-pinkLight items-center gap-2 py-1 lg:py-2 cursor-pointer" onClick={() => navigate(`/message/${userData.userId}`)} >

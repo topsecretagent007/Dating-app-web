@@ -58,8 +58,8 @@ export const lookingForData = [
     "TEXTING",
 ];
 export const showData = [
-    "MAN",
-    "WOMAN",
+    "MEN",
+    "WOMEN",
     "MAN + WOMAN COUPLE",
     "MAN + MAN COUPLE",
     "WOMAN + WOMAN COUPLE",

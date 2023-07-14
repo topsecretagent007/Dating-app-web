@@ -1,14 +1,30 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import ModelLogo from "../../assets/Modal-Logo.png"
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import { doc, updateDoc } from "firebase/firestore";
+import LoadingModal from "../../component/loadingPage";
+import { db } from "../../firebase";
+import { UserAuth } from "../../context/AuthContext";
 
-export default function NotificationModal() {
-    const [matches, setMatches] = useState(true);
-    const [like, setLike] = useState(true);
-    const [alert, setAlert] = useState(true);
+export default function NotificationModal({ mNtificationSetting, cNtificationSetting, lNtificationSetting, closeModal }) {
+    const { user } = UserAuth();
+    const [loading, setLoading] = useState(false);
+    const [matches, setMatches] = useState(mNtificationSetting);
+    const [like, setLike] = useState(lNtificationSetting);
+    const [alert, setAlert] = useState(cNtificationSetting);
+
+    const saveNotification = async () => {
+        setLoading(true);
+        await updateDoc(doc(db, "Users", user.uid), {
+            matchesNotification: matches,
+            likesNotification: like,
+            chatNotification: alert
+        });
+        setLoading(false);
+        closeModal();
+    }
 
 
     const IOSSwitch = styled((props) => (
@@ -100,10 +116,15 @@ export default function NotificationModal() {
             </div>
 
             <div className="w-full">
-                <Link className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white gap-1">
+                <button onClick={() => saveNotification()} className="w-5/6 xl:w-2/3 px-6 py-3 text-pinkLight border-2 border-pinkLight hover:bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3 hover:text-white gap-1">
                     <div className="text-sm xl:text-lg font-bold">Save</div>
-                </Link>
+                </button>
             </div>
+
+            {
+                loading &&
+                <LoadingModal />
+            }
         </>
     )
 }

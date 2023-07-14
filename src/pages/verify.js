@@ -52,11 +52,11 @@ export default function Verify() {
                 imageUrl: codeImageUrl,
                 name: name,
                 reason_verified: "",
-                verified: 2,
+                verified: 1,
                 phoneNumber: ""
             });
             await updateDoc(doc(db, "Users", user.uid), {
-                verified: 2,
+                verified: 1,
             });
             setLoading(false);
             setAlretUploadPhoto(true);
@@ -173,7 +173,7 @@ export default function Verify() {
                                     </div>
                                 </div>
 
-                                <div onClick={() => uploadPhote()} className="justify-between pt-8 md:px-10 xl:pt-10 2xl:pt-40 2xl:px-60">
+                                <div onClick={() => uploadPhote()} className="justify-between pt-8 md:px-10 xl:pt-10 2xl:pt-40 2xl:px-40">
                                     <button className="w-full justify-center py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center text-sm md:text-xl lg:text-2xl 2xl:text-3xl">
                                         Upload Photo
                                     </button>

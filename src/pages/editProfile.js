@@ -45,6 +45,7 @@ export default function EditProfilePage() {
     const [imageSave, setImageSave] = useState(false);
     const [currentCroppedImage, setCurrentCroppedImage] = useState(null);
     const [cameraModal, setCameraModal] = useState(false);
+    const [imgSaveErr, setImgSaveErr] = useState(false);
 
     const maxNumber = 6;
     const numbers = [1, 2, 3, 4, 5, 6];
@@ -99,10 +100,6 @@ export default function EditProfilePage() {
                 showGender: userShow,
                 desires: userLooking,
                 status: userStatus,
-                currentPoint: {
-                    geohash: "",
-                    geopoint: [0, 0]
-                },
                 interest: interests
             });
             setLoading(false);
@@ -210,7 +207,11 @@ export default function EditProfilePage() {
                                                 </div>
                                                 {imageList.map((image, index) => (
                                                     <div key={index} className="image-item">
-                                                        <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  ' onClick={() => { onImageRemove(index); setImageSave(false) }}>
+                                                        <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  '
+                                                            onClick={() => {
+                                                                if (imageList.length == 1) { setImgSaveErr(true) } else { onImageRemove(index); setImageSave(false) }
+                                                            }}
+                                                        >
                                                             <AiOutlineDelete />
                                                         </button>
 
@@ -319,6 +320,16 @@ export default function EditProfilePage() {
             {
                 loading &&
                 <LoadingModal />
+            }
+            {
+                imgSaveErr &&
+                <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
+                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                            <AlertModal text="This image can't be deleted. Your profile must contain at least one image." onCloseModal={() => setImgSaveErr(false)} />
+                        </div>
+                    </div >
+                </div>
             }
             {
                 imageSave &&

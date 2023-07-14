@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Slider } from "@material-tailwind/react";
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 
 export default function DistanceSlider({ distance, miles, onMiles, onDistance }) {
-    const [unit, setUnit] = useState(miles);
-    const [length, setLength] = useState(distance);
-    const [valueLength, setValueLangth] = useState();
 
     const selectLength = (e) => {
         e.preventDefault();
         const totalLength = (e.target.value);
-        if (unit === false) {
-            setLength(parseInt(totalLength * 4));
+        console.log(totalLength, "totalLength ")
+        if (miles === false) {
             onDistance(parseInt(totalLength * 4));
+            console.log(miles, "false")
         } else {
-            setLength(parseInt(totalLength * 2.48));
-            onDistance(parseInt(totalLength * 2.48));
+            onDistance(parseInt(totalLength * 2.5));
         }
     };
     const IOSSwitch = styled((props) => (
@@ -72,39 +69,26 @@ export default function DistanceSlider({ distance, miles, onMiles, onDistance })
     }));
 
     useEffect(() => {
-        onMiles(unit);
-        if (unit === false) {
-            setLength(parseInt(length * 4 / 2.48));
-            onDistance(parseInt(length * 4 / 2.48));
+        if (miles === false) {
+            onDistance(parseInt(distance * 4 / 2.5));
         } else {
-            setLength(parseInt(length * 2.48 / 4));
-            onDistance(parseInt(length * 2.48 / 4));
+            onDistance(parseInt(distance * 2.5 / 4));
         }
-    }, [unit]);
-
-    useEffect(() => {
-        const distanceValue = () => {
-            if (unit) {
-                setValueLangth(distance / 2.48)
-            } else {
-                setValueLangth(distance / 4)
-            }
-        }
-        if (distance && miles) {
-            distanceValue();
-        }
-    }, []);
-
+    }, [miles]);
 
     return (
         <div className="p-3">
-            <div className="justify-start">{distance}{unit ? "Mile" : "Km"}</div>
-            <Slider size="sm" defaultValue={valueLength} onChange={(e) => selectLength(e)} />
+            <div className="justify-start">{distance}{miles ? "Mile" : "Km"}</div>
+            <Slider 
+                size="sm" 
+                value={miles ? distance / 2.5: distance /4} 
+                onChange={(e) => selectLength(e)} 
+            />
             <div className="justify-start flex gap-4 items-center mt-5">
                 <div>Miles</div>
                 <div className="relative inline-flex items-center cursor-pointer">
                     <FormControlLabel
-                        control={<IOSSwitch sx={{ m: 1 }} defaultChecked checked={unit} onClick={() => { setUnit(!unit) }}
+                        control={<IOSSwitch sx={{ m: 1 }} checked={miles} onClick={() => { onMiles(!miles) }}
                         />}
                     />
                 </div>

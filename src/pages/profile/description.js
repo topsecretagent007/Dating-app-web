@@ -5,7 +5,7 @@ import Logo from "../../assets/Logo1.svg";
 import { db } from '../../firebase';
 import LoadingModal from "../../component/loadingPage";
 import { UserAuth } from "../../context/AuthContext";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import AlertModal from "../../component/modal/alertmodal";
 
 export default function ProfileDescription() {
@@ -31,8 +31,22 @@ export default function ProfileDescription() {
                     max: 99,
                     min: 18
                 },
-                maximum_distance: 200,
-                miles: false
+                maximum_distance: 400,
+                miles: false,
+                verified: 0,
+                matchesNotification : true,
+                likesNotification : true,
+                chatNotification : true
+            });
+            await setDoc(doc(db, "Relationship", user.uid), {
+                isRelationship: false,
+                partner: {
+                    partnerId: "",
+                    partnerImage: "",
+                    partnerName: ""
+                },
+                updataAt: new Date(),
+                userId: user.uid
             });
             setLoading(false);
             navigate("/");
@@ -85,7 +99,7 @@ export default function ProfileDescription() {
     }, [user])
 
     return (
-        <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen justify-center pt-10 pb-20">
+        <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen justify-center pb-10">
             <div className="flex">
                 <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
                     <Link to='/profile/photoaddmore'>
