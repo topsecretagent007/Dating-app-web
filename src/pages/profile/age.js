@@ -5,6 +5,9 @@ import Logo from "../../assets/Logo1.svg";
 import Image2 from "../../assets/image-2.png"
 
 export default function Age() {
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
 
     return (
         <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen justify-center py-12">

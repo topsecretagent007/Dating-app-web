@@ -14,32 +14,54 @@ export default function PreviewProfile() {
     const { user } = UserAuth();
     const [myData, setMyData] = useState();
     const [loading, setLoading] = useState(false);
+    const [partnerName, setPartnerName] = useState("");
+    const [partnerAvarta, setPartnerAvatar] = useState("");
+    const [partnerId, setPartnerId] = useState("");
+    const [partnerGender, setPartnerGender] = useState("");
+    const [partnerStatus, setPartnerStatus] = useState("");
 
-    const goToPage = (url) => {
-        navigate(url);
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
+
+    const Lookingprofile = async (userId) => {
+        navigate(`/likedUsers/${userId}`)
     }
 
     useEffect(() => {
-        setLoading(true);
-        const getUserInfo = async () => {
+        const goToUserInfo = async () => {
+            setLoading(true);
             const docSnap = await getDoc(doc(db, "Users", user.uid));
             if (docSnap.exists()) {
                 const userData = docSnap.data();
                 setMyData(userData);
-                setLoading(false);
             } else {
                 console.log("No such document!");
             }
+            const docSnapPartner = await getDoc(doc(db, "Relationship", user.uid));
+            if (docSnapPartner.exists()) {
+                const partnerData = docSnapPartner.data();
+                setPartnerName(partnerData?.partner.partnerName);
+                setPartnerAvatar(partnerData?.partner.partnerImage);
+                setPartnerId(partnerData?.partner.partnerId);
+                const docPartnerData = await getDoc(doc(db, "Users", partnerData?.partner.partnerId));
+                if (docPartnerData.exists()) {
+                    const partnerUserData = docPartnerData.data();
+                    setPartnerGender(partnerUserData?.editInfo?.userGender);
+                    setPartnerStatus(partnerUserData?.status);
+                }
+            }
+            setLoading(false);
         }
         if (user && user.uid) {
-            getUserInfo();
+            goToUserInfo();
         }
     }, [user])
 
     return (
         <>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover px-[13%] bg-[#FFFBFE] py-14">
+            <div className="w-full h-full min-h-[calc(100vh-154px)] bg-cover px-[13%] bg-[#FFFBFE] pt-2 pb-28 md:py-14">
                 <div className="w-full md:flex justify-center gap-14 mx-auto">
                     <div className="w-full max-w-2xl">
                         <ImageSlider />
@@ -92,7 +114,24 @@ export default function PreviewProfile() {
                             }
 
                         </div>
-                        <div onClick={() => goToPage('/editprofile')} className="mt-16 md:mt-6 justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2 text-xl cursor-pointer" >
+                        {
+                            partnerStatus !== "" &&
+                            <>
+                                <div className="text-start text-md md:text-lg lg:text-xl xl:text-2xl pb-3 font-bold text-[#5a5a5a]">Partner</div>
+                                <div className="flex border-[0.5px] border-black/10 rounded-xl px-6 py-4 max-w-xl text-start items-center gap-5 cursor-pointer" onClick={() => Lookingprofile(partnerId)}>
+                                    <img src={partnerAvarta} alt="partnerAvarta" className="w-14 h-14 rounded-full" />
+                                    <div className="">
+                                        <div className="text-2xl text-[#5a5a5a] font-bold">
+                                            {partnerName}
+                                        </div>
+                                        <div className="text-lg text-[#5a5a5a] font-semibold capitalize">
+                                            {partnerGender.toLowerCase()}, {partnerStatus.toLowerCase()}
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        }
+                        <div onClick={() => navigate('/editprofile')} className="mt-16 md:mt-6 justify-center xl:py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center xl:gap-5 gap-2 md:gap-3 lg:gap-4 py-1 lg:py-2 text-xl cursor-pointer" >
                             <div>OK</div>
                         </div>
                     </div>

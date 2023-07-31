@@ -1,11 +1,13 @@
 import { useContext, createContext, useEffect, useState } from "react";
 import {
     GoogleAuthProvider,
+    PhoneAuthProvider,
     signInWithPopup,
     signOut,
     onAuthStateChanged,
     RecaptchaVerifier,
-    signInWithPhoneNumber
+    signInWithPhoneNumber,
+    linkWithCredential
 } from "firebase/auth"
 import { auth } from "../firebase"
 
@@ -32,6 +34,25 @@ export const AuthContextProvider = ({children}) => {
         return signInWithPhoneNumber(auth, number, recaptchaVerifier);
     }
 
+    const verifyPhoneNumber = (number) => {
+        const recaptchaVerifier = new RecaptchaVerifier(
+            "recaptcha-container",
+            {},
+            auth
+        );
+        recaptchaVerifier.render();
+        const provider = new PhoneAuthProvider(auth);
+        const verificationId = provider.verifyPhoneNumber(number, recaptchaVerifier);
+        console.log(verificationId);
+        return verificationId;
+    }
+
+    const linkPhoneNumber = (verificationId, code) => {
+        var credential = PhoneAuthProvider.credential(verificationId, code);
+        console.log(credential); 
+        return linkWithCredential(user, credential);
+    }
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -41,7 +62,7 @@ export const AuthContextProvider = ({children}) => {
         }
     }, [])
     return (
-        <AuthContext.Provider value={{googleSignIn, logOut, user, setUpRecaptcha}}>
+        <AuthContext.Provider value={{googleSignIn, logOut, user, setUpRecaptcha, linkPhoneNumber, verifyPhoneNumber }}>
             {children}
         </AuthContext.Provider>
     )

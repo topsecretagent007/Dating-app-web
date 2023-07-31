@@ -27,6 +27,10 @@ export default function ProfileData() {
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
+
     const nameChange = (event) => {
         setName(event.target.value);
     }
@@ -63,9 +67,7 @@ export default function ProfileData() {
                 setAlertModal(false);
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -155,7 +157,7 @@ export default function ProfileData() {
         <div className="bg-[#FFFBFE] bg-cover rounded-xl w-full h-full min-h-screen flex">
             <div className="pt-20 pl-[8%]">
                 <Link to='/profile/friendship' className="">
-                    <FiArrowLeft className="text-pinkLight text-4xl my-3" />
+                    <FiArrowLeft className="text-pinkLight text-xl md:text-4xl my-3" />
                 </Link>
             </div>
             <div className="w-full">
@@ -183,7 +185,7 @@ export default function ProfileData() {
                 </div>
                 <button onClick={() => updateProfileData()} className="bg-pinkLight justify-center xl:text-2xl text-white rounded-xl py-2 px-8 xl:py-4 xl:px-32 mb-10">Continue</button>
             </div>
-            <div className=" pt-20 pl-[8%]">
+            <div className="pt-20 pl-[8%]">
             </div>
             {
                 loading &&
@@ -191,9 +193,9 @@ export default function ProfileData() {
             }
             {
                 alertModal &&
-                <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
+                <div className="fixed z-50 w-full h-full min-h-screen top-0">
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                        <div ref={menuDropdown} className="w-5/6 md:w-3/5 bg-white rounded-xl px-3 relative  py-12">
                             <AlertModal text="Please fill all the fields." onCloseModal={() => modalClose()} />
                         </div>
                     </div >

@@ -13,7 +13,6 @@ export default function Matches({ onClickUser }) {
         const getMatches = async () => {
             try {
                 setLoading(true);
-
                 const querySnapshot = await getDocs(
                     collection(db, "Users", user.uid, "Matches")
                 );
@@ -35,7 +34,6 @@ export default function Matches({ onClickUser }) {
 
             }
         };
-
         if (user && user.uid) getMatches();
     }, []);
 

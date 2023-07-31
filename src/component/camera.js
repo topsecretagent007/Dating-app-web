@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
+import { FiChevronLeft } from "react-icons/fi";
 
 function WebcamImage({ onSaveImage, onCloseModal }) {
   const [img, setImg] = useState(null);
@@ -23,6 +24,9 @@ function WebcamImage({ onSaveImage, onCloseModal }) {
 
   return (
     <div className="Container max-h-[650] mx-auto w-full">
+      <div onClick={() => onCloseModal()} className="text-pinkLight text-xl md:hidden">
+        <FiChevronLeft />
+      </div>
       {img === null ? (
         <>
           <div className="text-lg text-pinkLight">

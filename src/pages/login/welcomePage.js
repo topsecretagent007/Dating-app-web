@@ -21,6 +21,10 @@ export default function WelcomePage() {
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
+
     const modalClose = () => {
         setAlertModal(false);
     }
@@ -77,7 +81,7 @@ export default function WelcomePage() {
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 setLoading(false);
-                navigate("/");
+                navigate("/profile");
             } else {
                 const loginData = { apple: "", fb: "", google: "", phone: "" };
                 if (user.providerData[0].providerId === 'google.com') loginData.google = user.uid;
@@ -116,8 +120,8 @@ export default function WelcomePage() {
     }, [user])
 
     return (
-        <div className="w-full absolute h-full min-h-screen bg-cover flex bg-[url('./assets/Blur-Bg.png')] px-8 py-20 justify-center items-center" >
-            <div className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px]">
+        <div className="w-full absolute h-full min-h-screen bg-cover flex bg-[url('./assets/Blur-Bg.png')] px-[5px] md:px-8 py-20 justify-center items-center" >
+            <div className="w-full bg-white rounded-xl px-2 md:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px]">
                 <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <img src={ModelLogo} alt="ModelLogo" />
                 </h2>
@@ -130,7 +134,7 @@ export default function WelcomePage() {
                     agree to the Terms of Service
                 </span>
                 <button className="w-5/6 xl:w-2/3 px-6 py-3 bg-pinkLight rounded-xl  mx-auto flex justify-center items-center my-3  text-white gap-1" onClick={goToPhoneInputPage}>
-                    <BsTelephone /> <div className="text-sm xl:text-lg">Continue with Phone Number</div>
+                    <BsTelephone /> <div className="text-lg xl:text-lg">Continue with Phone Number</div>
                 </button>
                 <div className="lg:my-6 2xl:my-10 my-3">
                     <div className="inline-flex items-center justify-center w-full">
@@ -139,11 +143,11 @@ export default function WelcomePage() {
                     </div>
                 </div>
                 <div className="xl:flex gap-3 justify-center my-3 px-5">
-                    <div className="rounded-xl bg-blueLight px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center text-white gap-2 mb-3 xl:mb-0 text-sm xl:text-2xl cursor-pointer">
+                    <div className="rounded-xl bg-blueLight px-6 xl:px-16 py-3 xl:py-4 justify-center flex xl:gap-3 items-center text-white gap-2 mb-3 xl:mb-0 text-lg xl:text-2xl cursor-pointer">
                         <BsFacebook />
                         Facebook
                     </div>
-                    <div className="rounded-xl bg-white border-2 border-[#888888] px-6 xl:px-16 py-2 xl:py-4 justify-center flex xl:gap-3 items-center gap-2 text-sm xl:text-2xl text-[#888888] cursor-pointer" onClick={() => handleGoogleSignIn()}>
+                    <div className="rounded-xl bg-white border-2 border-[#888888] px-6 xl:px-16 py-3 xl:py-4 justify-center flex xl:gap-3 items-center gap-2 text-lg xl:text-2xl text-[#888888] cursor-pointer" onClick={() => handleGoogleSignIn()}>
                         <FcGoogle />
                         Google
                     </div>
@@ -152,7 +156,9 @@ export default function WelcomePage() {
                     <input id="default-checkbox" type="checkbox" value={agreeCheck} className="accent-pinkLight bg-gray-100 rounded-xl mr-1 cursor-pointer" onChange={() => setAgreeCheck(!agreeCheck)} />
                     I agree to terms and conditions
                 </div>
-                <div className="text-pinkLight text-sm justify-center my-6 ">Terms of use & Privacy Policy</div>
+                <div className=" text-pinkLight text-sm justify-center my-6 cursor-pointer">
+                    <a href="https://unjabbed.app/privacy-policy/">Terms of use & Privacy Policy</a>
+                </div>
             </div>
             {
                 loading &&
@@ -162,7 +168,7 @@ export default function WelcomePage() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-14">
+                        <div ref={menuDropdown} className="w-5/6 md:w-3/5 bg-white rounded-xl px-3 relative  py-14">
                             <AlertModal text="Please agree to our terms of use and privacy policy by checking the box below." onCloseModal={() => modalClose()} />
                         </div>
                     </div >

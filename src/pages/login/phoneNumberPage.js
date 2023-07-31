@@ -21,13 +21,19 @@ export default function PhoneNumberPage() {
     const [code, setCode] = useState("");
     const { setUpRecaptcha, user } = UserAuth();
     const [loading, setLoading] = useState(false);
+    const [showRecaptcha, setShowRecaptcha] = useState(true);
+
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
 
     const getEnterCode = async () => {
-        setErrMessage("")
+        setErrMessage("");
         if (number === "" || number === undefined) return setErrMessage("Invalid Phone Number");
         try {
             const response = await setUpRecaptcha(number);
             setConfirmObj(response);
+            setShowRecaptcha(false);
             setFlag(true);
         } catch (error) {
             setErrMessage(error.message)
@@ -38,7 +44,7 @@ export default function PhoneNumberPage() {
         if (code === "" || code === null) return;
         try {
             const res = await confirmObj.confirm(code);
-            
+
         } catch (error) {
             setErrMessage(error.message);
         }
@@ -51,7 +57,7 @@ export default function PhoneNumberPage() {
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 setLoading(false);
-                navigate("/");
+                navigate("/profile");
             } else {
                 const loginData = { apple: "", fb: "", google: "", phone: "" };
                 if (user.providerData[0].providerId === 'google.com') loginData.google = user.uid;
@@ -85,16 +91,17 @@ export default function PhoneNumberPage() {
                 navigate("/profile/age");
             }
         }
-        if (user !== null && user.uid !== null) {
+        if (user !== null && user.uid !== null && user !== "") {
+            console.log(user)
             setUserInfo();
         }
     }, [user])
 
     return (
-        <div className="w-full absolute h-full min-h-screen bg-cover flex bg-[url('./assets/Blur-Bg.png')] px-8 py-20 xl:py-40 justify-center items-center" >
+        <div className="w-full absolute h-full min-h-screen bg-cover flex bg-[url('./assets/Blur-Bg.png')]  py-20 xl:py-40 justify-center items-center" >
             {!flag &&
-                <div className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px]">
-                    <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="w-full items-center py-10 md:py-0 bg-white md:rounded-xl px-[5px] md:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] h-screen md:h-full ">
+                    <h2 className="hidden w-16 lg:w-24 absolute justify-center md:flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <img src={ModelLogo} alt="ModelLogo" />
                     </h2>
                     <Link to='/login'>
@@ -111,7 +118,7 @@ export default function PhoneNumberPage() {
                                 value={number}
                                 onChange={setNumber}
                                 minLength="9"
-                                maxLength="15"
+                                maxLength="20"
                             />
                         </div>
                         <hr className="w-4/5 2xl:w-2/3 h-px mx-auto my-3 border-0 bg-blueLight" />
@@ -121,7 +128,7 @@ export default function PhoneNumberPage() {
                             </span>
                         }
                     </div>
-                    <div id="recaptcha-container" className="" />
+                    {showRecaptcha && <div id="recaptcha-container" className="" />}
                     <div className="text-sm xl:text-lg justify-center my-5 xl:my-8 leading-relaxed">
                         Please enter your mobile number to receive a verification code. <br />Message and data rates may apply.
                     </div>
@@ -131,8 +138,8 @@ export default function PhoneNumberPage() {
                 </div>
             }
             {flag &&
-                <div className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px]">
-                    <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="w-full items-center py-10 md:py-0 bg-white md:rounded-xl px-[5px] lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] h-screen md:h-full ">
+                    <h2 className="hidden w-16 lg:w-24 absolute justify-center md:flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <img src={ModelLogo} alt="ModelLogo" />
                     </h2>
                     <button onClick={() => setFlag(false)} className="mr-[100%]">
@@ -144,7 +151,7 @@ export default function PhoneNumberPage() {
                         and click the verify button.<br />
                         <span className="text-pinkLight">{number}</span></div>
                     <div className="lg:text-xl px-10 mx-auto">
-                        <ReactCodeInput type='text' fields={6} value={code} onChange={(e) => setCode(e)} />
+                        <ReactCodeInput type='number' fields={6} value={code} onChange={(e) => setCode(e)} />
                     </div>
                     <div className="text-sm lg:text-lg xl:text-xl justify-center px-10 my-5">
                         Didn’t receive the code?

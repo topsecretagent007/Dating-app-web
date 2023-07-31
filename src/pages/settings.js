@@ -11,7 +11,6 @@ import InviteModal from "../component/modal/invitemodal";
 import CountryChangeModal from "../component/modal/ChangCountry";
 import LogoutModal from "../component/modal/logoutmodal";
 import DeleteModal from "../component/modal/deletemodal";
-import ContactModal from "../component/modal/contactmodal";
 import AddPartnerModal from "../component/modal/addpartnermodal";
 import PhoneVerification from "../component/modal/phoneverification";
 import SettingShow from "../component/combox/settingshow";
@@ -38,7 +37,6 @@ export default function SettingsPage() {
     const [inviteModal, setInviteModal] = useState(false);
     const [logoutModal, setLogoutModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
-    const [contactModal, setContactModal] = useState(false);
     const [addPartnerModal, setAddPartnerModal] = useState(false);
     const [phoneVerification, setPhoneVerification] = useState(false);
     const [notificationModal, setNotificationModal] = useState(false);
@@ -66,11 +64,13 @@ export default function SettingsPage() {
     const [cNotification, setCNotification] = useState(null);
     const [lNotification, setLNotification] = useState(null);
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
 
     const modalClose = () => {
         setLogoutModal(false);
         setDeleteModal(false);
-        setContactModal(false);
     }
 
     const SettingSave = async () => {
@@ -172,7 +172,7 @@ export default function SettingsPage() {
     }
 
     const getUserInfo = async () => {
-        setLoading(true);
+        setLoading(true)
         const docSnap = await getDoc(doc(db, "Users", user.uid));
         if (docSnap.exists()) {
             const userData = docSnap.data();
@@ -185,8 +185,8 @@ export default function SettingsPage() {
             setLastAge(userData.age_range?.max);
             setPhoneNumber(userData.phoneNumber);
             setCurrentMiles(userData.miles);
-            setPointLatitude(userData.point?.geopoint._lat);
-            setPointLongitude(userData.point?.geopoint._long);
+            setPointLatitude(userData.currentPoint?.geopoint._lat);
+            setPointLongitude(userData.currentPoint?.geopoint._long);
             if (userData.miles) {
                 setDistance(userData.maximum_distance * 4 / 2.5);
             } else {
@@ -227,15 +227,12 @@ export default function SettingsPage() {
                 setInviteModal(false);
                 setLogoutModal(false);
                 setDeleteModal(false);
-                setContactModal(false);
                 setAddPartnerModal(false);
                 setLocationModal(false);
                 setPhoneVerification(false);
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -258,7 +255,7 @@ export default function SettingsPage() {
                                 <div className="w-full flex">
                                     <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full px-3 py-3 border-b-[0.1px] border-b-black/10 items-center">
                                         <img src={partnerData.pendingAcc[0]?.imageUrl} alt="avatar" className="w-12 h-12 my-auto object-cover rounded-full" />
-                                        <div className="w-full block text-[#888888] text-start items-center text-base justify-between md:flex">
+                                        <div className="w-full block text-[#888888] text-start items-center text-base justify-between sm:flex">
                                             <div className="w-36 md:w-44  truncate font-bold">{partnerData.pendingAcc[0]?.userName} (pending)</div>
                                             <button onClick={() => deletePartner(partnerData?.pendingAcc[0]?.reqUid)} className="md:px-3 md:py-2 px-2 py-2 truncate rounded-2xl bg-pinkLight text-white text-base xl:text-lg cursor-pointer ">Cancel</button>
                                         </div>
@@ -272,7 +269,7 @@ export default function SettingsPage() {
                                 <div className="w-full flex">
                                     <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full px-3 py-3 border-b-[0.1px] border-b-black/10 items-center">
                                         <img src={partnerData.pendingReq[0]?.imageUrl} alt="avatar" className="w-12 h-12 my-auto object-cover rounded-full" />
-                                        <div className="w-full block text-[#888888] text-start items-center text-base justify-between md:flex">
+                                        <div className="w-full block text-[#888888] text-start items-center text-base justify-between sm:flex">
                                             <div className="w-36 md:w-44  truncate font-bold">{partnerData.pendingReq[0]?.userName} (Requested)</div>
                                             <div className="justify-center gap-2 flex">
                                                 <div onClick={() => addPartner(partnerData.pendingReq[0])} className="p-2 rounded-full bg-green-500 text-black text-lg xl:text-xl cursor-pointer "><AiOutlinePlus /></div>
@@ -286,12 +283,12 @@ export default function SettingsPage() {
                     </>
                     :
                     <>
-                        <div className="w-full flex">
+                        <div className="w-full flex ">
                             <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full px-3 py-3 border-b-[0.1px] border-b-black/10 items-center">
                                 <img src={partnerData?.partner?.partnerImage} alt="avatar" className="w-12 h-12 my-auto object-cover rounded-full" />
-                                <div className="w-full block text-[#888888] text-start items-center text-base justify-between md:flex">
+                                <div className="w-full block text-[#888888] text-start items-center text-base justify-between msm:flex">
                                     <div className="w-36 md:w-44  truncate font-bold">{partnerData?.partner?.partnerName}</div>
-                                    <button onClick={() => deletePartner(partnerData?.partner?.partnerId)} className="md:px-3 md:py-2 px-2 py-2 truncate rounded-2xl bg-pinkLight text-white text-base xl:text-lg cursor-pointer ">Cancel</button>
+                                    <button onClick={() => deletePartner(partnerData?.partner?.partnerId)} className="px-4 py-1 truncate rounded-2xl bg-pinkLight text-white text-base xl:text-lg cursor-pointer ">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -306,8 +303,8 @@ export default function SettingsPage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-14" >
-                <div className="w-[300px] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 xl:px-20 mx-auto  xl:flex gap-12">
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-[calc(100vh-154px)] pt-2 pb-32 md:py-14" >
+                <div className="w-[96%] md:w-[600px] xl:w-[1300px] 2xl:w-[2250px] px-5 xl:px-20 mx-auto  xl:flex gap-12">
                     <div className="w-full xl:w-2/3">
                         <div className="w-full  xl:flex gap-5">
                             <div className="w-full xl:w-1/2 rounded-xl bg-white border-2 border-black/5 mb-5">
@@ -315,7 +312,7 @@ export default function SettingsPage() {
                                     <div className="px-5 text-[#5a5a5a]">Account Settings</div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5 ">
-                                    <div className="w-full justify-between flex pl-5">
+                                    <div className="w-full items-center justify-between flex pl-5">
                                         <div className="justify-start w-full">Verification Status</div>
                                         {
                                             !userVerified ?
@@ -329,7 +326,7 @@ export default function SettingsPage() {
                                     </div>
                                 </div>
                                 <div className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center border-b-2 border-b-black/5">
-                                    <div className="w-full justify-between flex pl-5">
+                                    <div className="w-full items-center justify-between flex pl-5">
                                         <div className="justify-start w-full">Verification Profile</div>
                                         <div className="justify-end text-green-600 cursor-pointer">Verified</div>
                                     </div>
@@ -338,13 +335,13 @@ export default function SettingsPage() {
                                     </div>
                                 </div>
                                 <div onClick={() => setPhoneVerification(!phoneVerification)} className="text-sm lg:text-lg gap-6 py-2 xl:texl-xl justify-between text-start flex items-center">
-                                    <div className="w-full justify-between md:flex pl-5">
+                                    <div className="w-full items-center justify-between flex pl-5">
                                         <div className="justify-start w-full">Phone Number</div>
                                         {
-                                            phoneNumber === "" ?
-                                                <div className="justify-end md:text-end w-full cursor-pointer text-red-600">Unverified</div>
+                                            phoneNumber == "" || phoneNumber == undefined ?
+                                                <div className="justify-end cursor-pointer text-red-600">Unverified</div>
                                                 :
-                                                <div className="justify-end md:text-end w-full cursor-pointer text-green-600">verified</div>
+                                                <div className="justify-end cursor-pointer text-green-600">Verified</div>
                                         }
                                     </div>
                                     <div className="justify-end pr-5">
@@ -357,7 +354,6 @@ export default function SettingsPage() {
                                     <div className="px-5 text-[#5a5a5a]">Partner</div>
                                 </div>
                                 {listItems}
-
                                 <div className="text-sm lg:text-lg gap-6 py-2 px-10 xl:texl-xl justify-between text-start flex items-center">
                                     {
                                         listItems.type === "div" ?
@@ -380,9 +376,9 @@ export default function SettingsPage() {
                                     <div className="px-5 text-[#5a5a5a]">Account Settings</div>
                                 </div>
                                 <div className="text-sm gap-6 py-2 lg:texl-lg justify-between text-start flex items-center border-b-2 border-b-black/5 cursor-pointer">
-                                    <div onClick={() => setLocationModal(true)} className="w-full justify-between md:flex pl-5">
-                                        <div className="justify-start w-2/5">Current location</div>
-                                        <div className="justify-end md:text-end w-full text-blue-500 font-bold">{address} {countryID} {countryName}</div>
+                                    <div onClick={() => setLocationModal(true)} className="w-full justify-between msm:flex pl-5">
+                                        <div className="justify-start w-3/5">Current location</div>
+                                        <div className="justify-end msm:text-end w-full text-blue-500 font-bold">{address} {countryID} {countryName}</div>
                                     </div>
                                     <div className="justify-end pr-5">
                                         <GoChevronRight />
@@ -392,7 +388,7 @@ export default function SettingsPage() {
                                     <GoolgleMap lat={pointLatitude} long={pointLongitude} />
                                 </div>
                             </div>
-                            <div className="w-full xl:w-1/2 rounded-xl bg-white border-2 border-black/5">
+                            <div className="w-full mt-5 md:mt-0 xl:w-1/2 rounded-xl bg-white border-2 border-black/5">
                                 <div className="text-lg lg:text-xl xl:text-2xl py-4 text-start font-bold border-b-2 border-b-black/5">
                                     <div className="px-5 text-[#5a5a5a]">Search settings</div>
                                 </div>
@@ -453,7 +449,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         </button>
-                        <button onClick={() => (setContactModal(!contactModal))} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
+                        <button onClick={() => window.location.href = 'https://unjabbed.app/contact-us/'} className="w-full bg-white xl:text-2xl border-[0.5px] border-black/10  text-black rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                             <div className="w-48 xl:w-64 items-center flex">
                                 <div className="w-1/6">
                                     <AiOutlineMail />
@@ -478,8 +474,8 @@ export default function SettingsPage() {
                 {
                     notificationModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                        <div className="w-full h-screen bg-cover flex px-2 md:px-8  justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-5/6 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                                 <NotificationModal mNtificationSetting={mNotification} cNtificationSetting={cNotification} lNtificationSetting={lNotification} closeModal={() => (getUserInfo(), setNotificationModal(false))} />
                             </div>
                         </div >
@@ -488,8 +484,8 @@ export default function SettingsPage() {
                 {
                     inviteModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                        <div className="w-full h-screen bg-cover flex px-2 md:px-8  justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-5/6 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                                 <InviteModal />
                             </div>
                         </div >
@@ -498,8 +494,8 @@ export default function SettingsPage() {
                 {
                     logoutModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                        <div className="w-full h-screen bg-cover flex px-2 md:px-8 py-20 justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-5/6 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                                 <LogoutModal closeModal={() => modalClose()} />
                             </div>
                         </div >
@@ -508,19 +504,9 @@ export default function SettingsPage() {
                 {
                     deleteModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                        <div className="w-full h-screen bg-cover flex px-2 md:px-8 py-20 justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-5/6 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
                                 <DeleteModal closeModal={() => modalClose()} />
-                            </div>
-                        </div >
-                    </div>
-                }
-                {
-                    contactModal &&
-                    <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-8 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
-                                <ContactModal closeModal={() => setContactModal(false)} />
                             </div>
                         </div >
                     </div>
@@ -528,9 +514,9 @@ export default function SettingsPage() {
                 {
                     locationModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-8 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
-                                <CountryChangeModal onChangeLat={(e) => setPointLatitude(e)} onChangeLong={(e) => setPointLongitude(e)} closeModal={() => setLocationModal(false)} />
+                        <div className="w-full h-screen bg-cover flex md:px-8 md:py-20 justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-full bg-white md:rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20 h-screen md:h-full overflow-y-auto md:overflow-y-visible">
+                                <CountryChangeModal onChangeLat={(e) => setPointLatitude(e)} onChangeLong={(e) => setPointLongitude(e)} closeModal={() => setLocationModal(false)} onChangeAddress={(e) => setAddress(e)} onChangeCountry={(e) => setCountryName(e)} onChangeCountryId={(e) => setCountryID(e)} />
                             </div>
                         </div >
                     </div>
@@ -538,8 +524,8 @@ export default function SettingsPage() {
                 {
                     addPartnerModal &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                        <div className="w-full h-screen bg-cover flex md:px-8 py-20 justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-full bg-white md:rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20 h-screen md:h-full overflow-y-auto md:overflow-y-visible">
                                 <AddPartnerModal matchesUser={matches} myImage={userImage} myName={userName} onPartnerAdd={() => getUserInfo()} closeModal={() => (setAddPartnerModal(false))} />
                             </div>
                         </div >
@@ -548,8 +534,8 @@ export default function SettingsPage() {
                 {
                     phoneVerification &&
                     <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                        <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                            <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-10">
+                        <div className="w-full h-screen bg-cover flex md:px-8 py-20 justify-center items-center bg-black/90" >
+                            <div ref={menuDropdown} className="w-full bg-white md:rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20 h-screen md:h-full overflow-y-auto md:overflow-y-visible">
                                 <PhoneVerification closeModal={() => setPhoneVerification(false)} />
                             </div>
                         </div >

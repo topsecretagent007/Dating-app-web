@@ -19,6 +19,10 @@ export default function ProfileDescription() {
     const menuDropdown = useRef(null);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
+
     const updataProfileData = async () => {
         setLoading(true);
         const { about: _, ...temp } = originalEditInfo;
@@ -34,9 +38,9 @@ export default function ProfileDescription() {
                 maximum_distance: 400,
                 miles: false,
                 verified: 0,
-                matchesNotification : true,
-                likesNotification : true,
-                chatNotification : true
+                matchesNotification: true,
+                likesNotification: true,
+                chatNotification: true
             });
             await setDoc(doc(db, "Relationship", user.uid), {
                 isRelationship: false,
@@ -49,7 +53,7 @@ export default function ProfileDescription() {
                 userId: user.uid
             });
             setLoading(false);
-            navigate("/");
+            navigate("/profile");
         } catch (err) {
             setLoading(false);
             setInputText(true);
@@ -106,7 +110,7 @@ export default function ProfileDescription() {
                         <FiArrowLeft className="text-pinkLight text-xl lg:text-2xl xl:text-4xl my-3" />
                     </Link>
                 </div>
-                <div className="w-full">
+                <div className="w-full pr-4 md:pr-0">
                     <div className="w-full p-8 items-center">
                         <img src={Logo} alt="Logo" className="mx-auto" />
                     </div>
@@ -142,7 +146,7 @@ export default function ProfileDescription() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                        <div ref={menuDropdown} className="w-5/6 md:w-3/5 bg-white rounded-xl px-3 relative  py-12">
                             <AlertModal text="Please tell me about yourself." onCloseModal={() => setAlertModal(false)} />
                         </div>
                     </div >

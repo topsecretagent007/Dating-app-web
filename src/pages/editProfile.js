@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { AiOutlineDelete, AiOutlinePlus, AiFillEye } from 'react-icons/ai';
-import { useNavigate, useLocation } from "react-router-dom";
-import { FiImage, FiCamera } from "react-icons/fi"
+import { AiOutlineDelete, AiOutlinePlus, AiFillEye, AiFillCamera } from 'react-icons/ai';
+import { useNavigate } from "react-router-dom";
+import { FiImage } from "react-icons/fi"
 import ModelLogo from "../assets/Modal-Logo.png"
 import ImageUploading from 'react-images-uploading';
 import Dropdown from "../component/combox/dropdown";
@@ -47,10 +47,14 @@ export default function EditProfilePage() {
     const [cameraModal, setCameraModal] = useState(false);
     const [imgSaveErr, setImgSaveErr] = useState(false);
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
+
     const maxNumber = 6;
     const numbers = [1, 2, 3, 4, 5, 6];
     const listItems = numbers.map((numbers) =>
-        <div key={numbers} className="w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
+        <div key={numbers} className="w-[100px] h-[100px] lg:w-[160px] lg:h-[160px] mx-auto rounded-xl bg-[#888888]"></div>);
 
     const removeImage = async () => {
         setImageSave(false);
@@ -166,12 +170,12 @@ export default function EditProfilePage() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen py-12">
-                <div className="w-[340px] md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] px-5 mx-auto  xl:flex gap-12">
-                    <div className="w-full xl:px-10 2xl:px-40 pb-20">
+            <div className="w-full h-full bg-cover flex bg-[#FFFBFE] justify-center min-h-screen pt-2 pb-12 md:py-12 max-w-screen">
+                <div className="w-full md:w-[640px] xl:w-[1250px] 2xl:w-[1790px] md:px-5 mx-auto justify-center xl:flex gap-12">
+                    <div className="w-full justify-center xl:px-10 2xl:px-40 pb-20">
                         <div className="w-full lg:flex lg:justify-between items-center">
-                            <div className="text-xl xl:text-2xl font-bold text-center lg:text-start text-[#5A5A5A] ">Edit Profile</div>
-                            <div className="px-8 md:px-44 lg:px-0">
+                            <div className="text-xl xl:text-2xl font-bold text-center lg:text-start text-[#5A5A5A] py-2">Edit Profile</div>
+                            <div className="px-12 sm:px-32 md:px-44 lg:px-0">
                                 <button onClick={() => navigate("/profilepreview")} className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mb-5 justify-center gap-4 items-center flex hover:bg-pinkLight hover:text-white">
                                     <div className="w-40 lg:px-3 xl:w-60 items-center flex">
                                         <div className="w-1/6">
@@ -184,7 +188,7 @@ export default function EditProfilePage() {
                                 </button>
                             </div>
                         </div>
-                        <div className="xl:flex gap-20">
+                        <div className="xl:flex xl:gap-20">
                             <div className="PhotoAddMore xl:w-1/2">
                                 <ImageUploading
                                     multiple
@@ -201,22 +205,21 @@ export default function EditProfilePage() {
                                         dragProps,
                                     }) => (
                                         <div className="upload__image-wrapper">
-                                            <div className="w-[256px] h-[175px] lg:w-[512px] lg:h-[344px]  mx-auto p-2 rounded-xl gap-2 grid grid-cols-3">
+                                            <div className="w-[336px] h-[215px] lg:w-[512px] lg:h-[344px]  mx-auto p-2 rounded-xl gap-2 grid grid-cols-3">
                                                 <div className="absolute z-1 justify-center gap-2 grid grid-cols-3">
                                                     {listItems}
                                                 </div>
                                                 {imageList.map((image, index) => (
-                                                    <div key={index} className="image-item">
-                                                        <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-2 lg:ml-11 p-1 text-sm lg:text-lg rounded-full  '
+                                                    <div key={index} className="image-item -ml-1">
+                                                        <button className='absolute z-10 text-[#888888] border-[#888888] border-full border-2 mt-1 ml-4 lg:ml-11 p-1 text-sm lg:text-lg rounded-full'
                                                             onClick={() => {
                                                                 if (imageList.length == 1) { setImgSaveErr(true) } else { onImageRemove(index); setImageSave(false) }
                                                             }}
                                                         >
                                                             <AiOutlineDelete />
                                                         </button>
-
                                                         <img src={image['url']}
-                                                            className="absolute z-5 w-[75px] h-[75px] lg:w-[160px] lg:h-[160px] mx-auto object-cover rounded-xl" />
+                                                            className="relative z-5 w-[100px] h-[100px] lg:w-[160px] lg:h-[160px] mx-auto object-cover rounded-xl" />
                                                     </div>
                                                 ))}
                                             </div>
@@ -227,30 +230,35 @@ export default function EditProfilePage() {
                                                             <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                                                                 <img src={ModelLogo} alt="ModelLogo" />
                                                             </h2>
-                                                            <p className="text-lg lg:text-xl xl:text-3xl font-bold my-3 text-pinkLight">Add Photos</p>
-                                                            <span className="text-sm xl:text-lg 2xl:text-xl my-3 lg:leading-relaxed">
+                                                            <p className="text-xl lg:text-2xl xl:text-3xl font-bold my-3 text-pinkLight">Add Photos</p>
+                                                            <span className="text-sm md:text-base lg:text-lg 2xl:text-xl my-3 lg:leading-relaxed">
                                                                 Select source
                                                             </span>
-                                                            <div className="justify-center mt-[-30px] lg:mt-[-70px] ">
-                                                                <div className="justify-center flex mx-auto gap-48 lg:gap-80">
-                                                                    <button onClick={() => (setCameraModal(true), setUploadModal(!uploadModal))} className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
-                                                                    >
-                                                                        <FiCamera />
-                                                                    </button>
-                                                                    <button className="justify-start text-2xl p-2 lg:text-5xl lg:p-5 rounded-full bg-white text-pinkLight border-8 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
-                                                                        style={isDragging ? { color: 'red' } : undefined}
-                                                                        onClick={onImageUpload}
-                                                                        {...dragProps}
-                                                                    >
-                                                                        <FiImage />
-                                                                    </button>
+                                                            <div className="justify-center">
+                                                                <div className="justify-center md:flex w-full gap-3 md:gap-14 lg:gap-36 cursor-pointer">
+                                                                    <div onClick={() => (setCameraModal(true), setUploadModal(!uploadModal))} className="flex py-3 justify-center items-center text-pinkLight gap-2 cursor-pointer">
+                                                                        <button className="justify-start text-xl lg:text-4xl p-2 rounded-full bg-white  border-4 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
+                                                                        >
+                                                                            <AiFillCamera />
+                                                                        </button>
+                                                                        <div className="text-xl lg:text-2xl">Camera</div>
+                                                                    </div>
+                                                                    <div onClick={onImageUpload} className="flex py-3 justify-center items-center text-pinkLight gap-2 cursor-pointer">
+                                                                        <button className="justify-start text-xl lg:text-4xl p-2  rounded-full bg-white text-pinkLight border-4 border-pinkLight/70 hover:bg-pinkLight hover:text-white hover:border-white"
+                                                                            style={isDragging ? { color: 'red' } : undefined}
+                                                                            {...dragProps}
+                                                                        >
+                                                                            <FiImage />
+                                                                        </button>
+                                                                        <div className="text-xl lg:text-2xl">Gallery</div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div >
                                                 </div>
                                             }
-                                            <div className="px-8 md:px-44 lg:px-20">
+                                            <div className="px-12 sm:px-32 md:px-44 lg:px-20">
                                                 <button className="w-full bg-white xl:text-2xl text-pinkLight border-2 border-pinkLight rounded-xl py-2 mt-10 lg:mt-16 justify-center gap-2 items-center flex hover:bg-pinkLight hover:text-white"
                                                     onClick={() => setUploadModal(!uploadModal)}>
                                                     <AiOutlinePlus />Add Media
@@ -260,7 +268,7 @@ export default function EditProfilePage() {
                                     )}
                                 </ImageUploading>
                                 <div className="w-full items-center">
-                                    <div className="text-lg xl:text-2xl font-bold text-center lg:py-8 text-[#5A5A5A]">Interest</div>
+                                    <div className="text-lg xl:text-2xl font-bold text-center lg:py-8 text-[#5A5A5A] py-2">Interest</div>
                                     <AddInterested data={interests} onAddInterest={
                                         value => addInterest(value)
                                     }
@@ -270,9 +278,9 @@ export default function EditProfilePage() {
                                     />
                                 </div>
                             </div>
-                            <div className="w-full xl:w-1/2">
+                            <div className="w-full justify-center md:px-0 xl:w-1/2">
                                 <div className="mb-5">
-                                    <div className="text-xl xl:text-2xl lg:text-start">
+                                    <div className="text-xl xl:text-2xl lg:text-start px-10 sm:px-20">
                                         <div className="mb-5 font-bold text-[#5A5A5A]">About</div>
                                         <div className="text-sm w-full lg:w-3/4 mx-auto md:text-base lg:text-lg 2xl:text-xl mb-8 leading-relaxed">
                                             <textarea
@@ -288,7 +296,7 @@ export default function EditProfilePage() {
                                             </textarea>
                                         </div>
                                     </div>
-                                    <div className="grid md:grid-cols-2 md:justify-between gap-5 pb-16">
+                                    <div className="grid md:grid-cols-2 md:justify-between md:gap-5 pb-16 justify-center md:px-20">
                                         <Dropdown text="I am a " value={userSex} items={sexData} onHandleChange={e => (setUserSex(e[0]), setShowDialog(true))} />
                                         <Dropdown text="My sexual orientation " value={userOri} items={oriData} onHandleChange={e => (setUserOri(e[0]), setShowDialog(true))} />
                                         <Dropdown text="My Status is " value={userStatus} items={statusData} onHandleChange={e => (setUserStatus(e[0]), setShowDialog(true))} />
@@ -305,7 +313,7 @@ export default function EditProfilePage() {
                 alertModal &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
                     <div className="w-full h-screen bg-cover flex px-8  justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                        <div ref={menuDropdown} className="w-5/6 md:w-3/5 bg-white rounded-xl px-3 relative  py-12">
                             {
                                 editModal ?
                                     <AlertModal text="Please tell me about yourself." onCloseModal={() => setAlertModal(false)} />
@@ -325,7 +333,7 @@ export default function EditProfilePage() {
                 imgSaveErr &&
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                        <div ref={menuDropdown} className="w-5/6 md:w-3/5 bg-white rounded-xl px-3 relative  py-12">
                             <AlertModal text="This image can't be deleted. Your profile must contain at least one image." onCloseModal={() => setImgSaveErr(false)} />
                         </div>
                     </div >
@@ -334,8 +342,8 @@ export default function EditProfilePage() {
             {
                 imageSave &&
                 <div className={`fixed z-50 w-full h-full min-h-screen top-0 `}>
-                    <div className="w-full h-screen bg-cover flex px-8 py-12 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-64 bg-white rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20">
+                    <div className="w-full h-screen bg-cover flex md:px-8 md:py-12 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-full bg-white md:rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20 h-screen md:h-full overflow-y-auto md:overflow-y-visible">
                             <ImageCropper
                                 imageToCrop={images[images.length - 1]["url"]}
                                 onImageCropped={(image) => setCurrentCroppedImage(image)}
@@ -355,7 +363,7 @@ export default function EditProfilePage() {
                 cameraModal &&
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                        <div ref={menuDropdown} className="w-full bg-white md:rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20 h-screen md:h-full overflow-y-auto md:overflow-y-visible">
                             <WebcamImage onSaveImage={(img) => cameraOk(img)} onCloseModal={() => setCameraModal(false)} />
                         </div>
                     </div >

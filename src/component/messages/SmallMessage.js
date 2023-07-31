@@ -5,7 +5,6 @@ import { db } from "../../firebase";
 import { doc, getDoc, getDocs, collection, addDoc, onSnapshot } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 
-
 export default function Messages({ currentUser }) {
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
@@ -60,8 +59,6 @@ export default function Messages({ currentUser }) {
         </div>
     );
 
-
-
     const sendMessage = async () => {
         if (messageText === "") return;
         await addDoc(chats, {
@@ -74,9 +71,7 @@ export default function Messages({ currentUser }) {
             type: "Msg"
         });
         setMessageText("");
-
     }
-
 
     useEffect(() => {
         const goToGetAvatar = async () => {
@@ -127,8 +122,6 @@ export default function Messages({ currentUser }) {
             setChatMessages(messages);
             setChats(messageCollection);
             setLoading(false);
-
-
         };
         if (currentUser && user.uid) {
             goToGetAvatar();
@@ -162,8 +155,6 @@ export default function Messages({ currentUser }) {
             });
         }
     }, [chats]);
-
-
 
     return (
         <>
