@@ -41,7 +41,7 @@ export default function DropDown({ text, value, items, onHandleChange, multiple 
         <div>
             <div className="text-lg xl:text-xl w-full 2xl:text-3xl text-start ">
                 <FormControl variant="standard" className='w-full' sx={{ my: 2 }}>
-                    <div className='absolute z-50 left-1 md:left-5 text-base '>{text}</div>
+                    <div className='absolute z-8 left-1 md:left-5 text-base '>{text}</div>
                     <Select
                         labelId="demo-multiple-checkbox-label"
                         id="demo-multiple-checkbox"
@@ -69,7 +69,7 @@ export default function DropDown({ text, value, items, onHandleChange, multiple 
                 saveErr &&
                 <div className={`fixed z-[999999] top-0 left-0 w-full h-full min-h-screen `}>
                     <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div className="w-3/5 bg-white rounded-xl px-3 relative text-center py-12">
+                        <div className="w-5/6 md:w-3/5 bg-white rounded-xl px-3 relative text-center py-12">
                             <AlertModal text="You must have at least one preference." onCloseModal={() => setSaveErr(false)} />
                         </div>
                     </div >

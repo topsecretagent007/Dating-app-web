@@ -27,6 +27,10 @@ export default function Verify() {
     const [cameraModal, setCameraModal] = useState(false);
     const maxNumber = 100;
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
+
     const cameraOk = async (capturedImage) => {
         const file = new File([capturedImage], "camera-image.jpg", { type: "image/jpeg" });
         setImages([{ url: capturedImage, file: file }]);
@@ -67,7 +71,6 @@ export default function Verify() {
         setVeryficationCode(false);
     }, [])
 
-
     useEffect(() => {
         function handleScroll() {
             const currentScrollPos = window.pageYOffset;
@@ -86,9 +89,7 @@ export default function Verify() {
                 setCameraModal(false)
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -115,7 +116,7 @@ export default function Verify() {
     return (
         <div>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover justify-center px-[10%] py-14 bg-[#FFFBFE]" >
+            <div className="w-full h-full min-h-screen bg-cover justify-center px-[10%] pt-2 pb-32 md:py-14  bg-[#FFFBFE]" >
                 <div className="w-full xl:flex">
                     <div className="w-full xl:w-2/5">
                         <img src={SimpleImg} alt="FindImage" className="w-60 sm:w-[500px] lg:w-[700px] xl:w-full mx-auto" />
@@ -126,7 +127,6 @@ export default function Verify() {
                         {verifycationCode ?
                             <div>
                                 <GenerateRandomNumber generate={setVerifyCode} />
-
                                 <div className="flex justify-center bg-[#FFFBFE]">
                                     <div className="PhotoUpload">
                                         <ImageUploading
@@ -142,7 +142,6 @@ export default function Verify() {
                                                 dragProps,
                                             }) => (
                                                 // write your building UI
-
                                                 <div className="upload__image-wrapper">
                                                     <div className="w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[url('./assets/verifiedImage.png')] mx-auto rounded-3xl bg-cover">
                                                         {imageList.map((image, index) => (
@@ -172,7 +171,6 @@ export default function Verify() {
                                         </ImageUploading>
                                     </div>
                                 </div>
-
                                 <div onClick={() => uploadPhote()} className="justify-between pt-8 md:px-10 xl:pt-10 2xl:pt-40 2xl:px-40">
                                     <button className="w-full justify-center py-3 xl:px-10 flex rounded-xl text-white bg-pinkLight items-center text-sm md:text-xl lg:text-2xl 2xl:text-3xl">
                                         Upload Photo
@@ -200,7 +198,7 @@ export default function Verify() {
                         {alretUploadPhoto &&
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                                    <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                                    <div ref={menuDropdown} className="w-5/6 md:w-3/5 bg-white rounded-xl px-3 relative  py-12">
                                         <AlertModal text="Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile." onCloseModal={() => setAlretUploadPhoto(false)} />
                                     </div>
                                 </div >
@@ -210,7 +208,7 @@ export default function Verify() {
                             alertModal &&
                             <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
                                 <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                                    <div ref={menuDropdown} className="w-3/5 bg-white rounded-xl px-3 relative  py-12">
+                                    <div ref={menuDropdown} className="w-5/6 md:w-3/5 bg-white rounded-xl px-3 relative  py-12">
                                         <AlertModal text="Please capture image or select image from your computer." onCloseModal={() => setAlertModal(false)} />
                                     </div>
                                 </div >
@@ -227,8 +225,8 @@ export default function Verify() {
             {
                 cameraModal &&
                 <div className={`fixed z-50 top-0 left-0 w-full h-full min-h-screen `}>
-                    <div className="w-full h-screen bg-cover flex px-8 py-20 justify-center items-center bg-black/90" >
-                        <div ref={menuDropdown} className="w-2/5 bg-white rounded-xl px-3 relative  py-12">
+                    <div className="w-full h-screen bg-cover flex md:px-8 md:py-20 justify-center items-center bg-black/90" >
+                        <div ref={menuDropdown} className="w-full bg-white md:rounded-xl px-2 lg:px-16 xl:px-20 2xl:px-40 md:w-1/2 relative 2xl:w-[950px] py-12 lg:py-20 h-screen md:h-full overflow-y-auto md:overflow-y-visible">
                             <WebcamImage onSaveImage={(img) => cameraOk(img)} onCloseModal={() => setCameraModal(false)} />
                         </div>
                     </div >

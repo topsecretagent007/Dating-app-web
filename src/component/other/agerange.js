@@ -35,14 +35,12 @@ export default function DistanceSlider({ first, last, onFirstAge, onLastAge }) {
             setFirstAge(event.target.value);
             onFirstAge(event.target.value);
         }
-
     };
 
     const lastAgeChange = (event) => {
         if (event.target.value < firstAge) {
             setLastAge(firstAge + 1);
             onLastAge(firstAge + 1);
-
         } else {
             setLastAge(event.target.value);
             onLastAge(event.target.value);
@@ -115,9 +113,9 @@ export default function DistanceSlider({ first, last, onFirstAge, onLastAge }) {
     }, [first, last])
 
     return (
-        <div className="justify-start grid md:grid-cols-2 gap-4 items-center py-3">
+        <div className="justify-start grid msm:grid-cols-2 gap-4 items-center py-3">
             <div className="text-sm flex items-center">
-                <div className="text-start py-2 absolute z-10 pl-4 font-semibold">
+                <div className="text-start py-2 absolute z-8 pl-4 font-semibold">
                     From
                 </div>
                 <FormControl sx={{ m: 1, minWidth: 120 }} className="bg-white text-end" >
@@ -134,7 +132,7 @@ export default function DistanceSlider({ first, last, onFirstAge, onLastAge }) {
                 </FormControl>
             </div>
             <div className="text-sm flex items-center">
-                <div className="text-start py-2 absolute z-10 pl-4 font-semibold">
+                <div className="text-start py-2 absolute z-8 pl-4 font-semibold">
                     To
                 </div>
                 <FormControl sx={{ m: 1, minWidth: 120, }} className="bg-white text-end" >

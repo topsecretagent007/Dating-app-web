@@ -6,7 +6,6 @@ import { doc, getDoc, getDocs, collection } from "firebase/firestore";
 import LoadingModal from "../component/loadingPage";
 import Header from "../component/header/index";
 import Footer from "../component/footer/index";
-
 import UserBrowser from "../component/UserBrowser";
 
 export default function PreviewProfile() {
@@ -16,13 +15,16 @@ export default function PreviewProfile() {
     const [state, setState] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
+
     useEffect(() => {
         const getUserInfo = async () => {
             setLoading(true);
             const docUserMatches = await getDocs(collection(db, "Users", user.uid, "Matches"))
             docUserMatches.forEach((doc) => {
                 if (doc.id === id) setState(true);
-                else setState(false);
             })
             const docSnap = await getDoc(doc(db, "Users", id));
             if (docSnap.exists()) {
@@ -36,6 +38,7 @@ export default function PreviewProfile() {
             setLoading(false);
         }
         if (id) {
+            setState(false);
             getUserInfo();
         }
     }, [id, user])
@@ -44,9 +47,9 @@ export default function PreviewProfile() {
 
         <>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover px-[13%] bg-[#FFFBFE] py-14">
+            <div className="w-full h-full min-h-screen bg-cover md:px-[13%] bg-[#FFFBFE] pb-32 md:py-14">
                 {data &&
-                    <UserBrowser userData={data} matched={state} onRemoveUser />
+                    <UserBrowser userData={data} matched={state} onRemoveUser backBtn={true} />
                 }
                 {
                     loading &&

@@ -5,7 +5,7 @@ export default function SaveAvatar({ onSaveImage, onCloseImage }) {
 
     return (
         <>
-            <h2 className="w-16 lg:w-24 absolute justify-center flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <h2 className="hidden w-16 lg:w-24 absolute justify-center md:flex top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <img src={ModelLogo} alt="ModelLogo" />
             </h2>
             <p className="text-lg lg:text-xl xl:text-3xl font-bold my-3 text-pinkLight">Notification</p>

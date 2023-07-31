@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Search from "../component/other/search";
+import { Swiper, SwiperSlide } from 'swiper/react';
 import PrevUser from "../component/other/prevuser";
 import NextUser from "../component/other/nextuser";
 import Header from "../component/header/index";
@@ -11,6 +11,9 @@ import { doc, getDoc, collection, getDocs, query, where } from 'firebase/firesto
 import UserBrowser from "../component/UserBrowser";
 import { useNavigate } from "react-router-dom";
 import geolocator from 'geolocator';
+import { AiOutlineClose } from "react-icons/ai";
+import { BsHeartFill } from "react-icons/bs";
+import { Navigation, Pagination } from 'swiper/modules';
 
 geolocator.config({
     language: "en",
@@ -26,7 +29,14 @@ export default function FindPage() {
     const [loading, setLoading] = useState(false);
     const [userDistance, setUserDistance] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
-    const [searchUserDistance, setSearchUserDistance] = useState(true)
+    const [searchUserDistance, setSearchUserDistance] = useState(true);
+    const [likeAction, setLikeAction] = useState(null);
+    const [likeId, setLikeId] = useState(null);
+    const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
+
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
 
     const removeUser = (currentPage) => {
         setUserDistance([...userDistance.slice(0, currentPage), ...userDistance.slice(currentPage + 1)]);
@@ -71,7 +81,6 @@ export default function FindPage() {
             docUserReport.forEach((doc) => {
                 reportUserId.push(doc.data().victim_id);
             })
-
             for (let i = 0; i < userData.showGender.length; i++) {
                 if (userData.showGender[i] === "MEN") {
                     userData.showGender[i] = "MAN";
@@ -102,8 +111,8 @@ export default function FindPage() {
                             longitude: parseFloat(userData.point?.geopoint._long)
                         },
                         to: {
-                            latitude: parseFloat(item.location?.latitude),
-                            longitude: parseFloat(item.location?.longitude)
+                            latitude: parseFloat(item.currentPoint?.geopoint._lat),
+                            longitude: parseFloat(item.currentPoint?.geopoint._long)
                         },
                         formula: "HAVERSINE",
                         unitSystem: 1
@@ -118,10 +127,8 @@ export default function FindPage() {
                 }));
 
                 updatedSearchedUsers.sort((a, b) => a.distance - b.distance);
-                const filteredData = updatedSearchedUsers.filter(item => item.distance <= 10000);
-
+                const filteredData = updatedSearchedUsers.filter(item => item.distance <= "10000");
                 const distanceinUser = filteredData.filter(item => item.distance <= userData.maximum_distance);
-
                 if (searchUserDistance == true) {
                     setUserDistance(distanceinUser)
                 } else {
@@ -138,18 +145,16 @@ export default function FindPage() {
 
 
 
-
     return (
         <div>
             <Header />
-            <div className="w-full h-full min-h-screen bg-cover justify-center px-[13%] py-14  bg-[#FFFBFE]" >
+            <div className="w-full h-full min-h-[calc(100vh-154px)] bg-cover justify-center md:px-[13%] pb-36 md:py-14 bg-[#FFFBFE]" >
                 {currentPage > 0 &&
-                    <button type="button" className="fixed top-0 -left-2 md:left-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-prev>
+                    <button type="button" className="hidden md:fixed top-0 -left-2 md:left-0 z-9 md:flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-prev>
                         <PrevUser onPrevUser={() => prevPage()} />
                     </button>
                 }
-                <div>
-                    <Search />
+                <div className="md:block hidden">
                     {userDistance.length > 0 && currentPage < userDistance.length ?
                         <UserBrowser userData={userDistance[currentPage]} matched={false} onRemoveUser={() => removeUser(currentPage)} />
                         :
@@ -161,17 +166,87 @@ export default function FindPage() {
                             <div className="md:flex py-10 justify-center max-w-lg mx-auto">
                                 {
                                     searchUserDistance ?
-                                        <button onClick={() => setSearchUserDistance(false)} className="w-32 justify-center xl:py-3 mx-auto flex rounded-xl text-white bg-pinkLight items-center my-5 gap-2 py-1 lg:py-2 cursor-pointer">Continue</button>
+                                        <button onClick={() => setSearchUserDistance(false)} className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pinkLight items-center my-5 gap-2  cursor-pointer">Continue</button>
                                         :
-                                        <button className="w-32 justify-center xl:py-3 mx-auto flex rounded-xl text-white bg-pink-900 items-center my-5 gap-2 py-1 lg:py-2">Continue</button>
+                                        <button className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pink-900 items-center my-5 gap-2">Continue</button>
                                 }
-                                <button onClick={() => navigate('/settings')} className="w-32 justify-center xl:py-3 mx-auto flex rounded-xl text-white bg-pinkLight items-center my-5 gap-2 py-1 lg:py-2 cursor-pointer">Settings</button>
+                                <button onClick={() => navigate('/settings')} className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pinkLight items-center my-5 gap-2 cursor-pointer">Settings</button>
                             </div>
                         </div>
                     }
                 </div>
+                <div className="md:hidden">
+                    {userDistance.length > 0 && currentPage < userDistance.length ?
+                        <Swiper
+                            navigation={true}
+                            autoplay={{ delay: 5000 }}
+                            modules={[Navigation, Pagination]}
+                            followFinger={true}
+                            touchAngle={"45"}
+                            speed={"100"}
+                            className="userSlider overflow-x-clip flex"
+                            stretch={0}
+                            onSlideChange={(e) => setCurrentSlideIdx(e.activeIndex)}
+                        >
+                            {
+                                userDistance.map((item, index) => {
+                                    return (
+                                        <SwiperSlide key={index}  >
+                                            <UserBrowser userData={(userDistance[index])} matched={false} onRemoveUser={() => removeUser(index)} likeBtn={likeAction} likeUid={likeId} />
+                                        </SwiperSlide>
+                                    )
+                                })
+                            }
+                            <SwiperSlide>
+                                <div className="justify-center py-5 px-2">
+                                    <p className="text-lg xl:text-xl font-bold items-center pt-10 text-[#5A5A5A]">Regrettably, our current user base does not extend further within your specified distance parameters.
+                                        <br />
+                                        <br />
+                                        To explore potential matches beyond your preferred radius, please select the 'Continue' option below. Alternatively, should you wish to alter your geographical search parameters, you may do so by accessing the 'Settings' tab and updating your current location.</p>
+                                    <div className="msm:flex py-10 justify-center max-w-lg mx-auto">
+                                        {
+                                            searchUserDistance ?
+                                                <button onClick={() => setSearchUserDistance(false)} className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pinkLight items-center my-5 gap-2  cursor-pointer">Continue</button>
+                                                :
+                                                <button className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pink-900 items-center my-5 gap-2">Continue</button>
+                                        }
+                                        <button onClick={() => navigate('/settings')} className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pinkLight items-center my-5 gap-2 cursor-pointer">Settings</button>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        </Swiper>
+                        :
+                        <div className="justify-center py-5 px-3">
+                            <p className="text-lg xl:text-xl font-bold items-center pt-10 text-[#5A5A5A]">Regrettably, our current user base does not extend further within your specified distance parameters.
+                                <br />
+                                <br />
+                                To explore potential matches beyond your preferred radius, please select the 'Continue' option below. Alternatively, should you wish to alter your geographical search parameters, you may do so by accessing the 'Settings' tab and updating your current location.</p>
+                            <div className="msm:flex py-10 justify-center max-w-lg mx-auto">
+                                {
+                                    searchUserDistance ?
+                                        <button onClick={() => setSearchUserDistance(false)} className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pinkLight items-center my-5 gap-2  cursor-pointer">Continue</button>
+                                        :
+                                        <button className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pink-900 items-center my-5 gap-2">Continue</button>
+                                }
+                                <button onClick={() => navigate('/settings')} className="w-32 justify-center py-3 mx-auto flex rounded-xl text-white bg-pinkLight items-center my-5 gap-2 cursor-pointer">Settings</button>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+                {
+                    userDistance.length > 0 && currentPage < userDistance.length && currentSlideIdx != userDistance.length &&
+                    <div className="w-screen max-h-max  px-16 justify-between flex fixed bottom-28 md:hidden swiper-style">
+                        <div onClick={() => (setLikeAction(false), setLikeId(userDistance[currentSlideIdx].userId))} className="justify-center w-14 h-14 items-center border-[#888888] border-[0.1px] rounded-full flex cursor-pointer text-red-600 bg-white float-right" >
+                            <AiOutlineClose />
+                        </div>
+                        <div onClick={() => (setLikeAction(true), setLikeId(userDistance[currentSlideIdx].userId))} className="justify-center w-14 h-14 flex rounded-full text-pinkLight border-[#888888] border-[0.1px] bg-white items-center cursor-pointer float-left"  >
+                            <BsHeartFill />
+                        </div>
+                    </div>
+                }
                 {currentPage < userDistance.length &&
-                    <button type="button" className="fixed top-0 -right-2 md:right-0 z-9 flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-next>
+                    <button type="button" className="hidden md:fixed top-0 -right-2 md:right-0 z-9 md:flex items-center justify-center h-full px-3 cursor-pointer group focus:outline-none" data-carousel-next>
                         <NextUser onNextUser={() => nextPage()} />
                     </button>
                 }

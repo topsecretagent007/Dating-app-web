@@ -1,10 +1,9 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
-import React, { useState, useEffect } from 'react';
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import React, { useState } from 'react';
 
 import UserContext from './context/userContext';
-import { AuthContextProvider, UserAuth } from "./context/AuthContext"
-import Home from "./pages/home";
+import { AuthContextProvider } from "./context/AuthContext"
 import FindPage from './pages/find';
 import ProfileSetting from './pages/profile';
 import Notification from './pages/notification';
@@ -31,7 +30,7 @@ import Protected from './component/Protected';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Protected><Home /></Protected>
+    element: <WelcomePage />
   },
   {
     path: "/login",
@@ -74,9 +73,21 @@ const router = createBrowserRouter([
     element: <Protected><FindPage /></Protected>
   },
   {
-    path: "/notification",
+    path: "/notification/matches",
     element: <Protected><Notification /></Protected>
-  },  
+  },
+  {
+    path: "/notification/likes/like",
+    element: <Protected><Notification /></Protected>
+  },
+  {
+    path: "/notification/likes/dislike",
+    element: <Protected><Notification /></Protected>
+  },
+  {
+    path: "/notification/alerts",
+    element: <Protected><Notification /></Protected>
+  },
   {
     path: "/message",
     element: <Protected><Message /></Protected>

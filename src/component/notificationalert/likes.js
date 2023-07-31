@@ -6,7 +6,7 @@ import { getDocs, collection } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
 import { AiFillHeart } from "react-icons/ai";
 
-export default function LikedBy() {
+export default function LikedBy(likeState) {
     const navigate = useNavigate();
     const { user } = UserAuth();
     const [numbers, setNumbers] = useState();
@@ -14,8 +14,6 @@ export default function LikedBy() {
     const [likedTime, setLikedTime] = useState();
     const [likedUserName, setLikedUserName] = useState();
     const [loading, setLoading] = useState(false);
-    const [userLikes, setUserLikes] = useState(true);
-
 
     const Lookingprofile = async (userId) => {
         navigate(`/likedUsers/${userId}`)
@@ -63,7 +61,7 @@ export default function LikedBy() {
 
             const queryUserSnapshot = await getDocs(collection(db, "Users", user.uid, "CheckedUser"));
             queryUserSnapshot.forEach((doc) => {
-                if (matchedUserid.includes(doc.id) || doc.DislikedUser != null) {
+                if (matchedUserid.includes(doc.id) && doc.data().DislikedUser != null || doc.data().DislikedUser != undefined) {
                     return;
                 } else {
                     checkedUserid.push(doc.id)
@@ -84,8 +82,7 @@ export default function LikedBy() {
                     }
                 }
             });
-
-            if (userLikes === true) {
+            if (likeState.likeState) {
                 setNumbers(likedUserid);
                 setLikedUserAvatar(likedUserImage);
                 setLikedTime(likedUserTime);
@@ -98,17 +95,22 @@ export default function LikedBy() {
             }
             setLoading(false);
         }
-        if (user && user.uid) {
+        if (user && likeState) {
             getUserInfo();
         }
-    }, [user, userLikes]);
+    }, [likeState]);
 
     const listItems = numbers && numbers.length > 0 ? numbers.map((numbers, index) =>
-        <div key={index} className="w-full flex cursor-pointer" onClick={() => Lookingprofile(numbers)}>
-            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white items-center border-l-2 gap-5 flex w-full px-5 py-3 border-b-[0.1px] border-b-black/10">
-                <img src={likedUserAvatar[index]} alt="avatar" className="w-12 h-12 ml-2 mr-1 my-auto object-cover rounded-full " />
-                <div className="w-full text-[#888888] text-start pl-1 text-base justify-between pr-3 sm:flex ">
-                    <div className="w-40 sm:w-52 truncate">You liked {likedUserName[index]}</div>
+        <div key={index} className="w-full flex cursor-pointer mb-2" onClick={() => Lookingprofile(numbers)}>
+            <div className="md:hover:border-l-pinkLight md:hover:bg-[#bebebe] md:border-l-white md:border-l-2 gap-5 flex w-full px-5 py-3 cursor-pointer md:border-b-[0.1px] md:border-b-black/10 items-center bg-[#5a5a5a]/10 rounded-lg md:rounded-none md:bg-none">
+                <img src={likedUserAvatar[index]} alt="avatar" className="w-12 h-12 mx-1 my-auto object-cover rounded-full" />
+                <div className="w-full text-block text-start px-1 text-base justify-between sm:flex">
+                    {
+                        likeState.likeState ?
+                            <div className="w-[75%] md:w-48  truncate">You are liked by {likedUserName[index]}</div>
+                            :
+                            <div className="w-[75%] md:w-48  truncate">You liked {likedUserName[index]}</div>
+                    }
                     <div className=" text-sm">{likedTime[index].toDate().toLocaleString()}</div>
                 </div>
             </div>
@@ -120,18 +122,19 @@ export default function LikedBy() {
 
     return (
         <div>
-            <div className="flex py-3 border-b-[0.1px] border-b-black/10 gap-[20%] px-[10%] justify-center" >
-                <button onClick={() => setUserLikes(true)} className={`${userLikes ? "bg-pinkLight text-white border-none" : "text-pinkLight bg-white border-[0.5px]"} md:py-1 xl:py-2 text-base border-pinkLight rounded-lg w-40 hover:bg-pinkLight hover:text-white`}>
+            <div className="flex py-3 gap-[8%] md:gap-[20%] md:px-[10%] justify-center" >
+                <button onClick={() => navigate("/notification/likes/like")} className={`${likeState.likeState ? "bg-pinkLight text-white border-none" : "text-pinkLight bg-white border-[0.5px]"} py-2 text-base border-pinkLight rounded-lg w-full hover:bg-pinkLight hover:text-white`}>
                     <div className="flex items-center gap-2 justify-center">
                         <AiFillHeart />
                         Likes
                     </div>
                 </button>
-                <button onClick={() => setUserLikes(false)} className={`${userLikes ? "text-pinkLight bg-white border-[0.5px]" : "bg-pinkLight text-white border-none"} md:py-1 xl:py-2 text-base  border-pinkLight rounded-lg w-40 hover:bg-pinkLight hover:text-white`}>
+                <button onClick={() => navigate("/notification/likes/dislike")} className={`${likeState.likeState ? "text-pinkLight bg-white border-[0.5px]" : "bg-pinkLight text-white border-none"} py-2 text-base  border-pinkLight rounded-lg w-full hover:bg-pinkLight hover:text-white`}>
                     <div className="flex items-center gap-2 justify-center ">
                         <AiFillHeart />
                         My Likes
-                    </div></button>
+                    </div>
+                </button>
             </div>
             <div>
                 {listItems}

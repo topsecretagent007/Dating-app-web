@@ -56,12 +56,12 @@ export default function Matches() {
     }, [user]);
 
     const listItems = numbers && numbers.length > 0 ? numbers.map((numbers, index) =>
-        <div key={index} className="w-full flex" onClick={() => Lookingprofile(numbers)}>
-            <div className="hover:border-l-pinkLight hover:bg-[#bebebe] border-l-white border-l-2 gap-5 flex w-full px-5 py-3 cursor-pointer border-b-[0.1px] border-b-black/10 items-center">
-                <img src={likedUserAvatar[index]} alt="avatar" className="w-12 h-12 ml-1 mr-2 my-auto object-cover rounded-full" />
-                <div className="w-full text-[#888888] text-start pl-1 text-base justify-between pr-3 sm:flex">
-                    <div className="w-32 md:w-48  truncate">You are matched with {likedUserName[index]}</div>
-                    <div className="">{likedTime[index].toDate().toLocaleString()}</div>
+        <div key={index} className="w-full flex mb-2 md:my-0" onClick={() => Lookingprofile(numbers)}>
+            <div className="md:hover:border-l-pinkLight md:hover:bg-[#bebebe] md:border-l-white md:border-l-2 gap-5 flex w-full px-5 py-3 cursor-pointer md:border-b-[0.1px] md:border-b-black/10 items-center bg-[#5a5a5a]/10 rounded-lg md:rounded-none md:bg-none">
+                <img src={likedUserAvatar[index]} alt="avatar" className="w-12 h-12 mx-1 my-auto object-cover rounded-full" />
+                <div className="w-full text-block text-start px-1 text-base justify-between sm:flex">
+                    <div className="w-[75%] md:w-48  truncate">You are matched with {likedUserName[index]}</div>
+                    <div className="text-sm">{likedTime[index].toDate().toLocaleString()}</div>
                 </div>
             </div>
         </div>

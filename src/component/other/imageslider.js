@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { FiChevronLeft } from "react-icons/fi";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const arrowStyles = {
   position: 'absolute',
@@ -41,6 +43,8 @@ const nextArrow = (onClickHandler, hasNext, label) => {
   </span>
 }
 export default function UserCarousel({ pictures }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const carouselElement = useRef(null);
 
   useEffect(() => {
@@ -53,7 +57,6 @@ export default function UserCarousel({ pictures }) {
     <>
       {
         pictures.length > 0 &&
-
         <Carousel
           ref={carouselElement}
           showArrows={true}
@@ -65,7 +68,11 @@ export default function UserCarousel({ pictures }) {
         >
           {pictures.map((image, index) => (
             <div key={index} style={{ width: '100%' }}>
-              <img src={image.url} alt={`image-${index}`} className="rounded-xl w-full h-full" />
+              {location.pathname.includes("likedUsers") &&
+                <div onClick={() => navigate(-1)} className="text-2xl text-[#5a5a5a] p-1 rounded-lg bg-white absolute z-[9] top-6 left-3 cursor-pointer">
+                  <FiChevronLeft />
+                </div>}
+              <img src={image.url} alt={`image-${index}`} className="md:rounded-xl w-full h-full" />
             </div>
           ))}
         </Carousel>

@@ -12,7 +12,6 @@ export default function DeleteModal({ closeModal }) {
         closeModal();
         await deleteDoc(doc(db, "Users", userId));
         await deleteDoc(doc(db, "Verify", userId));
-        // deleteDoc(doc(db, "chats", userId));
         logOut();
     }
 
@@ -23,7 +22,6 @@ export default function DeleteModal({ closeModal }) {
                 const userData = docSnap.data();
                 setUserId(userData.userId);
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
         }
@@ -50,7 +48,7 @@ export default function DeleteModal({ closeModal }) {
                     <div className="text-sm xl:text-lg font-bold">Cancel</div>
                 </button>
             </div>
-            
+
         </>
     )
 }

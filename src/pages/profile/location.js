@@ -28,6 +28,9 @@ export default function Location() {
     const [address, setAddress] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
 
     const updataLocation = async () => {
         if (userLatitude !== null && userLongitude !== null) {
@@ -58,14 +61,13 @@ export default function Location() {
         }
     }
 
-
     useEffect(() => {
         const goToLocation = async () => {
             setLoading(true);
             var options = {
                 enableHighAccuracy: true,
-                desiredAccuracy: 30,
-                timeout: 1000,
+                desiredAccuracy: 1,
+                timeout: 10000,
                 maximumWait: 10000,
                 maximumAge: 0,
                 addressLookup: true,
@@ -73,25 +75,20 @@ export default function Location() {
                 fallbackToIP: true,
                 staticMap: false
             };
-
             const address = await new Promise((resolve, reject) => {
                 geolocator.locate(options, function (err, location) {
                     if (err) return reject(err);
-                    console.log(location);
                     return resolve(location);
-
                 });
             })
-
-            const encodedGeohash = ngeohash.encode(address.coords.latitude, address.coords.longitude);
+            const encodedGeohash = await ngeohash.encode(address.coords.latitude, address.coords.longitude);
             setUserHash(encodedGeohash);
-
-            setUserLatitude(address.coords?.latitude);
-            setUserLongitude(address.coords?.longitude);
-            setAddress(address.address?.route)
-            setCountry(address.address?.country)
-            setCountryCode(address.address?.countryCode)
-            setLoading(false);
+            await setUserLatitude(address.coords?.latitude);
+            await setUserLongitude(address.coords?.longitude);
+            await setAddress(address.address?.route)
+            await setCountry(address.address?.country)
+            await setCountryCode(address.address?.countryCode)
+            await setLoading(false);
         }
         if (user) {
             goToLocation();

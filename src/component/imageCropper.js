@@ -4,7 +4,6 @@ import ReactCrop, {
     makeAspectCrop
 } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-
 import demoImage from "../assets/findImage.png";
 
 function centerAspectCrop(
@@ -52,7 +51,6 @@ function ImageCropper(props) {
         const scaleX = sourceImage.naturalWidth / sourceImage.width;
         const scaleY = sourceImage.naturalHeight / sourceImage.height;
 
-
         var originWidth = cropConfig.width * scaleX;
         var originHeight = cropConfig.height * scaleY;
         // maximum width/height
@@ -69,8 +67,6 @@ function ImageCropper(props) {
             }
         }
         // set canvas size
-
-
         canvas.width = targetWidth;
         canvas.height = targetHeight;
         const ctx = canvas.getContext('2d');
@@ -105,7 +101,7 @@ function ImageCropper(props) {
     }
 
     return (
-        <div className="max-h-[500px] overflow-y-auto">
+        <div className="max-h-[300px] md:max-h-[500px] overflow-y-auto">
             <ReactCrop
                 crop={crop}
                 onComplete={(crop) => cropImage(crop)}
@@ -120,7 +116,7 @@ function ImageCropper(props) {
 }
 
 ImageCropper.defaultProps = {
-    onImageCropped: () => { console.log("AAAAAAAAAAAAAAAAA") }
+    onImageCropped: () => { console.log("CropImage") }
 }
 
 export default ImageCropper;

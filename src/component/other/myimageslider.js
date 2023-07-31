@@ -3,7 +3,6 @@ import { UserAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import LoadingModal from "../../component/loadingPage";
-
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -77,7 +76,6 @@ export default function MyCarousel() {
                 images.length > 0 &&
                 <Carousel
                     ref={carouselElement}
-
                     showArrows={true}
                     showThumbs={false}
                     axis='vertical'

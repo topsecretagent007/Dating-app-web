@@ -149,10 +149,48 @@ path {
   border-bottom: nome !important;
 }
 
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
+  width: 150px !important;
+}
+
 .locationcolor {
   color: #E50AAC !important
 }
 
 .css-e363es-MuiFormControl-root {
   margin: 0 !important;
+}
+
+.userSlider {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-wrapper {
+  display: flex;
+  object-fit: cover
+}
+
+.swiper-slide {
+  padding: 0 2px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
+
+.swiper-slide .swiper-style {
+  position: fixed !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+  /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+  /* Firefox */
 }

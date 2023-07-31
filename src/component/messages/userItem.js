@@ -23,13 +23,13 @@ export default function UserMessageItem({ chatter, selected }) {
         const getUserChatMsg = async () => {
             setLoading(true);
             let messageCollection;
-            const chatDocs = await getDocs(query(collection(db, "chats"), 
+            const chatDocs = await getDocs(query(collection(db, "chats"),
                 or(
-                    where("docId", "==", user.uid+"-"+chatter.Matches),
-                    where("docId", "==", chatter.Matches+"-"+user.uid)
-                    )
+                    where("docId", "==", user.uid + "-" + chatter.Matches),
+                    where("docId", "==", chatter.Matches + "-" + user.uid)
+                )
             ));
-            const docs = chatDocs.docs.map(data=>data.data());
+            const docs = chatDocs.docs.map(data => data.data());
             messageCollection = collection(
                 db,
                 "chats",
@@ -37,7 +37,7 @@ export default function UserMessageItem({ chatter, selected }) {
                 "messages"
             );
             setMsgCollection(messageCollection);
-            
+
             const lastMessageQuery = query(
                 messageCollection,
                 orderBy("time", "desc"),
@@ -55,8 +55,8 @@ export default function UserMessageItem({ chatter, selected }) {
         }
     }, [chatter]);
 
-    useEffect(()=> {
-        if(msgCollection) {
+    useEffect(() => {
+        if (msgCollection) {
             onSnapshot(msgCollection, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -76,7 +76,7 @@ export default function UserMessageItem({ chatter, selected }) {
     return (
         <div className="w-full flex">
             <div
-                className={`${selected ? "border-l-pinkLight" : "border-l-white"} hover:border-l-pinkLight hover:bg-[#bebebe]  border-l-2 gap-1 flex w-full py-3 cursor-pointer border-b-[0.1px] border-b-black/10 items-center`}
+                className={`${selected ? "border-l-pinkLight" : "border-l-white"} hover:border-l-pinkLight hover:bg-[#bebebe]  border-l-2 gap-1 hidden md:flex w-full py-3 cursor-pointer md:border-b-[0.1px] md:border-b-black/10 items-center`}
             >
                 <img
                     src={chatter.pictureUrl}
@@ -90,7 +90,28 @@ export default function UserMessageItem({ chatter, selected }) {
                             {lastData?.text}
                         </div>
                     </div>
-                    <div className="lg:text-end lg:w-20 text-sm">
+                    <div className="text-end w-20  max-h-10 overflow-hidden text-sm break-words">
+                        {lastData?.time?.toDate().toLocaleString()}
+                    </div>
+                </div>
+            </div>
+
+            <div
+                className={`hover:bg-[#bebebe] bg-[#bebebe]/10 rounded-md gap-1 flex w-full py-3 cursor-pointer md:border-b-[0.1px] md:border-b-black/10 items-center md:hidden`}
+            >
+                <img
+                    src={chatter.pictureUrl}
+                    alt="avatar"
+                    className="w-14 h-14 mx-3 my-auto object-cover rounded-full"
+                />
+                <div className="w-full text-start  justify-between pr-3 items-center flex ">
+                    <div className="">
+                        <div className="w-32 truncate text-block font-semibold">{chatter.userName}</div>
+                        <div className="w-[70%] truncate">
+                            {lastData?.text}
+                        </div>
+                    </div>
+                    <div className="text-end w-20  max-h-10 overflow-hidden text-sm break-words">
                         {lastData?.time?.toDate().toLocaleString()}
                     </div>
                 </div>

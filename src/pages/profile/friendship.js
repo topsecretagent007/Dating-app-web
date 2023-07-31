@@ -6,6 +6,10 @@ import Logo from "../../assets/Logo1.svg";
 export default function FriendShip() {
     const navigator = useNavigate();
 
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, { passive: false });
+
     return (
         <div className="bg-[#FFFBFE] rounded-xl w-full h-full min-h-screen flex pb-10">
             <div className="pt-20 pl-2 md:pl-5 xl:pl-20 2xl:pl-40">
